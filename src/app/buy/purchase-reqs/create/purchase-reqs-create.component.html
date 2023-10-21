@@ -1,0 +1,8 @@
+<app-purchase-reqs-form [action]="operations.Create"
+                        [model]="purchaseReq"
+                        (submitted)="onSubmitted($event)"
+                        [isLoading]="isLoading">
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{errorMessage}}
+  </div>
+</app-purchase-reqs-form>

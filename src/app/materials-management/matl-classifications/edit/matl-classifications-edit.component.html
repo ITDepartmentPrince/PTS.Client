@@ -1,0 +1,8 @@
+<app-matl-classifications-form [action]="operations.Edit"
+                       [model]="matlClassification"
+                       (submitted)="onSubmitted($event)"
+                       [isLoading]="isLoading">
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{errorMessage}}
+  </div>
+</app-matl-classifications-form>

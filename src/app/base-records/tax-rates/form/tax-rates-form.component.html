@@ -1,0 +1,64 @@
+<div class="row mt-4">
+  <div class="col-md-4">
+    <div *ngIf="isLoading" class="text-center">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+    <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isLoading">
+      <ng-content></ng-content>
+      <div *ngIf="!f.valid && f.touched" class="alert alert-danger" role="alert">
+        One or more inputs are incorrect
+      </div>
+      <div class="mb-4">
+        <label for="rate" class="form-label">Rate (%)</label>
+        <input type="number"
+               [controlDecimal]="3"
+               [min]="0"
+               class="form-control"
+               id="rate"
+               name="rate"
+               [(ngModel)]="model.rate"
+               required
+               #rate="ngModel"
+               [ngClass]="{input_danger: !rate.valid && rate.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="taxName" class="form-label">Tax name</label>
+        <input type="text"
+               maxlength="50"
+               class="form-control"
+               id="taxName"
+               name="taxName"
+               [(ngModel)]="model.taxName"
+               required
+               #taxName="ngModel"
+               [ngClass]="{input_danger: !taxName.valid && taxName.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4 form-check" *ngIf="action !== operations.Create">
+        <input type="checkbox"
+               class="form-check-input"
+               id="inActive"
+               name="inActive"
+               [(ngModel)]="model.inActive"
+               [disabled]="controlState">
+        <label for="inActive">Inactive</label>
+      </div>
+      <div class="mb-4">
+        <button class="btn btn-primary me-2"
+                type="submit"
+                *appAuth="AuthPolicy.canUserEdit()"
+                [disabled]="!f.valid && f.invalid">
+          <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
+          <span *ngIf="action === operations.View">Edit</span>
+        </button>
+        <button class="btn btn-primary"
+                type="button"
+                (click)="router.navigate(['/base-records/tax-rates'],
+                {queryParamsHandling: 'preserve'})">
+          Back
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

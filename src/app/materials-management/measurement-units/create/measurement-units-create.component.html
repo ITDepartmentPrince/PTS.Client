@@ -1,0 +1,8 @@
+<app-measurement-units-form [action]="operations.Create"
+                       [model]="measurementUnit"
+                       (submitted)="onSubmitted($event)"
+                       [isLoading]="isLoading">
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{errorMessage}}
+  </div>
+</app-measurement-units-form>

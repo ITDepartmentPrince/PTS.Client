@@ -1,0 +1,8 @@
+<app-vendors-form [action]="operations.Create"
+                  [model]="vendor"
+                  (submitted)="onSubmitted($event)"
+                  [isLoading]="isLoading">
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{errorMessage}}
+  </div>
+</app-vendors-form>

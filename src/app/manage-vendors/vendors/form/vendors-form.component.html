@@ -1,0 +1,150 @@
+<div class="row mt-4">
+  <div class="col-md-4">
+    <div *ngIf="isLoading" class="text-center">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+    <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isLoading">
+      <ng-content></ng-content>
+      <div *ngIf="!f.valid && f.touched" class="alert alert-danger" role="alert">
+        One or more inputs are incorrect
+      </div>
+      <div class="mb-4">
+        <label for="companyName" class="form-label">Company</label>
+        <input type="text"
+               class="form-control"
+               id="companyName"
+               name="companyName"
+               [ngModel]="model.companyName"
+               required
+               maxlength="50"
+               #companyName="ngModel"
+               [ngClass]="{input_danger: !companyName.valid && companyName.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="email" class="form-label">Email</label>
+        <input type="text"
+               class="form-control"
+               id="email"
+               name="email"
+               [ngModel]="model.email"
+               required
+               maxlength="50"
+               #email="ngModel"
+               [ngClass]="{input_danger: !email.valid && email.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="phoneNumber" class="form-label">Phone #</label>
+        <input type="text"
+               class="form-control"
+               id="phoneNumber"
+               name="phoneNumber"
+               [ngModel]="model.phoneNumber"
+               required
+               maxlength="20"
+               #phoneNumber="ngModel"
+               [ngClass]="{input_danger: !phoneNumber.valid && phoneNumber.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="street1" class="form-label">Street 1</label>
+        <input type="text"
+               class="form-control"
+               id="street1"
+               name="street1"
+               [ngModel]="model.street1"
+               required
+               maxlength="50"
+               #street1="ngModel"
+               [ngClass]="{input_danger: !street1.valid && street1.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="street2" class="form-label">Street 2 (optional)</label>
+        <input type="text"
+               class="form-control"
+               id="street2"
+               name="street2"
+               [ngModel]="model.street2"
+               #street2="ngModel"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="cityName" class="form-label">City</label>
+        <input type="text"
+               class="form-control"
+               id="cityName"
+               name="cityName"
+               [ngModel]="model.cityName"
+               required
+               maxlength="50"
+               #cityName="ngModel"
+               [ngClass]="{input_danger: !cityName.valid && cityName.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="stateCode" class="form-label">State</label>
+        <ng-select [items]="model.states"
+                   bindLabel="stateName"
+                   bindValue="stateCode"
+                   id="stateCode"
+                   name="stateCode"
+                   [ngModel]="model.stateCode"
+                   required
+                   maxlength="2"
+                   #stateCode="ngModel"
+                   [ngClass]="{input_danger: !stateCode.valid && stateCode.touched}"
+                   [disabled]="controlState">
+        </ng-select>
+      </div>
+      <div class="mb-4">
+        <label for="zipCode" class="form-label">Zip Code</label>
+        <input type="text"
+               class="form-control"
+               id="zipCode"
+               name="zipCode"
+               [ngModel]="model.zipCode"
+               required
+               maxlength="20"
+               #zipCode="ngModel"
+               [ngClass]="{input_danger: !zipCode.valid && zipCode.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="notes" class="form-label">Notes (optional)</label>
+        <input type="text"
+               class="form-control"
+               id="notes"
+               name="notes"
+               [ngModel]="model.notes"
+               #notes="ngModel"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4 form-check" *ngIf="action !== operations.Create">
+        <input type="checkbox"
+               class="form-check-input"
+               id="inActive"
+               name="inActive"
+               [ngModel]="model.inActive"
+               [disabled]="controlState">
+        <label for="inActive">Inactive</label>
+      </div>
+      <div class="mb-4">
+        <button class="btn btn-primary me-2"
+                type="submit"
+                *appAuth="AuthPolicy.canUserEdit()"
+                [disabled]="!f.valid && f.invalid">
+          <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
+          <span *ngIf="action === operations.View">Edit</span>
+        </button>
+        <button class="btn btn-primary"
+                type="button"
+                (click)="router.navigate(['/manage-vendors/vendors'],
+                {queryParamsHandling: 'preserve'})">
+          Back
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,77 @@
+<div class="row mt-4">
+  <div class="col-md-4">
+    <div *ngIf="isLoading" class="text-center">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+    <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isLoading">
+      <ng-content></ng-content>
+      <div *ngIf="!f.valid && f.touched" class="alert alert-danger" role="alert">
+        One or more inputs are incorrect
+      </div>
+      <div class="mb-4">
+        <label for="stateCode" class="form-label">State code</label>
+        <input type="text"
+               class="form-control"
+               id="stateCode"
+               name="stateCode"
+               [ngModel]="model.stateCode"
+               required
+               maxlength="2"
+               #stateCode="ngModel"
+               [ngClass]="{input_danger: !stateCode.valid && stateCode.touched}"
+               [disabled]="controlState || action === operations.Edit">
+      </div>
+      <div class="mb-4">
+        <label for="stateName" class="form-label">State name</label>
+        <input type="text"
+               class="form-control"
+               id="stateName"
+               name="stateName"
+               [ngModel]="model.stateName"
+               required
+               maxlength="50"
+               #stateName="ngModel"
+               [ngClass]="{input_danger: !stateName.valid && stateName.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="countryCode" class="form-label">Country</label>
+        <ng-select [items]="model.countries"
+                   bindLabel="countryName"
+                   bindValue="countryCode"
+                   id="countryCode"
+                   name="countryCode"
+                   [ngModel]="model.countryCode"
+                   required
+                   #countryCode="ngModel"
+                   [ngClass]="{input_danger: !countryCode.valid && countryCode.touched}"
+                   [disabled]="controlState">
+        </ng-select>
+      </div>
+      <div class="mb-4 form-check" *ngIf="action !== operations.Create">
+        <input type="checkbox"
+               class="form-check-input"
+               id="inActive"
+               name="inActive"
+               [ngModel]="model.inActive"
+               [disabled]="controlState">
+        <label for="inActive">Inactive</label>
+      </div>
+      <div class="mb-4">
+        <button class="btn btn-primary me-2"
+                type="submit"
+                *appAuth="AuthPolicy.canUserEdit()"
+                [disabled]="!f.valid && f.invalid">
+          <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
+          <span *ngIf="action === operations.View">Edit</span>
+        </button>
+        <button class="btn btn-primary"
+                type="button"
+                (click)="router.navigate(['/manage-vendors/states'],
+                {queryParamsHandling: 'preserve'})">
+          Back
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

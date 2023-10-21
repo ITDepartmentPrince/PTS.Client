@@ -1,0 +1,8 @@
+<app-states-form [action]="operations.Edit"
+                 [model]="state"
+                 (submitted)="onSubmitted($event)"
+                 [isLoading]="isLoading">
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{errorMessage}}
+  </div>
+</app-states-form>

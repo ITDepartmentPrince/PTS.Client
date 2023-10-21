@@ -1,0 +1,8 @@
+<app-countries-form [action]="operations.Create"
+                       [model]="country"
+                       (submitted)="onSubmitted($event)"
+                       [isLoading]="isLoading">
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{errorMessage}}
+  </div>
+</app-countries-form>

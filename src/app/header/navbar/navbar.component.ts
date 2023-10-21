@@ -1,0 +1,17 @@
+import { Component } from '@angular/core';
+import {OidcSecurityService} from "angular-auth-oidc-client";
+
+@Component({
+  selector: 'app-navbar',
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.css']
+})
+export class NavbarComponent {
+  constructor(private authService: OidcSecurityService) {}
+
+  logout() {
+    this.authService
+      .logoffAndRevokeTokens()
+      .subscribe((result) => console.log(result));
+  }
+}

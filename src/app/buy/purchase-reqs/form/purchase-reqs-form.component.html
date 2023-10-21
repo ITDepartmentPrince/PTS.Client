@@ -1,0 +1,402 @@
+<div class="trans">
+  <div class="row t-mb justify-content-between pb-2 border-bottom border-4">
+    <div class="col-md-4 align-self-end">
+      <div>
+        <div class="fw-bold fs-4">
+          Purchase requisition
+          <span class="fw-normal">
+            {{action === operations.Create ? '(create)' : ''}}
+            {{action === operations.Edit ? '(edit)' : ''}}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4" *ngIf="!isLoading">
+      <div class="row">
+        <div class="col-auto" *ngIf="action === operations.View">
+          <div *ngIf="!model?.isSubmitted" class="dropdown">
+            <button class="btn btn-danger dropdown-toggle w-100 btn-status"
+                    type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                    style="width: 12rem !important;">
+              Not submitted
+            </button>
+            <ul class="dropdown-menu shadow w-100">
+              <li (click)="onPrStatusChange(prStatus.Submitted)">
+                <div class="dropdown-item p-3" style="cursor: pointer;">Submitted</div>
+              </li>
+            </ul>
+          </div>
+
+          <div *ngIf="model?.isSubmitted" class="dropdown">
+            <div *appAuth="AuthPolicy.canUserApprovePr()">
+              <button class="btn {{model && model.approveUserId ? 'btn-success' : 'btn-secondary'}} dropdown-toggle btn-status"
+                      type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                      style="width: 12rem !important;">
+                {{model && model.approveUserId ? 'Approved' : 'Pending'}}
+              </button>
+              <ul class="dropdown-menu shadow w-100">
+                <li *ngIf="!model?.approveUserId" (click)="onPrStatusChange(prStatus.Approved)">
+                  <div class="dropdown-item p-3" style="cursor: pointer;">Approved</div>
+                </li>
+                <li (click)="onPrStatusChange(prStatus.Disapproved)">
+                  <div class="dropdown-item p-3" style="cursor: pointer;">Disapproved</div>
+                </li>
+              </ul>
+            </div>
+
+            <div *appAuthReverse="AuthPolicy.canUserApprovePr()">
+              <button class="btn {{model && model.approveUserId ? 'btn-success' : 'btn-secondary'}}"
+                      style="padding: 0.8rem;"
+                      type="button">
+                {{model && model.approveUserId ? 'Approved' : 'Pending'}}
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <!--Hello-->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isLoading">
+    <ng-content></ng-content>
+    <div class="row">
+      <div class="col-md-4">
+        <div *ngIf="!f.valid && f.touched" class="alert alert-danger" role="alert">
+          One or more inputs are incorrect
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-between">
+      <div class="col-md-2">
+        <div class="t-mb">
+          <label for="prNumber" class="form-label d-flex justify-content-between">
+            <span>PR #</span>
+            <span class="form-check" *ngIf="action !== operations.Create">
+              <input type="checkbox"
+                     class="form-check-input"
+                     id="inActive"
+                     name="inActive"
+                     [(ngModel)]="model.inActive"
+                     [disabled]="controlState">
+              <label for="inActive"
+                     class="fw-bold {{model.inActive ? 'text-danger' : ''}}">
+                cancelled
+              </label>
+            </span>
+          </label>
+          <input type="text"
+                 class="form-control"
+                 id="prNumber"
+                 name="prNumber"
+                 [ngModel]="model.prNumber"
+                 [placeholder]="action === operations.Create ? '-- new --' : ''"
+                 [disabled]=true>
+        </div>
+        <div class="t-mb">
+          <label class="form-label">Purchase items</label>
+          <ng-select [items]="model.classifications"
+                     bindLabel="classificationName"
+                     bindValue="classificationId"
+                     id="classificationId"
+                     name="classificationId"
+                     [(ngModel)]="model.classificationId"
+                     (change)="onClassificationChange()"
+                     required
+                     #classificationId="ngModel"
+                     [ngClass]="{input_danger: !classificationId.valid && classificationId.touched}"
+                     [disabled]="controlState">
+          </ng-select>
+        </div>
+        <div class="t-mb"> <!--Fix it later-->
+          <label for="vendorId" class="form-label">Department</label>
+          <!--<ng-select [items]="model.empty"
+                     bindLabel="companyName"
+                     bindValue="vendorId"
+                     id="vendorId"
+                     name="vendorId"
+                     [ngModel]="model.vendorId"
+                     #vendorId="ngModel"
+                     [ngClass]="{input_danger: !vendorId.valid && vendorId.touched}"
+                     [disabled]="controlState">
+          </ng-select>-->
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <div class="t-mb">
+          <label class="form-label">Vendor</label>
+          <ng-select [items]="model.vendors"
+                     bindLabel="companyName"
+                     bindValue="vendorId"
+                     id="vendorId"
+                     name="vendorId"
+                     placeholder="-- select --"
+                     [(ngModel)]="model.vendorId"
+                     (change)="onVendorChange()"
+                     #vendorId="ngModel"
+                     [ngClass]="{input_danger: !vendorId.valid && vendorId.touched}"
+                     [disabled]="controlState">
+          </ng-select>
+        </div>
+        <div class="t-mb">
+          <label class="form-label">Vendor contact</label>
+          <ng-select [items]="model.vendorContacts"
+                     bindLabel="name"
+                     bindValue="contactId"
+                     id="contactId"
+                     name="contactId"
+                     placeholder="-- select --"
+                     [(ngModel)]="model.contactId"
+                     required
+                     #contactId="ngModel"
+                     [ngClass]="{input_danger: !contactId.valid && contactId.touched}"
+                     [disabled]="controlState">
+          </ng-select>
+        </div>
+        <div class="t-mb"> <!--Fix it later-->
+          <label for="vendorId" class="form-label">Payment term</label>
+          <!--<ng-select [items]="model.empty"
+                     bindLabel="companyName"
+                     bindValue="vendorId"
+                     id="vendorId"
+                     name="vendorId"
+                     [ngModel]="model.vendorId"
+                     #vendorId="ngModel"
+                     [ngClass]="{input_danger: !vendorId.valid && vendorId.touched}"
+                     [disabled]="controlState">
+          </ng-select>-->
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <!--<div class="t-mb"> &lt;!&ndash;Fix it later&ndash;&gt;
+          <label for="prNumber1" class="form-label">Shipper</label>
+          <input type="text"
+                 class="form-control"
+                 id="prNumber1"
+                 name="prNumber1"
+                 [ngModel]="model.prNumber"
+                 required
+                 maxlength="8"
+                 #prNumber1="ngModel"
+                 [ngClass]="{input_danger: !prNumber1.valid && prNumber1.touched}"
+                 [disabled]="controlState">
+        </div>-->
+        <div class="t-mb"> <!--Fix it later-->
+          <label for="vendorId" class="form-label">Shipper account #</label>
+          <!--<ng-select [items]="model.empty"
+                     bindLabel="companyName"
+                     bindValue="vendorId"
+                     id="vendorId"
+                     name="vendorId"
+                     [ngModel]="model.vendorId"
+                     #vendorId="ngModel"
+                     [ngClass]="{input_danger: !vendorId.valid && vendorId.touched}"
+                     [disabled]="controlState">
+          </ng-select>-->
+        </div>
+        <div class="t-mb"> <!--Fix it later-->
+          <label for="vendorId" class="form-label">Ship To</label>
+         <!-- <ng-select [items]="model.empty"
+                     bindLabel="companyName"
+                     bindValue="vendorId"
+                     id="vendorId"
+                     name="vendorId"
+                     [ngModel]="model.vendorId"
+                     #vendorId="ngModel"
+                     [ngClass]="{input_danger: !vendorId.valid && vendorId.touched}"
+                     [disabled]="controlState">
+          </ng-select>-->
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <div class="t-mb">
+          <label for="deliveryDate" class="form-label">Expected arrival</label>
+          <input type="date"
+                 class="form-control"
+                 id="deliveryDate"
+                 name="deliveryDate"
+                 [ngModel]="model.deliveryDate | date: 'yyyy-MM-dd'"
+                 required
+                 #deliveryDate="ngModel"
+                 [ngClass]="{input_danger: !deliveryDate.valid && deliveryDate.touched}"
+                 [disabled]="controlState">
+        </div>
+        <div class="t-mb">
+          <label for="createDate" class="form-label">Created date</label>
+          <input type="date"
+                 class="form-control"
+                 id="createDate"
+                 name="createDate"
+                 [ngModel]="model.createDate | date: 'yyyy-MM-dd'"
+                 required
+                 #createDate="ngModel"
+                 [ngClass]="{input_danger: !createDate.valid && createDate.touched}"
+                 [disabled]="controlState">
+        </div>
+        <div class="t-mb" *ngIf="action !== operations.Create">
+          <label class="form-label">Approved by</label>
+          <input type="text"
+                 class="form-control"
+                 [disabled]=true
+                 [value]="model.approveUser?.name ?? 'pending'">
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-4">
+      <div class="position-relative">
+        <hr class="mt-5 mb-5">
+        <div style="font-weight: bold; position: absolute;
+      top: -11px; left: 25px; background-color: #fff; padding: 0 1rem;">Purchase requisition items</div>
+      </div>
+      <app-items-materials *ngIf="isClassifiedAs(model.classificationId, model.vendorId, ItemType.Material)"
+                           [controlState]="controlState"
+                           [action]="action">
+      </app-items-materials>
+    </div>
+
+    <br *ngIf="action === operations.View">
+    <div class="row justify-content-between mt-4 mb-2">
+      <div class="col-md-7">
+        <div class="d-flex align-items-center"
+             style="padding: 0.7rem 0;">Additional info</div>
+        <div class="border-bottom border-4"></div>
+        <div class="py-3 d-flex flex-column" style="height: calc(100% - 35px)">
+          <textarea class="form-control text-start"
+                    placeholder="-- type comment here --"
+                    name="notes"
+                    [(ngModel)]="model.notes"
+                    style="font-size: 1.4rem; height: 100%;"
+                    [disabled]="controlState"></textarea>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div>
+          <ng-template #noAdd><div style="padding: 0.7rem 0;">Summary</div></ng-template>
+          <div *ngIf="action !== operations.View; else noAdd" class="dropdown pr-add-charge text-end">
+            <div class="d-inline-block"
+                 data-bs-toggle="dropdown"
+                 data-bs-auto-close="outside"
+                 aria-expanded="false"
+                 title="Add additional charge">
+              <div class="btn-add-item m-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                </svg>
+                <span>Add</span>
+              </div>
+            </div>
+            <ul class="dropdown-menu shadow w-100" #ocDd>
+              <li>
+                <div class="uom">
+                  <div class="uom-header">
+                    <div>Select additional charge</div>
+                  </div>
+                  <div class="uom-body">
+                    <div class="mb-4 mt-2">
+                      <label class="form-label">Additional charge</label>
+                      <ng-select [items]="model.otherCharges"
+                                 bindLabel="otherChargeName"
+                                 bindValue="otherChargeId"
+                                 id="otherChargeId"
+                                 name="otherChargeId"
+                                 placeholder="-- select --"
+                                 ngModel
+                                 #otherChargeId="ngModel">
+                      </ng-select>
+                    </div>
+                    <div>
+                      <label for="ocAmount" class="form-label">Amount</label>
+                      <input type="number"
+                             [min]="0"
+                             class="form-control"
+                             id="ocAmount"
+                             name="ocAmount"
+                             [ngModel]=null
+                             [ngClass]="{input_danger: ocAmount.touched && ocAmount.value <= 0}"
+                             #ocAmount="ngModel">
+                    </div>
+                  </div>
+                  <div class="uom-footer">
+                    <button class="btn btn-primary px-4"
+                            type="button"
+                            [disabled]="!otherChargeId.value || ocAmount.value <= 0"
+                            (click)="onAddCharge(otherChargeId.value, ocAmount.value, ocDd)">Ok</button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div class="border-bottom border-4"></div>
+          <div>
+            <div *ngFor="let charge of model.purchaseReqCharges;">
+              <div class="row justify-content-between py-3">
+                <div class="col fw-bold">
+                  {{charge.otherCharge.otherChargeName}}
+                  <span *ngIf="action !== operations.View" class="btn-del ms-3" (click)="onRemoveCharge(charge)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                      <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                    </svg>
+                  </span>
+                </div>
+                <div class="col-md-4 text-end">{{charge.amount.toFixed(2)}} <span style="font-size: 1.3rem;">USD</span></div>
+              </div>
+              <div class="border-bottom"></div>
+            </div>
+            <div class="row justify-content-between py-3">
+              <div class="col fw-bold">Subtotal (Tax excluded):</div>
+              <div class="col-md-4 text-end">
+                {{(prService.getTotal() + prService.getAddChargesTotal()).toFixed(2)}}
+                <span style="font-size: 1.3rem;">USD</span>
+              </div>
+            </div>
+            <div class="border-bottom"></div>
+            <div class="row justify-content-between py-3">
+              <div class="col fw-bold">Plus Tax:</div>
+              <div class="col-md-4 text-end">
+                {{prService.getTotalTaxRate().toFixed(2)}}
+                <span style="font-size: 1.3rem;">USD</span>
+              </div>
+            </div>
+            <div class="border-bottom"></div>
+            <div class="row justify-content-between py-3">
+              <div class="col fw-bold">Total:</div>
+              <div class="col-md-4 text-end">
+                {{(prService.getTotal() + prService.getAddChargesTotal() + prService.getTotalTaxRate()).toFixed(2)}}
+                <span style="font-size: 1.3rem;">USD</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="t-mb">
+      <div class="d-inline-block" *ngIf="!model.isSubmitted">
+        <button class="btn btn-primary me-2"
+                type="submit"
+                *appAuth="AuthPolicy.canUserEdit()"
+                [disabled]="!f.valid && f.invalid || model.purchaseReqItems.length === 0">
+          <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
+          <span *ngIf="action === operations.View">Edit</span>
+        </button>
+      </div>
+      <button class="btn btn-primary"
+              type="button"
+              (click)="router.navigate(['/purchase-requisitions'],
+              {queryParamsHandling: 'preserve'})">
+        Back
+      </button>
+    </div>
+  </form>
+</div>
+<ng-container appModal></ng-container>

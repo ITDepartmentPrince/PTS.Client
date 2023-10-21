@@ -1,0 +1,8 @@
+<app-materials-form [action]="operations.Create"
+                    [model]="material"
+                    (submitted)="onSubmitted($event)"
+                    [isLoading]="isLoading">
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{errorMessage}}
+  </div>
+</app-materials-form>

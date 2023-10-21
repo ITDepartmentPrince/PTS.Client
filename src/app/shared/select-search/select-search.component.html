@@ -1,0 +1,7 @@
+<div class="select-search">
+  <input class="select-search-input" type="text" [value]="value" [placeholder]="placeHolder">
+  <div class="select-search-options">
+    <ng-content></ng-content>
+    <option *ngFor="let item of items" [value]="item.value">{{item.text}}</option>
+  </div>
+</div>

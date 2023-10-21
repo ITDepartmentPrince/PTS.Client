@@ -1,0 +1,26 @@
+.column-search {
+  display: inherit;
+}
+
+.column-search-icon {
+  cursor: pointer;
+}
+
+.column-search .dropdown-menu {
+  transform: translate3d(0px, 0px, 0px) !important;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0;
+  width: 100%;
+}
+
+.column-search-input {
+  border: none;
+  outline: none;
+  padding: 0.8rem 0.6rem;
+  width: 100%;
+}
+
+.searching {
+  transform: scale(1.3);
+}

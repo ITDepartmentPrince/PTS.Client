@@ -1,0 +1,129 @@
+<div class="row mt-4">
+  <div class="col-md-4">
+    <div *ngIf="isLoading" class="text-center">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+    <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isLoading">
+      <ng-content></ng-content>
+      <div *ngIf="!f.valid && f.touched" class="alert alert-danger" role="alert">
+        One or more inputs are incorrect
+      </div>
+      <div class="mb-4">
+        <label for="vendorId" class="form-label">Vendor</label>
+        <ng-select [items]="model.vendors"
+                   bindLabel="companyName"
+                   bindValue="vendorId"
+                   id="vendorId"
+                   name="vendorId"
+                   [ngModel]="model.vendorId"
+                   required
+                   #vendorId="ngModel"
+                   [ngClass]="{input_danger: !vendorId.valid && vendorId.touched}"
+                   [disabled]="controlState">
+        </ng-select>
+      </div>
+      <div class="mb-4">
+        <label for="firstName" class="form-label">First name</label>
+        <input type="text"
+               class="form-control"
+               id="firstName"
+               name="firstName"
+               [ngModel]="model.firstName"
+               required
+               maxlength="30"
+               #firstName="ngModel"
+               [ngClass]="{input_danger: !firstName.valid && firstName.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="lastName" class="form-label">Last name</label>
+        <input type="text"
+               class="form-control"
+               id="lastName"
+               name="lastName"
+               [ngModel]="model.lastName"
+               required
+               maxlength="30"
+               #lastName="ngModel"
+               [ngClass]="{input_danger: !lastName.valid && lastName.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="emailAddress" class="form-label">Email</label>
+        <input type="text"
+               class="form-control"
+               id="emailAddress"
+               name="emailAddress"
+               [ngModel]="model.emailAddress"
+               required
+               maxlength="50"
+               #emailAddress="ngModel"
+               [ngClass]="{input_danger: !emailAddress.valid && emailAddress.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="emailDistribution" class="form-label">Email dist.</label>
+        <input type="text"
+               class="form-control"
+               id="emailDistribution"
+               name="emailDistribution"
+               [ngModel]="model.emailDistribution"
+               required
+               maxlength="150"
+               #emailDistribution="ngModel"
+               [ngClass]="{input_danger: !emailDistribution.valid && emailDistribution.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="phoneNumber" class="form-label">Work phone</label>
+        <input type="text"
+               class="form-control"
+               id="phoneNumber"
+               name="phoneNumber"
+               [ngModel]="model.phoneNumber"
+               required
+               maxlength="50"
+               #phoneNumber="ngModel"
+               [ngClass]="{input_danger: !phoneNumber.valid && phoneNumber.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="mobileNumber" class="form-label">Mobile #</label>
+        <input type="text"
+               class="form-control"
+               id="mobileNumber"
+               name="mobileNumber"
+               [ngModel]="model.mobileNumber"
+               required
+               maxlength="50"
+               #mobileNumber="ngModel"
+               [ngClass]="{input_danger: !mobileNumber.valid && mobileNumber.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4 form-check" *ngIf="action !== operations.Create">
+        <input type="checkbox"
+               class="form-check-input"
+               id="inActive"
+               name="inActive"
+               [ngModel]="model.inActive"
+               [disabled]="controlState">
+        <label for="inActive">Inactive</label>
+      </div>
+      <div class="mb-4">
+        <button class="btn btn-primary me-2"
+                type="submit"
+                *appAuth="AuthPolicy.canUserEdit()"
+                [disabled]="!f.valid && f.invalid">
+          <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
+          <span *ngIf="action === operations.View">Edit</span>
+        </button>
+        <button class="btn btn-primary"
+                type="button"
+                (click)="router.navigate(['/manage-vendors/vendor-contacts'],
+                {queryParamsHandling: 'preserve'})">
+          Back
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

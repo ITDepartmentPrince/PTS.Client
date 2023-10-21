@@ -1,0 +1,15 @@
+<div>
+  <p>Please confirm the current task by pressing the 'yes' button.</p>
+  <div>
+    <label for="notes" class="form-label">The below comment will be send to the user. (optional)</label>
+    <textarea class="form-control text-start"
+              id="notes"
+              placeholder="-- type comment here --"
+              name="notes"
+              required
+              ngModel
+              #lol="ngModel"
+              [ngClass]="{input_danger: !lol.valid && lol.touched}"
+              style="font-size: 1.4rem; height: 9rem;"></textarea>
+  </div>
+</div>

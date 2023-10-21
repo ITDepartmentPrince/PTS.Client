@@ -1,0 +1,170 @@
+<div class="row mt-4">
+  <div class="col-md-4">
+    <div *ngIf="isLoading" class="text-center">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+    <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isLoading">
+      <ng-content></ng-content>
+      <div *ngIf="!f.valid && f.touched" class="alert alert-danger" role="alert">
+        One or more inputs are incorrect
+      </div>
+      <div class="mb-4">
+        <label for="materialDescription" class="form-label">Description</label>
+        <input type="text"
+               class="form-control"
+               id="materialDescription"
+               name="materialDescription"
+               [ngModel]="model.materialDescription"
+               required
+               maxlength="300"
+               #materialDescription="ngModel"
+               [ngClass]="{input_danger: !materialDescription.valid && materialDescription.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="catalogNumber" class="form-label">Catalog #</label>
+        <input type="text"
+               class="form-control"
+               id="catalogNumber"
+               name="catalogNumber"
+               [ngModel]="model.catalogNumber"
+               required
+               maxlength="50"
+               #catalogNumber="ngModel"
+               [ngClass]="{input_danger: !catalogNumber.valid && catalogNumber.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="uomId" class="form-label">Unit of measure</label>
+        <ng-select [items]="model.measurementUnits"
+                   bindLabel="longUnit"
+                   bindValue="unitId"
+                   id="uomId"
+                   name="uomId"
+                   [ngModel]="model.uomId"
+                   required
+                   #uomId="ngModel"
+                   [ngClass]="{input_danger: !uomId.valid && uomId.touched}"
+                   [disabled]="controlState">
+        </ng-select>
+      </div>
+      <div class="mb-4">
+        <label for="classificationId" class="form-label">Classification</label>
+        <ng-select [items]="model.classifications"
+                   bindLabel="classificationName"
+                   bindValue="classificationId"
+                   id="classificationId"
+                   name="classificationId"
+                   [ngModel]="model.classificationId"
+                   required
+                   #classificationId="ngModel"
+                   [ngClass]="{input_danger: !classificationId.valid && classificationId.touched}"
+                   [disabled]="controlState">
+        </ng-select>
+      </div>
+      <div class="mb-4">
+        <label for="categoryId" class="form-label">Category</label>
+        <ng-select [items]="model.matlCategories"
+                   bindLabel="categoryName"
+                   bindValue="categoryId"
+                   id="categoryId"
+                   name="categoryId"
+                   [ngModel]="model.categoryId"
+                   required
+                   #categoryId="ngModel"
+                   [ngClass]="{input_danger: !categoryId.valid && categoryId.touched}"
+                   [disabled]="controlState">
+        </ng-select>
+      </div>
+      <div class="mb-4">
+        <label for="sizeId" class="form-label">Size Variant</label>
+        <ng-select [items]="model.sizeVariants"
+                   bindLabel="sizeDescription"
+                   bindValue="sizeId"
+                   id="sizeId"
+                   name="sizeId"
+                   [ngModel]="model.sizeId"
+                   required
+                   #sizeId="ngModel"
+                   [ngClass]="{input_danger: !sizeId.valid && sizeId.touched}"
+                   [disabled]="controlState">
+        </ng-select>
+      </div>
+      <div class="mb-4">
+        <label for="vendorId" class="form-label">Vendor</label>
+        <ng-select [items]="model.vendors"
+                   bindLabel="companyName"
+                   bindValue="vendorId"
+                   id="vendorId"
+                   name="vendorId"
+                   [ngModel]="model.vendorId"
+                   required
+                   #vendorId="ngModel"
+                   [ngClass]="{input_danger: !vendorId.valid && vendorId.touched}"
+                   [disabled]="controlState">
+        </ng-select>
+      </div>
+      <div class="mb-4">
+        <div class="form-check">
+          <input type="checkbox"
+                 class="form-check-input"
+                 id="differentUom"
+                 name="differentUom"
+                 [(ngModel)]="model.isPurchaseDifferent"
+                 [disabled]="controlState">
+          <label for="differentUom">Do you buy this item in a different unit of measure?</label>
+        </div>
+        <div *ngIf="model.isPurchaseDifferent">
+          <div class="mb-4 mt-2">
+            <label for="defaultUomUnitId" class="form-label">Default purchase unit of measure</label>
+            <ng-select [items]="model.defaultUomUnits"
+                       bindLabel="longUnit"
+                       bindValue="unitId"
+                       id="defaultUomUnitId"
+                       name="defaultUomUnitId"
+                       [(ngModel)]="model.defaultUomUnitId"
+                       [disabled]="controlState">
+            </ng-select>
+          </div>
+          <div>
+            <label for="conversionRate" class="form-label">Unit conversion rate</label>
+            <div class="d-flex align-items-center outer-border p-1 px-3">
+              <span class="me-3">1 {{defaultLongUnit ?? '?'}} = </span>
+              <input type="number"
+                     class="form-control w-25"
+                     id="conversionRate"
+                     name="conversionRate"
+                     [ngModel]="model.conversionRate"
+                     [disabled]="controlState">
+              <span class="ms-3">{{uomLongUnit ?? '?'}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mb-4 form-check" *ngIf="action !== operations.Create">
+        <input type="checkbox"
+               class="form-check-input"
+               id="inActive"
+               name="inActive"
+               [ngModel]="model.inActive"
+               [disabled]="controlState">
+        <label for="inActive">Inactive</label>
+      </div>
+      <div class="mb-4">
+        <button class="btn btn-primary me-2"
+                type="submit"
+                *appAuth="AuthPolicy.canUserEdit()"
+                [disabled]="!f.valid && f.invalid">
+          <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
+          <span *ngIf="action === operations.View">Edit</span>
+        </button>
+        <button class="btn btn-primary"
+                type="button"
+                (click)="router.navigate(['/materials-management/materials'],
+                {queryParamsHandling: 'preserve'})">
+          Back
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

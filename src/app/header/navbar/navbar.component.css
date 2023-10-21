@@ -1,0 +1,138 @@
+.nav {
+  background-color: #154e9d;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+.nav-brand {
+  font-weight: bold;
+  font-size: 1.6rem;
+}
+
+.nav .nav-item {
+  cursor: pointer;
+  height: 50px;
+  padding: 0 15px;
+  display: inline-flex;
+  align-items: center;
+  color: #e9ebf0;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.nav-item:hover {
+  background-color: #1e56a8;
+}
+
+.nav-btn {
+  background-color: transparent;
+  border: none;
+}
+
+.nav-btn-icon {
+  width: 20px;
+  height: 20px;
+  fill: #e9ebf0;
+}
+
+.nav .nav-item.nav-dropdown,
+.nav-dropdown .dropdown-menu,
+.nav-account .dropdown-menu {
+  padding: 0;
+}
+
+.nav .dropdown-menu {
+  overflow: hidden;
+  transform: translate3d(0px, 51px, 0px) !important;
+  min-width: 15rem;
+}
+
+.nav-dropdown .dropdown-toggle,
+.nav-account .dropdown-toggle {
+  height: 50px;
+  padding: 0 15px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.nav-dropdown .dropdown-toggle::after,
+.nav-account .dropdown-toggle::after {
+  content: none;
+}
+
+.nav-dropdown .dropdown-menu .dropdown-item,
+.nav-account .dropdown-menu .dropdown-item {
+  font-size: 1.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-account {
+  margin-right: 0 !important;
+  padding: 0 !important;
+}
+
+.nav-account .name {
+  display: none;
+}
+
+.nav-account img {
+  width: 40px;
+  border-radius: 50%;
+}
+
+@media screen and (min-width: 768px) {
+  .nav .nav-item {
+    margin-right: 1rem;
+  }
+
+  .nav .nav-item.nav-dropdown {
+    padding: 0;
+  }
+
+  .nav .nav-item.nav-dropdown:hover {
+    background-color: transparent;
+  }
+
+  .nav-dropdown .dropdown-toggle {
+    display: none;
+  }
+
+  .nav-dropdown .dropdown-menu {
+    min-width: auto;
+    position: relative !important;
+    display: inline-flex;
+    align-items: center;
+    padding: 0;
+    transform: none !important;
+    background-color: transparent;
+    border: none;
+    overflow: unset;
+  }
+
+  .nav-dropdown .dropdown-menu .dropdown-item {
+    height: 50px;
+    padding: 0 15px;
+    color: #e9ebf0;
+    transition: background-color 0.3s;
+  }
+
+  .nav-dropdown .dropdown-menu .dropdown-item:hover {
+    background-color: #1e56a8;
+  }
+
+  .nav-dropdown .dropdown-menu .dropdown-item:focus {
+    background-color: #fff;
+    color: #1a1d20;
+  }
+
+  .nav-dropdown .dropdown-menu .dropdown-item-wd {
+    display: none;
+  }
+
+  .nav-account .name {
+    display: inline-block;
+    padding-right: 0.8rem;
+  }
+}

@@ -1,1 +1,516 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --color-primary: #154e9d;
+  --color-white: #fff;
+  --color-black: #000;
+  /*--color-secondary: #00d9ff;
+  --color-accent: #ff3400;
+  --color-headings: #1b0760;
+  --color-body: #918ca4;
+  --color-body-darker: #5c5577;
+  --color-border: #ccc;
+  --border-radius: 30px;*/
+}
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-family: -apple-system, sans-serif;
+  line-height: 1.5;
+  font-size: 1.4rem;
+  position: relative;
+}
+
+hr {
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+h4 {
+  font-weight: bold;
+}
+
+.main {
+  padding: 2.5rem 2.5rem 1rem;
+}
+
+.success {
+  background-color: var(--bs-success);
+}
+
+form .mb-4 {
+  margin-bottom: 2rem !important;
+}
+
+.form-label {
+  font-size: 1.3rem;
+}
+
+.form-control:not(.nav-input),
+.ng-select-searchable .ng-select-container {
+  padding: 0.475rem 0.85rem;
+}
+
+.outer-border {
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+}
+
+/*Dropdown*/
+.dropdown .dropdown-menu {
+  font-size: 1.4rem;
+}
+
+/*Ng-Select Search Dropdown*/
+.ng-select-container {
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  font-weight: 400;
+  line-height: 1.5;
+  height: 100% !important;
+  min-height: 100% !important;
+  color: var(--bs-body-color);
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--bs-body-bg);
+  background-clip: padding-box;
+  border: var(--bs-border-width) solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.ng-select.ng-select-focused:not(.ng-select-opened)>.ng-select-container {
+  color: var(--bs-body-color) !important;
+  background-color: var(--bs-body-bg) !important;
+  border-color: #86b7fe !important;
+  outline: 0 !important;
+  border-radius: var(--bs-border-radius);
+  box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25) !important;
+}
+
+.ng-select.ng-select-disabled>.ng-select-container {
+  background-color: #e9ecef !important;
+}
+
+.ng-select .ng-select-container:hover {
+  box-shadow: none !important;
+}
+
+.input_danger .ng-select-container {
+  border-color: var(--bs-danger) !important;
+}
+
+.ng-value-container {
+  padding-left: 0 !important;
+}
+
+.ng-input {
+  top: 4px !important;
+  padding-left: 8px !important;
+}
+
+.ng-dropdown-panel .ng-dropdown-panel-items .ng-option.ng-option-marked {
+  color: #fff;
+  background-color: var(--color-primary);
+}
+
+.ng-select .ng-clear-wrapper .ng-clear {
+  font-size: 14px !important;
+}
+
+/*Scrollbar*/
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/*Buttons*/
+.btn-primary {
+  background-color: var(--color-primary);
+}
+
+/*Inputs*/
+input:not(input[type="checkbox"]),
+.btn {
+  font-size: 1.4rem;
+}
+
+.input_danger {
+  border-color: var(--bs-danger) !important;
+}
+
+input[type='number'] {
+  -moz-appearance:textfield;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+/*Labels*/
+.form-label {
+  margin-bottom: 3px;
+}
+
+/*Links*/
+a {
+  text-decoration: none;
+}
+
+.sub-nav-link {
+  padding: 0.5rem 0.8rem 0.2rem;
+  border: 1px solid var(--bs-border-color);
+  border-bottom: none;
+  color: var(--color-black);
+}
+
+.sub-nav-link-active {
+  background-color: var(--color-primary);
+  color: var(--color-white);
+  font-weight: bold;
+}
+
+.sub-nav-link-border {
+  border-bottom: 0.62rem solid var(--color-primary);
+}
+
+/*Transactions*/
+.trans.trans-receiving .ng-select.ng-select-disabled>.ng-select-container,
+.trans-receiving-items-lb .ng-select.ng-select-disabled>.ng-select-container {
+  background-color: #fff !important;
+  border-color: var(--bs-border-color);
+}
+
+.trans.trans-receiving .trans-receiving-items .ng-select.ng-select-disabled>.ng-select-container,
+.trans-receiving-items-lb .ng-select.ng-select-disabled>.ng-select-container {
+  border-color: transparent;
+}
+
+.trans .line-separate {
+  font-weight: bold;
+  position: absolute;
+  top: -11px;
+  left: 25px;
+  width: 17rem;
+  text-align: center;
+  background-color: #fff;
+  padding: 0 2rem;
+  border-radius: 3px;
+}
+
+.trans .t-mb {
+  margin-bottom: 1.5rem;
+}
+
+.trans-items .table {
+  margin: 0;
+}
+
+.trans-items .table>:not(caption)>*>* {
+  padding: 0;
+}
+
+.trans-items th {
+  white-space: nowrap;
+  font-size: 1.3rem;
+  font-weight: bold;
+  padding: 0.8rem !important;
+}
+
+.trans-items tr {
+  vertical-align: middle;
+}
+
+.trans-items input[type="checkbox"] {
+  cursor: pointer;
+  font-size: 1.6rem;
+  margin-top: 3px;
+}
+
+.trans .btn-del svg,
+.trans-receiving-items-lb .btn-del svg {
+  fill: var(--bs-danger);
+  cursor: pointer;
+}
+
+.trans .btn-status {
+  width: 100%;
+  padding: 0.8rem 2.5rem 0.8rem 0.8rem;
+}
+
+.trans-items .ng-select.ng-select-focused:not(.ng-select-opened)>.ng-select-container,
+.trans-items .ng-select-container,
+.trans-items .form-control {
+  border-radius: 0;
+  border-color: #fff;
+  padding: 0.3rem 0.8rem;
+  line-height: 2.2;
+}
+
+.trans-items .ng-select.ng-select-focused:not(.ng-select-opened)>.ng-select-container,
+.trans-items .form-control:focus {
+  box-shadow: none !important;
+  border-color: #86b7fe !important;
+}
+
+.trans-items .ng-clear {
+  margin: 0 0.5rem;
+}
+
+.trans-items .ng-arrow-wrapper {
+  padding: 0;
+}
+
+.trans .btn-add-item {
+  font-weight: 600;
+  margin: 0.5rem 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.7rem;
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.trans .btn-add-item:hover {
+  background-color: rgba(0, 0, 0, 4%);
+  border-radius: 0.3rem;
+}
+
+.trans .dropdown-toggle::after {
+  position: absolute;
+  right: 10px;
+  bottom: 45%;
+}
+
+.trans .dropdown-menu {
+  padding: 0;
+  max-width: 30rem;
+}
+
+.trans .dropdown-menu .uom-header {
+  padding: 0.8rem 1.5rem;
+  background-color: var(--color-primary);
+  color: #fff;
+  border-top-left-radius: var(--bs-dropdown-inner-border-radius);
+  border-top-right-radius: var(--bs-dropdown-inner-border-radius);
+}
+
+.trans .dropdown-menu .uom-body {
+  padding: 0.8rem 1.5rem;
+}
+
+.trans .dropdown-menu .uom-body .ng-select.ng-select-focused:not(.ng-select-opened)>.ng-select-container,
+.trans .dropdown-menu .uom-body .ng-select-container,
+.trans .dropdown-menu .uom-body .form-control {
+  border-radius: 4px;
+  border-color: var(--bs-border-color);
+  /*padding: 0.3rem 0.8rem;*/
+  line-height: 1.5;
+}
+
+.trans .dropdown-menu .uom-footer {
+  text-align: right;
+  padding: 0.8rem 1.5rem;
+}
+
+.trans .pr-add-charge .dropdown-menu {
+  inset: auto !important;
+  transform: translate3d(0, -45%, 0) !important;
+  right: 6rem !important;
+}
+
+/*Paginator*/
+.mat-mdc-paginator-icon {
+  fill: var(--color-primary) !important;
+}
+
+.mat-mdc-tooltip-disabled {
+  opacity: 0.3 !important;
+}
+
+.mdc-notched-outline__trailing,
+.mdc-notched-outline__notch,
+.mdc-notched-outline__leading {
+  border-color: var(--bs-border-color) !important;
+}
+
+.mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__leading,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__notch,
+.mdc-text-field--outlined:not(.mdc-text-field--disabled).mdc-text-field--focused .mdc-notched-outline__trailing {
+  border-color: var(--color-primary) !important;
+}
+
+/*Datatable*/
+.data-table-container {
+  position: relative;
+}
+
+.data-table {
+  height: calc(100vh - 238px);
+  overflow: auto;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 3px;
+}
+
+.data-table .spinner-container-wrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  z-index: 1001;
+}
+
+.data-table .spinner-container {
+  position: relative;
+  text-align: center;
+  top: 15%;
+}
+
+.data-table .search-container {
+  margin: 2px 15px 0 0;
+}
+
+.data-table .status-col {
+  padding: 0 0.18rem 0 0.2rem;
+  /*background-color: #fff;*/
+}
+
+.data-table .status-col .dropdown-menu {
+  padding: 0;
+  border-radius: 1px;
+  width: 17.7rem;
+}
+
+.data-table .status-col .dropdown-menu .dropdown-item {
+  padding: 1rem;
+}
+
+.data-table .btn-status {
+  border-radius: 1px;
+  line-height: 1.8;
+  width: 100%;
+}
+
+.mat-mdc-table {
+  width: 100%;
+  border-collapse: separate;
+}
+
+.mat-sort-header-container {
+  justify-content: center;
+}
+
+.mat-mdc-table th,
+.mat-mdc-table td {
+  /*line-height: 1.5 !important;*/
+  position: relative;
+  overflow: hidden;
+  padding: 0 1rem;
+}
+
+.mat-mdc-table .cell-data {
+  display: inline-flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.mat-mdc-cell span {
+  position: absolute;
+  white-space: nowrap;
+  /*transform: translate(0, -50%);*/
+  transform: translate(0, -45%);
+  overflow: hidden;
+  /*left: 10px;
+  right: 10px;*/
+}
+
+.mat-mdc-table tr th:last-child,
+.mat-mdc-table tr td:last-child {
+  border-right: none !important;
+}
+
+.mat-mdc-header-cell {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+.mat-mdc-table .datatable-no-data {
+  height: 38px;
+  border: 1px solid var(--bs-border-color) !important;
+  text-align: center;
+}
+
+.mat-mdc-table .mdc-data-table__header-row,
+.mat-mdc-table .mdc-data-table__row {
+  height: 38px;
+}
+
+.mat-mdc-row:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 1.6%);
+}
+
+.mat-mdc-table .mat-mdc-row:nth-child(odd):hover {
+  background-color: rgba(0, 0, 0, 1.6%);
+}
+
+.mat-mdc-header-cell,
+.mdc-data-table__cell {
+  border-right: 1px solid var(--bs-border-color) !important;
+}
+
+.mdc-data-table__row:last-child > .mdc-data-table__cell {
+  border-bottom: 1px solid var(--bs-border-color) !important;
+}
+
+.mat-mdc-header-cell .resize-holder {
+  cursor: col-resize;
+  width: 20px;
+  height: 100%;
+  position: absolute;
+  right: -10px;
+  top: 0;
+  z-index: 1;
+}
+
+.mat-mdc-table-sticky {
+  box-shadow: 0 0.1rem 0.2rem rgba(0,0,0,.175) !important;
+}
+
+.mat-mdc-table .highlighted {
+  background-color: var(--color-primary) !important;
+}
+
+.mat-mdc-table .highlighted td {
+  color: var(--color-white);
+}
+
+.mat-mdc-table .inactive {
+  opacity: 0.6;
+}

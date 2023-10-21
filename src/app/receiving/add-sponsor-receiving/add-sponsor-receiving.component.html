@@ -1,0 +1,124 @@
+<div class="trans trans-receiving">
+  <div class="row t-mb justify-content-between pb-2 border-bottom border-4">
+    <div class="col-md-4 align-self-end">
+      <div>
+        <div class="fw-bold fs-4">
+          Sponsor receiving
+          <span class="fw-normal">(create)</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col-auto">
+
+        </div>
+        <div class="col-md-4">
+          <!--Hello-->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isLoading">
+    <div class="row justify-content-between w-75">
+      <div class="col-md-3">
+        <div class="t-mb">
+          <label class="form-label">Receiving #</label>
+          <div class="form-control d-flex">
+            <input type="text"
+                   style="border: none; outline: none; width: 100%;"
+                   name="roNumber"
+                   [ngModel]="asrService.receiving.roNumber"
+                   placeholder="-- new --"
+                   [readOnly]=true>
+          </div>
+        </div>
+        <div class="t-mb">
+          <label class="form-label">Receiving items</label>
+          <ng-select [items]="classifications"
+                     bindLabel="classificationName"
+                     bindValue="classificationId"
+                     name="classificationId"
+                     [(ngModel)]="asrService.receiving.classificationId"
+                     (change)="onClassificationChange()">
+          </ng-select>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="t-mb">
+          <label class="form-label">Source</label>
+          <ng-select [items]="sourcesType"
+                     bindLabel="name"
+                     bindValue="id"
+                     name="sourceType"
+                     [ngModel]="asrService.receiving.source.sourceType"
+                     [readonly]="true">
+          </ng-select>
+        </div>
+        <div class="t-mb">
+          <label class="form-label">Source reference</label>
+          <ng-select [items]="sponsors"
+                     bindLabel="sponsorName"
+                     bindValue="id"
+                     name="sponsorId"
+                     [(ngModel)]="asrService.receiving.source.sponsorId"
+                     required
+                     #sponsorId="ngModel"
+                     [ngClass]="{input_danger: !sponsorId.valid && sponsorId.touched}">
+          </ng-select>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="t-mb">
+          <label class="form-label">Delivered date</label>
+          <input type="datetime-local"
+                 class="form-control"
+                 name="deliveryDate"
+                 [ngModel]="asrService.receiving.deliveryDate | date: 'yyyy-MM-ddThh:mm'"
+                 [readonly]=true>
+        </div>
+        <div class="t-mb">
+          <label class="form-label">Created date</label>
+          <input type="date"
+                 class="form-control"
+                 name="createDate"
+                 [ngModel]="asrService.receiving.createDate | date: 'yyyy-MM-dd'"
+                 [readonly]=true>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-4">
+      <div class="position-relative">
+        <hr class="mt-5 mb-5">
+        <div style="font-weight: bold; position: absolute;
+        top: -11px; left: 25px; background-color: #fff; padding: 0 1rem;">Receiving items</div>
+      </div>
+      <add-sponsor-receiving-items-materials *ngIf="isClassifiedAs(asrService.receiving.classificationId,
+        ItemType.Material)">
+      </add-sponsor-receiving-items-materials>
+    </div>
+
+    <div class="my-4">
+      <button class="btn btn-primary me-2"
+              type="submit"
+              [disabled]="!f.valid && f.invalid || asrService.receiving.receivingItems.length === 0">
+        <span>Save</span>
+      </button>
+      <button class="btn btn-primary"
+              type="button"
+              (click)="router.navigate(['/receiving'],
+              {queryParamsHandling: 'preserve'})">
+        Back
+      </button>
+    </div>
+  </form>
+</div>
+<ng-container appModal></ng-container>

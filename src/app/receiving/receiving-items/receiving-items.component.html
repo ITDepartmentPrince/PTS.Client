@@ -1,0 +1,88 @@
+<div *ngIf="isLoading" class="text-center">
+  <app-loading-spinner></app-loading-spinner>
+</div>
+
+<div class="trans-receiving-items" *ngIf="!isLoading">
+  <div class="trans-items-container">
+    <div class="trans-items table-responsive">
+      <table class="table table-bordered">
+        <thead>
+        <tr>
+          <th style="width: 3rem;">#</th>
+          <th style="min-width: 20rem;">Item</th>
+          <th style="width: 10rem;">Quantity</th>
+          <th style="width: 10rem;">UOM</th>
+          <th style="width: 10rem;">Price per qty</th>
+          <th style="width: 10rem;">Total price</th>
+          <th style="width: 10rem;">Tax</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngIf="receivingItems.length > 0" class="fw-bold" style="line-height: 2;">
+          <td colspan="2" style="padding: 0 3.5rem;">Total:</td>
+          <td class="text-end" style="padding: 0 0.8rem;">{{rfsService.getTotalQty(receivingItems)}}</td>
+          <td colspan="2" class="text-end" style="padding: 0 0.8rem;">
+            {{rfsService.getTotalPricePerQty(receivingItems).toFixed(2)}}
+          </td>
+          <td class="text-end" style="padding: 0 0.8rem;">{{rfsService.getTotal(receivingItems).toFixed(2)}}</td>
+          <td class="text-end" style="padding: 0 0.8rem;">
+            {{rfsService.getTotalTaxRate(receivingItems, taxRates).toFixed(2)}}
+          </td>
+          <td></td>
+        </tr>
+
+        <tr *ngFor="let item of receivingItems; let i = index;">
+          <td style="padding: 0 0.8rem;">{{i+1}}</td>
+          <td class="text-start">
+            <ng-select [items]="materials"
+                       bindLabel="catalogDescription"
+                       bindValue="materialId"
+                       name="materialId{{i+1}}"
+                       [ngModel]="item.materialId"
+                       [readonly]=true>
+            </ng-select>
+          </td>
+          <td>
+            <input type="number"
+                   class="form-control text-end"
+                   name="quantity{{i+1}}"
+                   [value]="item.orderedQty"
+                   [readonly]=true>
+          </td>
+          <td>
+            <ng-select [items]="measurementUnits"
+                       bindLabel="longUnit"
+                       bindValue="unitId"
+                       name="unitId{{i+1}}"
+                       [ngModel]="item.orderedUomId"
+                       [readonly]=true>
+            </ng-select>
+          </td>
+          <td>
+            <input type="number"
+                   class="form-control text-end"
+                   name="pricePerQty{{i+1}}"
+                   [ngModel]="item.pricePerOrderedQty.toFixed(2)"
+                   [readonly]=true>
+          </td>
+          <td>
+            <input type="number"
+                   class="form-control text-end"
+                   [value]="(item.orderedQty * item.pricePerOrderedQty).toFixed(2)"
+                   [readonly]=true>
+          </td>
+          <td>
+            <ng-select [items]="taxRates"
+                       bindLabel="nameTaxRate"
+                       bindValue="taxId"
+                       name="taxId{{i+1}}"
+                       [ngModel]="item.taxId"
+                       [readonly]=true>
+            </ng-select>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

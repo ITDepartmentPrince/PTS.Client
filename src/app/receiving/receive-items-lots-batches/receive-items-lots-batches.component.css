@@ -1,0 +1,27 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td {
+  border: 1px solid var(--bs-border-color);
+}
+
+td table {
+  width: 100%;
+}
+
+td table td {
+  border: 0;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+  border-color: var(--bs-border-color);
+}
+
+td table tr:last-child td {
+  border-bottom: 0;
+}
+
+td table td:last-child {
+  border-right: 0;
+}

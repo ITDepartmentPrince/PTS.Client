@@ -1,0 +1,8 @@
+<app-size-variant-form [action]="operations.Create"
+                       [model]="sizeVariant"
+                       (submitted)="onSubmitted($event)"
+                       [isLoading]="isLoading">
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{errorMessage}}
+  </div>
+</app-size-variant-form>

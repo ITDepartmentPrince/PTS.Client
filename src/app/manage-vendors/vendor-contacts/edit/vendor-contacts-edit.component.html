@@ -1,0 +1,8 @@
+<app-vendor-contacts-form [action]="operations.Edit"
+                 [model]="contact"
+                 (submitted)="onSubmitted($event)"
+                 [isLoading]="isLoading">
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{errorMessage}}
+  </div>
+</app-vendor-contacts-form>

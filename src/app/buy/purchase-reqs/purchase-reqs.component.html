@@ -1,0 +1,177 @@
+<app-command-bar export="purchase-reqs"
+                 [reports]=true
+                 [edit]="!dataSource.row?.isSubmitted"
+                 (operations)="onOperate($event)">
+  <ul class="dropdown-menu shadow">
+    <li class="dropdown-item">Report One</li>
+  </ul>
+</app-command-bar>
+<div class="data-table-container">
+  <div class="data-table" tabindex="0">
+    <table id="purchase-reqs" mat-table [dataSource]="dataSource" matSort [matSortStart]="dataSource.pageOrder">
+      <ng-container matColumnDef="CreateDate">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>Created Date</span>
+          <span class="search-container">
+            <app-column-search column="CreateDate"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               type="date"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>{{row['createDate'] | date:'MM-dd-yyyy'}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="PrNumber">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>PR #</span>
+          <span class="search-container">
+            <app-column-search column="PrNumber"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>{{row['prNumber']}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="CompanyName">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>Company</span>
+          <span class="search-container">
+            <app-column-search column="CompanyName"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>{{row['vendor']['companyName']}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="TotalPurchaseValue">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>Total order value</span>
+          <span class="search-container">
+            <app-column-search column="TotalPurchaseValue"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row" class="text-end">
+          <div class="d-inline-block">{{row['totalPurchaseValue'].toFixed(2)}}</div>
+          <div style="display: inline-block; font-size: 1.3rem; margin-left: 0.7rem;">USD</div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="DeliveryDate">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>{{deliveryColHeader}}</span>
+          <span class="search-container">
+            <app-column-search column="DeliveryDate"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               type="date"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>{{row['deliveryDate'] | date:'MM-dd-yyyy'}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Status">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true" style="width: 18rem;">
+        <span class="cell-data">
+          <span mat-sort-header>Status</span>
+          <span class="search-container">
+            <app-column-search column="CreatedBy"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row" class="status-col">
+          <div *ngIf="!row['isSubmitted']" class="dropdown">
+            <button class="btn btn-danger dropdown-toggle w-100 btn-status"
+                    data-bs-popper-config='{"strategy":"fixed"}'
+                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Not submitted
+            </button>
+            <ul class="dropdown-menu shadow">
+              <li (click)="onPrStatusChange(row, prStatus.Submitted)">
+                <div class="dropdown-item p-3" style="cursor: pointer;">Submitted</div>
+              </li>
+            </ul>
+          </div>
+
+          <div *ngIf="row['isSubmitted']" class="dropdown">
+            <div *appAuth="AuthPolicy.canUserApprovePr()">
+              <button class="btn {{row['approveUserId'] ? 'btn-success' : 'btn-secondary'}} dropdown-toggle btn-status"
+                      data-bs-popper-config='{"strategy":"fixed"}'
+                      type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{row['approveUserId'] ? 'Approved' : 'Pending'}}
+              </button>
+              <ul class="dropdown-menu shadow">
+                <li *ngIf="!row['approveUserId']" (click)="onPrStatusChange(row, prStatus.Approved)">
+                  <div class="dropdown-item p-3" style="cursor: pointer;">Approved</div>
+                </li>
+                <li (click)="onPrStatusChange(row, prStatus.Disapproved)">
+                  <div class="dropdown-item p-3" style="cursor: pointer;">Disapproved</div>
+                </li>
+              </ul>
+            </div>
+
+            <div *appAuthReverse="AuthPolicy.canUserApprovePr()">
+              <button class="btn {{row['approveUserId'] ? 'btn-success' : 'btn-secondary'}} btn-status"
+                      type="button">
+                {{row['approveUserId'] ? 'Approved' : 'Pending'}}
+              </button>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          (click)="dataSource.onRowSelect(row)"
+          [ngClass]="{highlighted: dataSource.selection.isSelected(row), inactive: row['inActive']}">
+      </tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell datatable-no-data"
+            [colSpan]="displayedColumns.length"
+            *ngIf="!(dataSource.isLoading | async)">No data available in table
+        </td>
+      </tr>
+    </table>
+    <div *ngIf="dataSource.isLoading | async" class="spinner-container-wrapper">
+      <div class="spinner-container">
+        <app-loading-spinner></app-loading-spinner>
+      </div>
+    </div>
+  </div>
+</div>
+<mat-paginator [pageSizeOptions]="[15, 30, 50, 100]"
+               [pageIndex]="dataSource.pageIndex"
+               showFirstLastButtons>
+</mat-paginator>
+<ng-container appModal></ng-container>

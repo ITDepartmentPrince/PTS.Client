@@ -1,0 +1,132 @@
+<div *ngIf="isLoading" class="text-center">
+  <app-loading-spinner></app-loading-spinner>
+</div>
+<div class="trans-receiving-items-lb py-3" *ngIf="!isLoading">
+  <div class="row t-mb justify-content-between pb-2 border-bottom border-4">
+    <div class="col-md-4">
+      <div>
+        <input type="text" class="form-control" placeholder="scan for items here">
+      </div>
+    </div>
+    <div class="col-auto">
+      <div class="row g-3 align-items-center">
+        <div class="col-auto">
+          <label for="recvdDate" class="col-form-label">Received date</label>
+        </div>
+        <div class="col-auto">
+          <input type="datetime-local"
+                 class="form-control"
+                 id="recvdDate"
+                 name="recvdDate"
+                 [ngModel]="recvdDate | date: 'yyyy-MM-ddThh:mm:ss'">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mt-5">
+    <div class="trans-items-container">
+      <div class="trans-items table-responsive-xl">
+        <table>
+          <tr style="font-size: 1.3rem; font-weight: bold;">
+            <td style="padding: 0.8rem;">Item</td>
+            <td style="width: 8rem; padding: 0.8rem;">Qty left</td>
+            <td>
+              <table>
+                <tr>
+                  <td style="width: 8rem; padding: 0.8rem;">To receive</td>
+                  <td style="width: 18rem; padding: 0.8rem;">Lot/Batch #</td>
+                  <td style="width: 10rem; padding: 0.8rem;">Not accepted</td>
+                  <td style="width: 18rem; padding: 0.8rem;">Expiration date</td>
+                  <td style="width: 3rem;"></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr *ngFor="let item of rfsService.receivingItems; let i = index;">
+            <td style="vertical-align: top">
+              <div class="{{item.recvdItemLotsBatches.length > 1 ? 'border-bottom' : ''}}">
+                <ng-select [items]="materials"
+                           bindLabel="catalogDescription"
+                           bindValue="materialId"
+                           [clearable]=false
+                           name="materialId{{i+1}}"
+                           [ngModel]="item.materialId"
+                           [readonly]=true>
+                </ng-select>
+              </div>
+            </td>
+            <td style="width: 8rem; vertical-align: top;">
+              <div class="{{item.recvdItemLotsBatches.length > 1 ? 'border-bottom' : ''}}">
+                <input type="number"
+                       class="form-control text-end"
+                       [value]="item.orderedQty - rfsService
+                          .itemQtyReceived(item.recvdItemLotsBatches)"
+                       [readonly]=true>
+              </div>
+            </td>
+            <td>
+              <table>
+                <tr *ngFor="let itemLb of item.recvdItemLotsBatches; let j = index;">
+                  {{updateRestRecvdIlbFields(itemLb, item)}}
+                  <td style="width: 8rem;">
+                    <input type="number"
+                           [min]="0"
+                           class="form-control text-end"
+                           name="rlbQty{{i+j+1}}"
+                           [ngModel]="itemLb.rlbQty"
+                           (click)="$any($event.target).select()"
+                           (focusout)="onToReceive($event, item, itemLb, j)"
+                           required
+                           #rlbQty="ngModel"
+                           [ngClass]="{input_danger: !rlbQty.valid && rlbQty.touched}">
+                  </td>
+                  <td style="width: 18rem;">
+                    <ng-select [items]="batchLots"
+                               bindLabel="batchLotNumber"
+                               bindValue="batchLotId"
+                               [addTag]="addTag.bind(batchLots, itemLb, item, batchesLotsService)"
+                               name="blItemId{{i+j+1}}"
+                               [(ngModel)]="itemLb.batchLotId">
+                      <ng-template ng-tag-tmp let-search="searchTerm">
+                        <b>create new</b>: {{ search }}
+                      </ng-template>
+                      <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                        <div class="d-flex">
+                          <span style="border-right: 2px solid;">{{item['batchLotNumber']}}&#160;</span>
+                          <span class="fw-bold">&#160;{{getBatchLotQty(itemLb)}}</span>
+                          <span>&#160;in stock</span>
+                        </div>
+                      </ng-template>
+                    </ng-select>
+                  </td>
+                  <td style="width: 10rem; text-align: center;">
+                    <input type="checkbox"
+                           class="form-check-input"
+                           id="isDamage"
+                           name="isDamage"
+                           [(ngModel)]="itemLb.isDamage">
+                  </td>
+                  <td style="width: 18rem;">
+                    <input type="date"
+                           class="form-control"
+                           name="expireDate{{i+j+1}}"
+                           [(ngModel)]="itemLb.expireDate">
+                  </td>
+                  <td  style="width: 3rem; text-align: center;">
+                    <span *ngIf="j > 0"
+                          class="btn-del"
+                          (click)="onRemoveToReceived(item, j)">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                      </svg>
+                    </span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

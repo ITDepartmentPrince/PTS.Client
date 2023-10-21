@@ -1,0 +1,46 @@
+<div class="dropdown text-end my-3">
+  <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+          data-bs-auto-close="outside" aria-expanded="false">
+    Search Builder
+  </button>
+  <div class="dropdown-menu shadow p-3" #dropdownMenu>
+    <div class="container p-0">
+      <div class="mb-3 row">
+        <div class="col-auto">
+          <button class="btn btn-primary" (click)="addSearchColumn()">Add Search Item</button>
+        </div>
+        <div class="col-auto">
+          <select class="form-control">
+            <option value="And">And</option>
+            <option value="Or">Or</option>
+          </select>
+        </div>
+      </div>
+      <div *ngFor="let item of searchColumns; let i = index" class="row mb-3 justify-content-between">
+        <div class="col-3">
+          <select class="form-control" [(ngModel)]="item.column">
+            <option value="" disabled>Select Column</option>
+            <option *ngFor="let col of columns" [value]="col">{{ col }}</option>
+          </select>
+        </div>
+        <div class="col-3">
+          <select class="form-control" [(ngModel)]="item.condition">
+            <option value="" disabled>Select Condition</option>
+            <option *ngFor="let condition of conditions" [value]="condition">{{ condition }}</option>
+          </select>
+        </div>
+        <div class="col-4">
+          <input type="text" class="form-control" [(ngModel)]="item.value" placeholder="Value">
+        </div>
+        <div class="col-auto">
+          <button class="btn btn-danger" (click)="removeSearchColumn(i)">Remove</button>
+        </div>
+      </div>
+      <hr class="mb-3">
+      <div class="text-end">
+        <button class="btn btn-primary" (click)="onSearch()">Search</button>
+      </div>
+    </div>
+  </div>
+</div>
+

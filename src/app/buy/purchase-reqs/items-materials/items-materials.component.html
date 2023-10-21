@@ -1,0 +1,221 @@
+<div class="trans-items-container">
+  <div class="trans-items table-responsive">
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th style="width: 3rem;">#</th>
+        <th style="min-width: 20rem;">Item</th>
+        <th style="width: 10rem;">Quote #</th>
+        <th style="width: 8rem;">MSD</th>
+        <th style="width: 8rem;">COA</th>
+        <th style="width: 8rem;">In stock</th>
+        <th style="width: 8rem;">Back order</th>
+        <th style="width: 10rem;">Quantity</th>
+        <th style="width: 10rem;">UOM</th>
+        <th style="width: 10rem;">Price per qty</th>
+        <th style="width: 10rem;">Total price</th>
+        <th style="width: 10rem;">Tax</th>
+        <th style="width: 3rem;" *ngIf="action !== operations.View">Task</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngIf="items.length > 0" class="fw-bold" style="line-height: 2;">
+        <td colspan="2" style="padding: 0 3.5rem;">Total:</td>
+        <td colspan="6" class="text-end" style="padding: 0 0.8rem;">{{prService.getTotalQty()}}</td>
+        <td colspan="2" class="text-end" style="padding: 0 0.8rem;">{{prService.getTotalPricePerQty().toFixed(2)}}</td>
+        <td class="text-end" style="padding: 0 0.8rem;">{{prService.getTotal().toFixed(2)}}</td>
+        <td class="text-end" style="padding: 0 0.8rem;">{{prService.getTotalTaxRate().toFixed(2)}}</td>
+        <td></td>
+      </tr>
+
+      <tr *ngFor="let item of items; let i = index;">
+        <td style="padding: 0 0.8rem;">{{i+1}}</td>
+        <td class="text-start">
+          <ng-select [items]="materials"
+                     bindLabel="catalogDescription"
+                     bindValue="materialId"
+                     name="materialId{{i+1}}"
+                     placeholder="-- select --"
+                     [(ngModel)]="item.materialId"
+                     (change)="onMaterialChange(item)"
+                     appendTo="body"
+                     required
+                     #materialId="ngModel"
+                     [ngClass]="{input_danger: !materialId.valid && materialId.touched}"
+                     [disabled]="controlState">
+          </ng-select>
+        </td>
+        <td>
+          <input type="text"
+                 class="form-control"
+                 name="quoteNo{{i+1}}"
+                 [(ngModel)]="item.quoteNo"
+                 [disabled]="controlState">
+        </td>
+        <td class="text-center">
+          <input type="checkbox"
+                 class="form-check-input"
+                 name="msdRequired{{i+1}}"
+                 [(ngModel)]="item.msdRequired"
+                 [disabled]="controlState">
+        </td>
+        <td class="text-center">
+          <input type="checkbox"
+                 class="form-check-input"
+                 name="coaRequired{{i+1}}"
+                 [(ngModel)]="item.coaRequired"
+                 [disabled]="controlState">
+        </td>
+        <td class="text-center">
+          <input type="checkbox"
+                 class="form-check-input"
+                 name="inStock{{i+1}}"
+                 [(ngModel)]="item.inStock"
+                 required
+                 #inStock="ngModel"
+                 [ngClass]="{input_danger: !inStock.valid && inStock.touched}"
+                 [disabled]="controlState">
+        </td>
+        <td class="text-center">
+          <input type="checkbox"
+                 class="form-check-input"
+                 name="backOrder{{i+1}}"
+                 [(ngModel)]="item.backOrder"
+                 [disabled]="controlState">
+        </td>
+        <td>
+          <input type="number"
+                 [min]="0"
+                 class="form-control text-end"
+                 name="quantity{{i+1}}"
+                 [(ngModel)]="item.quantity"
+                 required
+                 #quantity="ngModel"
+                 [ngClass]="{input_danger: !quantity.valid && quantity.touched}"
+                 [disabled]="controlState">
+        </td>
+        <td>
+          <div class="dropdown">
+            <div class="dropdown-toggle"
+                 data-bs-toggle="dropdown"
+                 data-bs-auto-close="outside"
+                 aria-expanded="false"
+                 data-bs-popper-config='{"strategy":"fixed"}'>
+              <input type="text"
+                     class="form-control"
+                     [value]="purchaseUomLu(item.purchaseUomId) ?? '?'"
+                     required
+                     [ngClass]="{input_danger: !purchaseUomId.valid &&
+                     purchaseUomId.touched ||
+                     !conversionRate.valid &&
+                     conversionRate.touched}"
+                     readonly
+                     style="cursor: pointer; padding-right: 20px !important;"
+                     [disabled]="controlState">
+            </div>
+            <ul class="dropdown-menu shadow" #uomDd>
+              <li>
+                <div class="uom">
+                  <div class="uom-header">
+                    <div>Buy this in a different unit</div>
+                  </div>
+                  <div class="uom-body">
+                    <div class="mb-4 mt-2">
+                      <label class="form-label">Purchase unit of measure</label>
+                      <ng-select [items]="measurementUnits"
+                                 bindLabel="longUnit"
+                                 bindValue="unitId"
+                                 name="purchaseUomId{{i+1}}"
+                                 placeholder="-- select --"
+                                 [(ngModel)]="item.purchaseUomId"
+                                 required
+                                 #purchaseUomId="ngModel"
+                                 [ngClass]="{input_danger: !purchaseUomId.valid && purchaseUomId.touched}"
+                                 [disabled]="controlState">
+                      </ng-select>
+                    </div>
+                    <div>
+                      <label class="form-label">Unit conversion rate</label>
+                      <div class="d-flex align-items-center p-1 px-3">
+                        <span class="me-3">1 {{purchaseUomLu(item.purchaseUomId) ?? '?'}} = </span>
+                        <input type="number"
+                               [min]="1"
+                               class="form-control w-50"
+                               name="conversionRate{{i+1}}"
+                               [(ngModel)]="item.conversionRate"
+                               required
+                               #conversionRate="ngModel"
+                               [ngClass]="{input_danger: !conversionRate.valid && conversionRate.touched}"
+                               [disabled]="controlState">
+                        <span class="ms-3">{{baseUomLu(item.materialId) ?? '?'}}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="uom-footer">
+                    <button class="btn btn-primary px-4"
+                            type="button"
+                            (click)="uomDd.classList.remove('show')">Ok</button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </td>
+        <td>
+          <input type="number"
+                 [min]="0"
+                 class="form-control text-end"
+                 name="pricePerQty{{i+1}}"
+                 [(ngModel)]="item.pricePerQty"
+                 required
+                 #pricePerQty="ngModel"
+                 [ngClass]="{input_danger: !pricePerQty.valid && pricePerQty.touched}"
+                 [disabled]="controlState">
+        </td>
+        <td>
+          <input type="number"
+                 [min]="0"
+                 class="form-control text-end"
+                 readonly
+                 [value]="(item.quantity * item.pricePerQty).toFixed(2)"
+                 [disabled]="controlState">
+        </td>
+        <td>
+          <ng-select [items]="prService.taxRates"
+                     bindLabel="nameTaxRate"
+                     bindValue="taxId"
+                     name="taxId{{i+1}}"
+                     placeholder="-- select --"
+                     [(ngModel)]="item.taxId"
+                     appendTo="body"
+                     required
+                     #taxId="ngModel"
+                     [ngClass]="{input_danger: !taxId.valid && taxId.touched}"
+                     [disabled]="controlState">
+          </ng-select>
+        </td>
+        <td class="text-center" *ngIf="action !== operations.View">
+          <span class="btn-del" (click)="onRemoveItem(item)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+              <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+            </svg>
+          </span>
+        </td>
+      </tr>
+
+      <tr *ngIf="items.length === 0" style="line-height: 2.5;">
+        <td class="text-center"
+            [colSpan]="13">
+          No data available in table
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="action !== operations.View" class="btn-add-item" (click)="onAddItem()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+    </svg>
+    <span>Add row</span>
+  </div>
+</div>

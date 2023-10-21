@@ -1,0 +1,63 @@
+<div class="row mt-4">
+  <div class="col-md-4">
+    <div *ngIf="isLoading" class="text-center">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+    <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isLoading">
+      <ng-content></ng-content>
+      <div *ngIf="!f.valid && f.touched" class="alert alert-danger" role="alert">
+        One or more inputs are incorrect
+      </div>
+      <div class="mb-4">
+        <label for="countryCode" class="form-label">Country code</label>
+        <input type="text"
+               class="form-control"
+               id="countryCode"
+               name="countryCode"
+               [ngModel]="model.countryCode"
+               required
+               maxlength="2"
+               #countryCode="ngModel"
+               [ngClass]="{input_danger: !countryCode.valid && countryCode.touched}"
+               [disabled]="controlState || action === operations.Edit">
+      </div>
+      <div class="mb-4">
+        <label for="countryName" class="form-label">Country name</label>
+        <input type="text"
+               class="form-control"
+               id="countryName"
+               name="countryName"
+               [ngModel]="model.countryName"
+               required
+               maxlength="50"
+               #countryName="ngModel"
+               [ngClass]="{input_danger: !countryName.valid && countryName.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4 form-check" *ngIf="action !== operations.Create">
+        <input type="checkbox"
+               class="form-check-input"
+               id="inActive"
+               name="inActive"
+               [ngModel]="model.inActive"
+               [disabled]="controlState">
+        <label for="inActive">Inactive</label>
+      </div>
+      <div class="mb-4">
+        <button class="btn btn-primary me-2"
+                type="submit"
+                *appAuth="AuthPolicy.canUserEdit()"
+                [disabled]="!f.valid && f.invalid">
+          <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
+          <span *ngIf="action === operations.View">Edit</span>
+        </button>
+        <button class="btn btn-primary"
+                type="button"
+                (click)="router.navigate(['/manage-vendors/countries'],
+                {queryParamsHandling: 'preserve'})">
+          Back
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
