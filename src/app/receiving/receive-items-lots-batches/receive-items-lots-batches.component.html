@@ -18,7 +18,8 @@
                  class="form-control"
                  id="recvdDate"
                  name="recvdDate"
-                 [ngModel]="recvdDate | date: 'yyyy-MM-ddThh:mm:ss'">
+                 [ngModel]="recvdDate | date: 'yyyy-MM-ddTHH:mm'"
+                 (change)="onReceiveDateChange($event)">
         </div>
       </div>
     </div>
@@ -67,12 +68,11 @@
             <td>
               <table>
                 <tr *ngFor="let itemLb of item.recvdItemLotsBatches; let j = index;">
-                  {{updateRestRecvdIlbFields(itemLb, item)}}
                   <td style="width: 8rem;">
                     <input type="number"
-                           [min]="0"
+                           [min]="1"
                            class="form-control text-end"
-                           name="rlbQty{{i+j+1}}"
+                           name="rlbQty{{i}}{{j}}"
                            [ngModel]="itemLb.rlbQty"
                            (click)="$any($event.target).select()"
                            (focusout)="onToReceive($event, item, itemLb, j)"
@@ -81,19 +81,23 @@
                            [ngClass]="{input_danger: !rlbQty.valid && rlbQty.touched}">
                   </td>
                   <td style="width: 18rem;">
-                    <ng-select [items]="batchLots"
+                    <ng-select [items]="itemLb.batchLots"
                                bindLabel="batchLotNumber"
                                bindValue="batchLotId"
-                               [addTag]="addTag.bind(batchLots, itemLb, item, batchesLotsService)"
-                               name="blItemId{{i+j+1}}"
-                               [(ngModel)]="itemLb.batchLotId">
+                               [addTag]="addTag.bind(null, itemLb, item)"
+                               [loading]="itemLb.isLoading"
+                               name="blItemId{{i}}{{j}}"
+                               [(ngModel)]="itemLb.batchLotId"
+                               required
+                               #blItemId="ngModel"
+                               [ngClass]="{input_danger: !blItemId.valid && blItemId.touched}">
                       <ng-template ng-tag-tmp let-search="searchTerm">
                         <b>create new</b>: {{ search }}
                       </ng-template>
-                      <ng-template ng-option-tmp let-item="item" let-index="index" let-search="searchTerm">
+                      <ng-template ng-option-tmp let-item="item">
                         <div class="d-flex">
                           <span style="border-right: 2px solid;">{{item['batchLotNumber']}}&#160;</span>
-                          <span class="fw-bold">&#160;{{getBatchLotQty(itemLb)}}</span>
+                          <span class="fw-bold">&#160;{{getBatchLotQty(item, itemLb)}}</span>
                           <span>&#160;in stock</span>
                         </div>
                       </ng-template>
@@ -109,7 +113,7 @@
                   <td style="width: 18rem;">
                     <input type="date"
                            class="form-control"
-                           name="expireDate{{i+j+1}}"
+                           name="expireDate{{i}}{{j}}"
                            [(ngModel)]="itemLb.expireDate">
                   </td>
                   <td  style="width: 3rem; text-align: center;">

@@ -16,6 +16,7 @@ import {ModalService} from "../shared/modal/modal.service";
 import {ModalDirective} from "../shared/modal/modal.directive";
 import {RecvdItemsLotsBatchesService} from "./recvd-items-lots-batches.service";
 import {TaxRate} from "../models/tax-rate";
+import {BatchesLotsService} from "./batches-lots.service";
 
 export const site = new InjectionToken<number>('Site', {
   providedIn: 'root',
@@ -33,6 +34,7 @@ export class ReceivingForSiteService implements IService<Receiving> {
   constructor(private httpClient: HttpClient,
               private modalService: ModalService,
               private recvdItemsLb: RecvdItemsLotsBatchesService,
+              private batchesLotsService: BatchesLotsService,
               @Inject(site) public siteId: number) {
     if (this.siteId === 0)
       throw new Error('Location not set.');
@@ -127,7 +129,7 @@ export class ReceivingForSiteService implements IService<Receiving> {
       this.receiving = receiving as Receiving;
     }
 
-    let title = 'Receive items from ';
+    let title = `Receive items from RO ${this.receiving.roNumber}, caused by `;
     switch (this.receiving.source.sourceType) {
       case SourceType["Prince Po"]:
         title += `PO ${this.receiving.source.poNumber}`;
@@ -210,8 +212,21 @@ export class ReceivingForSiteService implements IService<Receiving> {
 
       item.recvdItemLotsBatches = [];
 
-      if (item.orderedQty > 0)
-        item.recvdItemLotsBatches.push(new RecvdItemLotBatch());
+      if (item.orderedQty > 0) {
+        const rilb = new RecvdItemLotBatch()
+        rilb.rilbReceivingItemId = item.receivingItemId;
+        rilb.pricePerRlbQty = item.pricePerOrderedQty;
+
+        new Promise(resolve => {
+          this.batchesLotsService
+            .getAllByMaterial(item.riSiteId, item.materialId)
+            .subscribe(res => {
+              rilb.batchLots = res;
+              item.recvdItemLotsBatches.push(rilb);
+              resolve(null);
+            });
+        }).then();
+      }
 
       if (item.orderedQty === 0)
         removeItemsIndex.push(this.receivingItems.indexOf(item));
@@ -240,7 +255,8 @@ export class ReceivingForSiteService implements IService<Receiving> {
       groupRbn.receivedItems = JSON.parse(JSON.stringify(this.receivedItems));
 
       for (const rItem of groupRbn.receivedItems) {
-        rItem.recvdItemLotsBatches = item.filter((itm: any) => itm.rilbReceivingItemId === rItem.receivingItemId)
+        rItem.recvdItemLotsBatches = item.filter((itm: any) =>
+          itm.rilbReceivingItemId === rItem.receivingItemId)
 
         if (rItem.recvdItemLotsBatches.length > 0) {
           const qtyReceived = this.itemQtyReceived(rItem.recvdItemLotsBatches);

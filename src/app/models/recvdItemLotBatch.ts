@@ -9,7 +9,7 @@ export class RecvdItemLotBatch {
   receivingItem: ReceivingItem;
   rlbQty = 0;
   pricePerRlbQty = 0;
-  batchLotId: number | null;
+  batchLotId: number;
   batchLot: BatchLot;
   batchLotSiteId: number;
   batchLotSite: Site;
@@ -19,4 +19,6 @@ export class RecvdItemLotBatch {
   recvdBlockDate = new Date();
   createUserId: number;
   createUser: CreateUser;
+  batchLots: Array<BatchLot> = [];
+  isLoading = false;
 }

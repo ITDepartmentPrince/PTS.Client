@@ -19,7 +19,7 @@
           </button>
           <button type="submit"
                   class="btn btn-primary"
-                  [disabled]="btnSuccess">
+                  [disabled]="btnSuccess || f.invalid">
             {{btnSuccessLabel ?? 'Yes'}}
           </button>
         </div>

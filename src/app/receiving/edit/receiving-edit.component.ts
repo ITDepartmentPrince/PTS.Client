@@ -26,7 +26,6 @@ export class ReceivingEditComponent implements OnInit, OnDestroy {
       .subscribe({
         next: ro => {
           this.rfsService.receiving = ro;
-
           this.isLoading = false;
         },
         error: _ => {

@@ -8,7 +8,16 @@ import {BatchLot} from "../models/batchLot";
 export class BatchesLotsService {
   constructor(private httpClient: HttpClient) { }
 
-  create(model: BatchLot): Observable<any> {
+  getAllByMaterial(siteId: number, materialId: number): Observable<Array<BatchLot>> {
+    return this.httpClient.get<Array<BatchLot>>(AuthConstant.apiRoot +
+      `/BatchesLots/${siteId}/Materials/${materialId}`);
+  }
+
+  get(batchLotId: number, siteId: number): Observable<BatchLot> {
+    return this.httpClient.get<BatchLot>(AuthConstant.apiRoot + `/BatchesLots/${batchLotId}/${siteId}`);
+  }
+
+  create(model: BatchLot): Observable<BatchLot> {
     return this.httpClient.post<BatchLot>(AuthConstant.apiRoot + '/BatchesLots', model, {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     });

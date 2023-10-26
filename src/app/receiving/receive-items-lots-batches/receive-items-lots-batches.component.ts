@@ -21,20 +21,15 @@ export class ReceiveItemsLotsBatchesComponent implements OnInit {
   recvdDate: Date;
   materials: Array<Material>;
   measurementUnits: Array<MeasurementUnit>;
-  batchLots: Array<BatchLot>;
 
   constructor(public rfsService: ReceivingForSiteService,
               private receivingService: ReceivingService,
               private materialsService: MaterialsService,
               public batchesLotsService: BatchesLotsService) {
     this.recvdDate = new Date();
-
-    for (const item of this.rfsService.receiving.receivingItems)
-      item.recvdItemLotsBatches
-        .push(new RecvdItemLotBatch());
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     //automapper issue cause materials to call separate.
     this.materialsService.getAll()
       .subscribe({
@@ -45,11 +40,6 @@ export class ReceiveItemsLotsBatchesComponent implements OnInit {
             .subscribe({
               next: refs => {
                 this.measurementUnits = refs.measurementUnits;
-                this.batchLots = refs.batchesLots;
-
-                if (!this.batchLots)
-                  this.batchLots = new Array<BatchLot>();
-
                 this.isLoading = false;
               }
             });
@@ -72,23 +62,21 @@ export class ReceiveItemsLotsBatchesComponent implements OnInit {
       itemLb.rlbQty = recvdValue;
 
     if (recvdValue > 0 && item.orderedQty > recvdQty + recvdValue
-      && !item.recvdItemLotsBatches[rIlbIndex + 1])
-      item.recvdItemLotsBatches.push(new RecvdItemLotBatch());
+      && !item.recvdItemLotsBatches[rIlbIndex + 1]) {
+      const rilb = new RecvdItemLotBatch();
+      rilb.rilbReceivingItemId = item.receivingItemId;
+      rilb.pricePerRlbQty = item.pricePerOrderedQty;
+      rilb.batchLots = JSON.parse(JSON.stringify(itemLb.batchLots));
+      item.recvdItemLotsBatches.push(rilb);
+    }
   }
 
   onRemoveToReceived(item: ReceivingItem, indexItemLb: number) {
     item.recvdItemLotsBatches.splice(indexItemLb, 1);
   }
 
-  updateRestRecvdIlbFields(itemLb: RecvdItemLotBatch, item: ReceivingItem) {
-    itemLb.rilbReceivingItemId = item.receivingItemId;
-    itemLb.pricePerRlbQty = item.pricePerOrderedQty;
-    itemLb.recvdBlockDate = this.recvdDate;
-    return '';
-  }
-
-  addTag(rilb: RecvdItemLotBatch, ri: ReceivingItem,
-         batchesLotsService: BatchesLotsService, value: string) {
+  addTag = (rilb: RecvdItemLotBatch, ri: ReceivingItem, value: string) => {
+    rilb.isLoading = true;
     const bl = new BatchLot();
     bl.siteId = ri.riSiteId;
     bl.batchLotNumber = value;
@@ -96,26 +84,37 @@ export class ReceiveItemsLotsBatchesComponent implements OnInit {
     bl.blUomId = ri.orderedUomId;
     bl.expireDate = rilb.expireDate;
 
-    batchesLotsService.create(bl)
-      .subscribe({
-        next: res => {
-          console.log(res);
-          (<any>this).push(res);
-        },
-        error: error => {
-          console.log(error);
+    this.batchesLotsService.create(bl)
+      .subscribe(res => {
+        for (const item of this.rfsService.receivingItems) {
+          if (item.materialId === res.materialId) {
+            for (const rilbItem of item.recvdItemLotsBatches) {
+              rilbItem.batchLots.push(res);
+              rilbItem.batchLots = JSON.parse(JSON.stringify(rilbItem.batchLots))
+            }
+          }
         }
+
+        rilb.batchLotId = res.batchLotId;
+        rilb.batchLotSiteId = ri.riSiteId;
+        rilb.isLoading = false;
       });
 
-    return {
-      ...bl,
-      valid: true
-    };
+    return {};
   }
 
-  getBatchLotQty(itemLb: RecvdItemLotBatch) {
-    return itemLb.batchLot
+  getBatchLotQty(batchLot: BatchLot, rilb: RecvdItemLotBatch) {
+    return rilb.batchLots
+      .find(bl => bl.batchLotId === batchLot.batchLotId &&
+        bl.siteId === batchLot.siteId)
       ?.inventoryIntels
       .reduce((acc, curr) => acc + curr.qty, 0) ?? 0;
+  }
+
+  onReceiveDateChange(event: any) {
+    for (let rilb of this.rfsService.receivingItems
+      .flatMap(ri => ri.recvdItemLotsBatches)) {
+      rilb.recvdBlockDate = event.target.value;
+    }
   }
 }
