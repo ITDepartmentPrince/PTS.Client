@@ -15,18 +15,24 @@ export class AuthDirective implements OnInit {
     this.userRoles = authPolicy;
   }
 
-  ngOnInit(): void {
-    let hasAccess = false;
-
+  @Input()
+  set appAuthElse(template: TemplateRef<any>) {
     this.authService.getUserData()
       .subscribe(value => {
-        if (this.userRoles)
-          hasAccess = this.userRoles.some(r => (value?.role as string[])?.includes(r));
-
-        if (hasAccess)
-          this.viewContainer.createEmbeddedView(this.templateRef);
+        if (this.userRoles && this.userRoles.some(r => (value?.role as string[])?.includes(r))){}
+          // this.viewContainer.clear();
         else
-          this.viewContainer.clear();
+          this.viewContainer.createEmbeddedView(template);
+      });
+  }
+
+  ngOnInit(): void {
+    this.authService.getUserData()
+      .subscribe(value => {
+          if (this.userRoles && this.userRoles.some(r => (value?.role as string[])?.includes(r)))
+            this.viewContainer.createEmbeddedView(this.templateRef);
+          /*else
+            this.viewContainer.clear();*/
       });
   }
 }

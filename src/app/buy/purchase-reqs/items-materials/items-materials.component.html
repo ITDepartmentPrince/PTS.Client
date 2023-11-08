@@ -4,17 +4,27 @@
       <thead>
       <tr>
         <th style="width: 3rem;">#</th>
-        <th style="min-width: 20rem;">Item</th>
-        <th style="width: 10rem;">Quote #</th>
-        <th style="width: 8rem;">MSD</th>
-        <th style="width: 8rem;">COA</th>
-        <th style="width: 8rem;">In stock</th>
-        <th style="width: 8rem;">Back order</th>
-        <th style="width: 10rem;">Quantity</th>
-        <th style="width: 10rem;">UOM</th>
-        <th style="width: 10rem;">Price per qty</th>
-        <th style="width: 10rem;">Total price</th>
-        <th style="width: 10rem;">Tax</th>
+        <th style="width: 50rem;">Item</th>
+        <th>Quote #</th>
+        <th>MSD</th>
+        <th>COA</th>
+        <th style="padding-top: 0 !important; padding-bottom: 0 !important;">
+          <div class="d-flex flex-column align-items-center" style="line-height: 1.2;">
+            <div>In</div>
+            <div>stock</div>
+          </div>
+        </th>
+        <th style="padding-top: 0 !important; padding-bottom: 0 !important;">
+          <div class="d-flex flex-column align-items-center" style="line-height: 1.2;">
+            <div>Back</div>
+            <div>order</div>
+          </div>
+        </th>
+        <th>Quantity</th>
+        <th>UOM</th>
+        <th>Price per qty</th>
+        <th>Total price</th>
+        <th style="width: 18rem;">Tax</th>
         <th style="width: 3rem;" *ngIf="action !== operations.View">Task</th>
       </tr>
       </thead>
@@ -42,7 +52,7 @@
                      required
                      #materialId="ngModel"
                      [ngClass]="{input_danger: !materialId.valid && materialId.touched}"
-                     [disabled]="controlState">
+                     [readonly]="controlState">
           </ng-select>
         </td>
         <td>
@@ -50,7 +60,7 @@
                  class="form-control"
                  name="quoteNo{{i+1}}"
                  [(ngModel)]="item.quoteNo"
-                 [disabled]="controlState">
+                 [readonly]="controlState">
         </td>
         <td class="text-center">
           <input type="checkbox"
@@ -89,10 +99,11 @@
                  class="form-control text-end"
                  name="quantity{{i+1}}"
                  [(ngModel)]="item.quantity"
+                 (click)="$any($event.target).select()"
                  required
                  #quantity="ngModel"
                  [ngClass]="{input_danger: !quantity.valid && quantity.touched}"
-                 [disabled]="controlState">
+                 [readonly]="controlState">
         </td>
         <td>
           <div class="dropdown">
@@ -111,7 +122,7 @@
                      conversionRate.touched}"
                      readonly
                      style="cursor: pointer; padding-right: 20px !important;"
-                     [disabled]="controlState">
+                     [readonly]="controlState">
             </div>
             <ul class="dropdown-menu shadow" #uomDd>
               <li>
@@ -131,7 +142,7 @@
                                  required
                                  #purchaseUomId="ngModel"
                                  [ngClass]="{input_danger: !purchaseUomId.valid && purchaseUomId.touched}"
-                                 [disabled]="controlState">
+                                 [readonly]="controlState">
                       </ng-select>
                     </div>
                     <div>
@@ -146,7 +157,7 @@
                                required
                                #conversionRate="ngModel"
                                [ngClass]="{input_danger: !conversionRate.valid && conversionRate.touched}"
-                               [disabled]="controlState">
+                               [readonly]="controlState">
                         <span class="ms-3">{{baseUomLu(item.materialId) ?? '?'}}</span>
                       </div>
                     </div>
@@ -167,10 +178,11 @@
                  class="form-control text-end"
                  name="pricePerQty{{i+1}}"
                  [(ngModel)]="item.pricePerQty"
+                 (click)="$any($event.target).select()"
                  required
                  #pricePerQty="ngModel"
                  [ngClass]="{input_danger: !pricePerQty.valid && pricePerQty.touched}"
-                 [disabled]="controlState">
+                 [readonly]="controlState">
         </td>
         <td>
           <input type="number"
@@ -178,7 +190,7 @@
                  class="form-control text-end"
                  readonly
                  [value]="(item.quantity * item.pricePerQty).toFixed(2)"
-                 [disabled]="controlState">
+                 [readonly]=true>
         </td>
         <td>
           <ng-select [items]="prService.taxRates"
@@ -191,7 +203,7 @@
                      required
                      #taxId="ngModel"
                      [ngClass]="{input_danger: !taxId.valid && taxId.touched}"
-                     [disabled]="controlState">
+                     [readonly]="controlState">
           </ng-select>
         </td>
         <td class="text-center" *ngIf="action !== operations.View">

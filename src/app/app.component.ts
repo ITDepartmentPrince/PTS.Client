@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {OidcSecurityService} from "angular-auth-oidc-client";
+import {take} from "rxjs";
 
 @Component({
   selector: 'app-root',
@@ -15,6 +16,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.authService
       .checkAuth()
+      .pipe(take(1))
       .subscribe(({isAuthenticated}) => {
         this.isAuthenticated = isAuthenticated;
       });

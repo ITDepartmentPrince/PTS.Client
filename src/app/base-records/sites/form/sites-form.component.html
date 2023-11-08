@@ -1,0 +1,108 @@
+<div class="row mt-4">
+  <div class="col-md-4">
+    <div *ngIf="isLoading" class="text-center">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+    <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isLoading">
+      <ng-content></ng-content>
+      <div *ngIf="!f.valid && f.touched" class="alert alert-danger" role="alert">
+        One or more inputs are incorrect
+      </div>
+      <div class="mb-4">
+        <label for="siteName" class="form-label">Site name</label>
+        <input type="text"
+               class="form-control"
+               id="siteName"
+               name="siteName"
+               [(ngModel)]="sitesService.site.siteName"
+               required
+               #siteName="ngModel"
+               [ngClass]="{input_danger: !siteName.valid && siteName.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="street1" class="form-label">Street1</label>
+        <input type="text"
+               class="form-control"
+               id="street1"
+               name="street1"
+               [(ngModel)]="sitesService.site.street1"
+               required
+               #street1="ngModel"
+               [ngClass]="{input_danger: !street1.valid && street1.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="street2" class="form-label">Street2 (optional)</label>
+        <input type="text"
+               class="form-control"
+               id="street2"
+               name="street2"
+               [(ngModel)]="sitesService.site.street2"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="cityName" class="form-label">City</label>
+        <input type="text"
+               class="form-control"
+               id="cityName"
+               name="cityName"
+               [(ngModel)]="sitesService.site.cityName"
+               required
+               #cityName="ngModel"
+               [ngClass]="{input_danger: !cityName.valid && cityName.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="stateCode" class="form-label">City</label>
+        <ng-select [items]="states"
+                   bindLabel="stateName"
+                   bindValue="stateCode"
+                   id="stateCode"
+                   name="stateCode"
+                   placeholder="-- select --"
+                   [(ngModel)]="sitesService.site.stateCode"
+                   #stateCode="ngModel"
+                   [ngClass]="{input_danger: !stateCode.valid && stateCode.touched}"
+                   [disabled]="controlState">
+        </ng-select>
+      </div>
+      <div class="mb-4">
+        <label for="zipCode" class="form-label">Zip code</label>
+        <input type="text"
+               class="form-control"
+               id="zipCode"
+               name="zipCode"
+               [(ngModel)]="sitesService.site.zipCode"
+               required
+               #zipCode="ngModel"
+               [ngClass]="{input_danger: !zipCode.valid && zipCode.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4 form-check" *ngIf="action !== operations.Create">
+        <input type="checkbox"
+               class="form-check-input"
+               id="inActive"
+               name="inActive"
+               [(ngModel)]="sitesService.site.inActive"
+               [disabled]="controlState">
+        <label for="inActive">Inactive</label>
+      </div>
+      <div class="mb-4">
+        <button class="btn btn-primary me-2"
+                type="submit"
+                *appAuth="AuthPolicy.canUserEdit()"
+                [disabled]="!f.valid && f.invalid">
+          <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
+          <span *ngIf="action === operations.View">Edit</span>
+        </button>
+        <button class="btn btn-primary"
+                type="button"
+                (click)="router.navigate(['/base-records/sites'],
+                {queryParamsHandling: 'preserve'})">
+          Back
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

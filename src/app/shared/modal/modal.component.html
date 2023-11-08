@@ -2,7 +2,7 @@
   <div class="modal-dialog {{modalSize}}">
     <div class="modal-content">
       <form (ngSubmit)="onSuccess()" #f="ngForm" tabindex="0">
-        <div class="modal-header bg-danger">
+        <div class="modal-header" style="background-color: var(--color-primary)">
           <h5 class="modal-title fw-bold"
               style="color: #fff; font-size: 1.4rem;" id="staticBackdropLabel">
             {{title ?? 'Confirmation'}}
@@ -17,9 +17,10 @@
                   (click)="onClose()">
             {{btnCloseLabel ?? 'Close'}}
           </button>
-          <button type="submit"
+          <button *ngIf="btnSuccess"
+                  type="submit"
                   class="btn btn-primary"
-                  [disabled]="btnSuccess || f.invalid">
+                  [disabled]="f.invalid">
             {{btnSuccessLabel ?? 'Yes'}}
           </button>
         </div>

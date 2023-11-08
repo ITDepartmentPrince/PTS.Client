@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Operations} from "../../../shared/operations";
 import {IFormModel} from "../../../shared/interface/IFormModel";
 import {NgForm} from "@angular/forms";
@@ -20,7 +20,7 @@ import {ItemType} from "../../../shared/item-type";
   selector: 'app-purchase-reqs-form',
   templateUrl: './purchase-reqs-form.component.html'
 })
-export class PurchaseReqsFormComponent {
+export class PurchaseReqsFormComponent implements OnInit {
   operations = Operations;
   controlState: boolean;
   @Input() isLoading = false;
@@ -39,9 +39,12 @@ export class PurchaseReqsFormComponent {
               private contactsService: VendorContactsService) {
   }
 
-  onSubmit() {
-    this.isLoading = true;
+  ngOnInit(): void {
+    this.controlState = this.action === this.operations.View ||
+      this.action === this.operations.Delete;
+  }
 
+  onSubmit() {
     this.model.deliveryDate = this.form.value.deliveryDate;
     this.model.createDate = this.form.value.createDate;
 
@@ -49,11 +52,6 @@ export class PurchaseReqsFormComponent {
       action: this.action,
       model: this.model
     });
-  }
-
-  ngOnInit(): void {
-    this.controlState = this.action === this.operations.View ||
-      this.action === this.operations.Delete;
   }
 
   onClassificationChange() {
@@ -92,6 +90,7 @@ export class PurchaseReqsFormComponent {
   onPrStatusChange(status: PrStatus) {
     if (status === PrStatus.Submitted) {
       this.modalService.show(this.modal.viewContainerRef, {
+        btnSuccess: true,
         successCallback: (form) => {
           this.isLoading = true;
 
@@ -110,6 +109,7 @@ export class PurchaseReqsFormComponent {
     if (status === PrStatus.Approved) {
       if (!this.model.approveUserId) {
         this.modalService.show(this.modal.viewContainerRef, {
+          btnSuccess: true,
           successCallback: (form) => {
             this.isLoading = true;
 
@@ -125,6 +125,7 @@ export class PurchaseReqsFormComponent {
 
     if (status === PrStatus.Disapproved) {
       this.modalService.show(this.modal.viewContainerRef, {
+        btnSuccess: true,
         successCallback: (form) => {
           this.isLoading = true;
 
@@ -145,5 +146,25 @@ export class PurchaseReqsFormComponent {
       c.classificationId === classificationId
       && c.classifiedAs === classifiedAs)
       && !!vendorId;
+  }
+
+  onDuplicate() {
+    this.prService.purchaseReq = this.model;
+    this.prService.purchaseReq.prNumber = '';
+    this.prService.purchaseReq.purchaseOrder = null;
+    this.prService.purchaseReq.totalPurchaseValue = 0;
+    this.prService.purchaseReq.isSubmitted = false;
+    this.prService.purchaseReq.submitUserId = undefined;
+    this.prService.purchaseReq.approveDate = undefined;
+    this.prService.purchaseReq.approveUserId = undefined;
+    this.prService.purchaseReq.inActive = false;
+    for (const item of this.prService.purchaseReq.purchaseReqItems) {
+      item.prNumber = '';
+      item.itemId = 0;
+    }
+    for (const item of this.prService.purchaseReq.purchaseReqCharges)
+      item.prNumber = '';
+
+    this.router?.navigate(['/purchase-requisitions/create'], {state: {duplicate: true}});
   }
 }

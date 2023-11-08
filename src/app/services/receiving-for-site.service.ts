@@ -116,8 +116,8 @@ export class ReceivingForSiteService implements IService<Receiving> {
     return !this.isNotReceived(rec) && length > 0 && length <= rec.receivingItems.length;
   }
 
-  itemQtyReceived(itemsLb: Array<RecvdItemLotBatch>): number {
-    return itemsLb?.reduce((acc, curr) => acc + curr.rlbQty, 0) ?? 0;
+  itemQtyReceived(recvdItemLotBatches: Array<RecvdItemLotBatch>): number {
+    return recvdItemLotBatches?.reduce((acc, curr) => acc + curr.rlbQty, 0) ?? 0;
   }
 
   onRoStatusChange(roStatus: ReceivingStatus,
@@ -142,8 +142,9 @@ export class ReceivingForSiteService implements IService<Receiving> {
       case ReceivingStatus.ReceivedAll:
         this.modalService.show(modal.viewContainerRef, {
           modalSize: 'modal-xl',
+          btnSuccess: true,
           btnSuccessLabel: 'Receive',
-          btnCloseLabel: 'cancel',
+          btnCloseLabel: 'Cancel',
           title: title,
           successCallback: _ => {
             this.recvdItemsLb
@@ -213,9 +214,10 @@ export class ReceivingForSiteService implements IService<Receiving> {
       item.recvdItemLotsBatches = [];
 
       if (item.orderedQty > 0) {
-        const rilb = new RecvdItemLotBatch()
+        const rilb = new RecvdItemLotBatch();
         rilb.rilbReceivingItemId = item.receivingItemId;
         rilb.pricePerRlbQty = item.pricePerOrderedQty;
+        rilb.rlbConversionRate = item.orderedConversionRate;
 
         new Promise(resolve => {
           this.batchesLotsService
@@ -257,6 +259,19 @@ export class ReceivingForSiteService implements IService<Receiving> {
       for (const rItem of groupRbn.receivedItems) {
         rItem.recvdItemLotsBatches = item.filter((itm: any) =>
           itm.rilbReceivingItemId === rItem.receivingItemId)
+          .map((itmRilb: any) => {
+            new Promise(resolve => {
+              this.batchesLotsService
+                .get(itmRilb.batchLotId, itmRilb.batchLotSiteId)
+                .subscribe(res => {
+                  itmRilb.batchLot = res;
+                  resolve(itmRilb);
+                });
+            })
+            .then(res => res);
+
+            return itmRilb;
+          });
 
         if (rItem.recvdItemLotsBatches.length > 0) {
           const qtyReceived = this.itemQtyReceived(rItem.recvdItemLotsBatches);

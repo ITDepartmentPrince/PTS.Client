@@ -63,11 +63,32 @@ import {ReceivingComponent} from "./receiving/receiving.component";
 import {ReceivingViewComponent} from "./receiving/view/receiving-view.component";
 import {ReceivingEditComponent} from "./receiving/edit/receiving-edit.component";
 import {AddSponsorReceivingComponent} from "./receiving/add-sponsor-receiving/add-sponsor-receiving.component";
+import {InventoryComponent} from "./inventory/inventory.component";
+import {InventoryNavComponent} from "./inventory/inventory-nav.component";
+import {DepartmentsCreateComponent} from "./base-records/department/create/departments-create.component";
+import {DepartmentsComponent} from "./base-records/department/departments.component";
+import {DepartmentsViewComponent} from "./base-records/department/view/departments-view.component";
+import {DepartmentsEditComponent} from "./base-records/department/edit/departments-edit.component";
+import {ShippingsComponent} from "./base-records/shippings/shippings.component";
+import {ShippingsEditComponent} from "./base-records/shippings/edit/shippings-edit.component";
+import {ShippingsViewComponent} from "./base-records/shippings/view/shippings-view.component";
+import {ShippingsCreateComponent} from "./base-records/shippings/create/shippings-create.component";
+import {SitesViewComponent} from "./base-records/sites/view/sites-view.component";
+import {SitesEditComponent} from "./base-records/sites/edit/sites-edit.component";
+import {SitesCreateComponent} from "./base-records/sites/create/sites-create.component";
+import {SitesComponent} from "./base-records/sites/sites.component";
+import {PayTermsComponent} from "./manage-vendors/pay-terms/pay-terms.component";
+import {PayTermsEditComponent} from "./manage-vendors/pay-terms/edit/pay-terms-edit.component";
+import {PayTermsViewComponent} from "./manage-vendors/pay-terms/view/pay-terms-view.component";
+import {PayTermsCreateComponent} from "./manage-vendors/pay-terms/create/pay-terms-create.component";
 
 const appRoutes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full', canActivate: [AutoLoginPartialRoutesGuard] },
+
   { path: 'home', component: HomeComponent, canActivate: [AutoLoginPartialRoutesGuard] },
-  { path: 'materials-management',
+
+  {
+    path: 'materials-management',
     component: MaterialsManagementComponent,
     canActivate: [AutoLoginPartialRoutesGuard],
     children: [
@@ -94,38 +115,49 @@ const appRoutes: Routes = [
       { path: 'matl-categories', component: MatlCategoriesComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'matl-categories/create', component: MatlCategoriesCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'matl-categories/:categoryId', component: MatlCategoriesViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
-      { path: 'matl-categories/:categoryId/edit', component: MatlCategoriesEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
-
+      { path: 'matl-categories/:categoryId/edit', component: MatlCategoriesEditComponent, canActivate: [AutoLoginPartialRoutesGuard] }
     ],
   },
+
   {
     path: 'manage-vendors',
     component: ManageVendorsComponent,
     canActivate: [AutoLoginPartialRoutesGuard],
     children: [
-      { path: 'countries', component: CountriesComponent, canActivate: [AutoLoginPartialRoutesGuard] },
-      { path: 'countries/create', component: CountriesCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
-      { path: 'countries/:countryCode', component: CountriesViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
-      { path: 'countries/:countryCode/edit', component: CountriesEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
-
-      { path: 'states', component: StatesComponent, canActivate: [AutoLoginPartialRoutesGuard] },
-      { path: 'states/create', component: StatesCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
-      { path: 'states/:stateCode', component: StatesViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
-      { path: 'states/:stateCode/edit', component: StatesEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
-
+      { path: '', pathMatch: 'full', redirectTo: 'vendors'},
       { path: 'vendors', component: VendorsComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'vendors/create', component: VendorsCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'vendors/:vendorId', component: VendorsViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'vendors/:vendorId/edit', component: VendorsEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
 
+      { path: '', pathMatch: 'full', redirectTo: 'countries'},
+      { path: 'countries', component: CountriesComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'countries/create', component: CountriesCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'countries/:countryCode', component: CountriesViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'countries/:countryCode/edit', component: CountriesEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+
+      { path: '', pathMatch: 'full', redirectTo: 'states'},
+      { path: 'states', component: StatesComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'states/create', component: StatesCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'states/:stateCode', component: StatesViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'states/:stateCode/edit', component: StatesEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+
+      { path: '', pathMatch: 'full', redirectTo: 'vendor-contacts'},
       { path: 'vendor-contacts', component: VendorContactsComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'vendor-contacts/create', component: VendorContactsCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'vendor-contacts/:contactId', component: VendorContactsViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'vendor-contacts/:contactId/edit', component: VendorContactsEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
 
+      { path: '', pathMatch: 'full', redirectTo: 'pay-terms'},
+      { path: 'pay-terms', component: PayTermsComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'pay-terms/create', component: PayTermsCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'pay-terms/:id', component: PayTermsViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'pay-terms/:id/edit', component: PayTermsEditComponent, canActivate: [AutoLoginPartialRoutesGuard] }
     ]
   },
-  { path: 'purchase-requisitions',
+
+  {
+    path: 'purchase-requisitions',
     component: PurchaseReqsNavComponent,
     canActivate: [AutoLoginPartialRoutesGuard],
     children: [
@@ -134,11 +166,15 @@ const appRoutes: Routes = [
       { path: 'done', component: PurchaseReqsComponent, canActivate: [AutoLoginPartialRoutesGuard] },
     ]
   },
+
   { path: 'purchase-requisitions/create', component: PurchaseReqsCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+
   { path: 'purchase-requisitions/:prNumber', component: PurchaseReqsViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+
   { path: 'purchase-requisitions/:prNumber/edit', component: PurchaseReqsEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
 
-  { path: 'purchase-orders',
+  {
+    path: 'purchase-orders',
     component: PurchaseOrdersNavComponent,
     canActivate: [AutoLoginPartialRoutesGuard],
     children: [
@@ -148,7 +184,8 @@ const appRoutes: Routes = [
     ]
   },
 
-  { path: 'receiving',
+  {
+    path: 'receiving',
     component: ReceivingNavComponent,
     canActivate: [AutoLoginPartialRoutesGuard],
     children: [
@@ -165,29 +202,62 @@ const appRoutes: Routes = [
       },
     ]
   },
+
   { path: 'receiving/:roNumber', component: ReceivingViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+
   {
     path: 'receiving/:roNumber/edit',
     component: ReceivingEditComponent,
     canActivate: [AutoLoginPartialRoutesGuard],
     data: { refreshComponent: true }
   },
+
   { path: 'receiving/sponsor/create', component: AddSponsorReceivingComponent, canActivate: [AutoLoginPartialRoutesGuard] },
 
-
+  {
+    path: 'inventory',
+    component: InventoryNavComponent,
+    canActivate: [AutoLoginPartialRoutesGuard],
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'material'},
+      { path: 'material',
+        component: InventoryComponent,
+        canActivate: [AutoLoginPartialRoutesGuard],
+        data: { refreshComponent: true, pathEnd: 'material' }
+      },
+      { path: 'finish-goods',
+        component: InventoryComponent,
+        canActivate: [AutoLoginPartialRoutesGuard],
+        data: { refreshComponent: true, pathEnd: 'finish-goods' }
+      },
+    ]
+  },
 
   {
     path: 'base-records',
     component: BaseRecordsComponent,
     canActivate: [AutoLoginPartialRoutesGuard],
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'tax-rates'},
+      { path: '', pathMatch: 'full', redirectTo: 'sites'},
+      { path: 'sites', component: SitesComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'sites/create', component: SitesCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'sites/:siteId', component: SitesViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'sites/:siteId/edit', component: SitesEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+
       { path: 'tax-rates', component: TaxRatesComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'tax-rates/create', component: TaxRatesCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'tax-rates/:taxId', component: TaxRatesViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'tax-rates/:taxId/edit', component: TaxRatesEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
 
+      { path: 'departments', component: DepartmentsComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'departments/create', component: DepartmentsCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'departments/:id', component: DepartmentsViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'departments/:id/edit', component: DepartmentsEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
 
+      { path: 'shippings', component: ShippingsComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'shippings/create', component: ShippingsCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'shippings/:id', component: ShippingsViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+      { path: 'shippings/:id/edit', component: ShippingsEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
     ]
   },
 

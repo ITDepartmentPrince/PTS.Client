@@ -1,0 +1,49 @@
+<div class="row mt-4">
+  <div class="col-md-4">
+    <div *ngIf="isLoading" class="text-center">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+    <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isLoading">
+      <ng-content></ng-content>
+      <div *ngIf="!f.valid && f.touched" class="alert alert-danger" role="alert">
+        One or more inputs are incorrect
+      </div>
+      <div class="mb-4">
+        <label for="name" class="form-label">Name</label>
+        <input type="text"
+               class="form-control"
+               id="name"
+               name="name"
+               [(ngModel)]="dService.department.name"
+               required
+               #name="ngModel"
+               [ngClass]="{input_danger: !name.valid && name.touched}"
+               [disabled]="controlState">
+      </div>
+      <div class="mb-4 form-check" *ngIf="action !== operations.Create">
+        <input type="checkbox"
+               class="form-check-input"
+               id="inActive"
+               name="inActive"
+               [(ngModel)]="dService.department.inActive"
+               [disabled]="controlState">
+        <label for="inActive">Inactive</label>
+      </div>
+      <div class="mb-4">
+        <button class="btn btn-primary me-2"
+                type="submit"
+                *appAuth="AuthPolicy.canUserEdit()"
+                [disabled]="!f.valid && f.invalid">
+          <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
+          <span *ngIf="action === operations.View">Edit</span>
+        </button>
+        <button class="btn btn-primary"
+                type="button"
+                (click)="router.navigate(['/base-records/departments'],
+                {queryParamsHandling: 'preserve'})">
+          Back
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -16,4 +16,5 @@ export class Site {
   createUser: CreateUser;
   lastUpdate: Date;
   lastUser: LastUser;
+  address: string;
 }

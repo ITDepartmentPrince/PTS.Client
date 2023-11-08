@@ -8,7 +8,7 @@ import {ItemType} from "../../shared/item-type";
 import {AddSponsorReceivingService} from "../../services/add-sponsor-receiving.service";
 import {Sponsor} from "../../models/sponsor";
 import {NgForm} from "@angular/forms";
-import {SiteService} from "../../services/site-service";
+import {SitesService} from "../../services/sites.service";
 import {Utils} from "../../shared/utils";
 
 @Component({
@@ -27,12 +27,12 @@ export class AddSponsorReceivingComponent implements  OnInit {
   constructor(public router: Router,
               private receivingService: ReceivingService,
               public asrService: AddSponsorReceivingService,
-              private siteService: SiteService) {
-    this.asrService.receiving.siteId = this.siteService.site;
+              private siteService: SitesService) {
+    this.asrService.receiving.siteId = this.siteService.localSite;
     this.asrService.receiving.deliveryDate = new Date();
     this.asrService.receiving.createDate = new Date();
     this.asrService.receiving.source = new Source();
-    this.asrService.receiving.source.srSiteId = this.siteService.site;
+    this.asrService.receiving.source.srSiteId = this.siteService.localSite;
     this.asrService.receiving.source.sourceType = SourceType.Sponsor;
   }
 

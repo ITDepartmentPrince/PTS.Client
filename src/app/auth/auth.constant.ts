@@ -7,6 +7,6 @@
   public static redirectUri = `${this.clientRoot}/login-callback`;
   public static postLogoutRedirectUri = `${this.clientRoot}/logout-callback`;
   public static silentRedirectUri = `${this.clientRoot}/assets/silent-callback.html`;
-  public static scope = 'openid profile offline_access roles ptsapi.read ptsapi.write';
+  public static scope = 'openid profile offline_access roles ptsapi.read ptsapi.write IdentityServerApi';
   public static responseType = 'code';
 }

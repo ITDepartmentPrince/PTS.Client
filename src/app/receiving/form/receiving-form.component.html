@@ -6,6 +6,7 @@
           Receiving
           <span class="fw-normal">
 <!--            {{action === operations.Create ? '(create)' : ''}}-->
+            {{action === operations.View ? '(read only)' : ''}}
             {{action === operations.Edit ? '(edit)' : ''}}
           </span>
         </div>
@@ -188,9 +189,9 @@
                      class="form-control"
                      style="width: 18rem;"
                      id="recvdBlockDate"
-                     name="recvdBlockDate"
+                     name="recvdBlockDate{{i}}"
                      [readonly]=true
-                     [ngModel]="item.recvdBlockDate | date: 'yyyy-MM-ddThh:mm'">
+                     [ngModel]="item.recvdBlockDate | date: 'yyyy-MM-ddTHH:mm'">
             </div>
           </div>
           <div class="row g-3 align-items-center">
@@ -204,14 +205,15 @@
                      class="form-control"
                      style="width: 16rem;"
                      id="createUserId"
-                     name="createUserId"
+                     name="createUserId{{i}}"
                      [readonly]=true
                      [ngModel]="item.createUser.cuFirstName + ' ' + item.createUser.cuLastName">
             </div>
           </div>
         </div>
 
-        <app-receiving-items [receivingItems]="item.receivedItems"></app-receiving-items>
+        <app-receiving-items [receivingItems]="item.receivedItems"
+                             [ShowBatchesLots]=true></app-receiving-items>
       </div>
     </div>
 

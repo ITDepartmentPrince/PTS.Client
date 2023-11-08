@@ -23,7 +23,7 @@ const defaultOptions = {
   title: 'Confirmation',
   btnCloseLabel: 'Close',
   btnSuccessLabel: 'Yes',
-  btnSuccess: false,
+  btnSuccess: true,
   btnClose: false,
   modalSize: '',
   successCallback: () => {},

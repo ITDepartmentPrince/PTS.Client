@@ -19,7 +19,13 @@ export class PurchaseReqsCreateComponent implements OnInit {
 
   constructor(private router: Router,
               private purchaseReqsService: PurchaseReqsService) {
-    this.purchaseReqsService.purchaseReq = this.purchaseReq;
+    if (!this.router.getCurrentNavigation()?.extras.state?.['duplicate'])
+      this.purchaseReqsService.purchaseReq = this.purchaseReq;
+    else
+      if (this.purchaseReqsService.purchaseReq)
+        this.purchaseReq = this.purchaseReqsService.purchaseReq;
+      else
+        this.purchaseReqsService.purchaseReq = this.purchaseReq;
   }
 
   ngOnInit(): void {
@@ -29,6 +35,10 @@ export class PurchaseReqsCreateComponent implements OnInit {
           this.purchaseReq.classifications = refs.classifications;
           this.purchaseReq.vendors = refs.vendors;
           this.purchaseReq.otherCharges = refs.otherCharges;
+          this.purchaseReq.departments = refs.departments;
+          this.purchaseReq.payTerms = refs.payTerms;
+          this.purchaseReq.shippings = refs.shippings;
+          this.purchaseReq.sites = refs.sites;
           this.isLoading = false;
 
           //set the classificationId to raw materials by default.
@@ -47,6 +57,7 @@ export class PurchaseReqsCreateComponent implements OnInit {
   }
 
   onSubmitted(formModel: IFormModel<PurchaseReq>) {
+    this.isLoading = true;
     this.purchaseReqsService.create(formModel.model)
       .subscribe({
         next: _ => {

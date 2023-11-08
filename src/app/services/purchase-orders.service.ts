@@ -6,10 +6,11 @@ import {Observable} from "rxjs";
 import {DatatableResponse} from "../models/datatable-response";
 import {AuthConstant} from "../auth/auth.constant";
 import {PurchaseOrder} from "../models/purchase-order";
+import {SitesService} from "./sites.service";
 
 @Injectable({providedIn: 'root'})
 export class PurchaseOrdersService implements IService<PurchaseOrder> {
-  constructor(private httpClient: HttpClient) {}
+  constructor(private httpClient: HttpClient, private sitesService: SitesService) {}
 
   getRequired(queryParams: QueryParams): Observable<DatatableResponse<PurchaseOrder>> {
     return this.httpClient
@@ -28,5 +29,25 @@ export class PurchaseOrdersService implements IService<PurchaseOrder> {
 
   delete(poNumber: string | undefined): Observable<any> {
     return this.httpClient.delete(AuthConstant.apiRoot + `/PurchaseOrders/${poNumber}`);
+  }
+
+  approvePo(poNumber: string, notes: string): Observable<any> {
+    return this.httpClient.post(AuthConstant.apiRoot +
+        `/PurchaseOrders/ApprovePo/${poNumber}/CreateReceivingForSite/${this.sitesService.localSite}`,
+      {notes: notes},
+      {headers: new HttpHeaders().set('Content-Type', 'application/json')});
+  }
+
+  execApprovePo(poNumber: string, notes: string): Observable<any> {
+    return this.httpClient.post(AuthConstant.apiRoot +
+      `/PurchaseOrders/ExecApprovePo/${poNumber}/CreateReceivingForSite/${this.sitesService.localSite}`,
+      {notes: notes},
+      {headers: new HttpHeaders().set('Content-Type', 'application/json')});
+  }
+
+  disApprovePo(poNumber: string, notes: string): Observable<any> {
+    return this.httpClient.post(AuthConstant.apiRoot + `/PurchaseOrders/DisApprovePo/${poNumber}`,
+      {notes: notes},
+      {headers: new HttpHeaders().set('Content-Type', 'application/json')});
   }
 }

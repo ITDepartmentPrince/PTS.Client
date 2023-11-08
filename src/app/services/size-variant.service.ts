@@ -23,7 +23,7 @@ export class SizeVariantService implements IService<SizeVariant> {
   }
 
   get(sizeId: number): Observable<SizeVariant> {
-    return this.httpClient.get(AuthConstant.apiRoot + `/SizeVariants/${sizeId}`);
+    return this.httpClient.get<SizeVariant>(AuthConstant.apiRoot + `/SizeVariants/${sizeId}`);
   }
 
   create(model: SizeVariant): Observable<any> {

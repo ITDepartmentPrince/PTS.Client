@@ -18,7 +18,7 @@ import {BatchesLotsService} from "../../services/batches-lots.service";
 })
 export class ReceiveItemsLotsBatchesComponent implements OnInit {
   isLoading = true;
-  recvdDate: Date;
+  recvdDate: any;
   materials: Array<Material>;
   measurementUnits: Array<MeasurementUnit>;
 
@@ -66,6 +66,7 @@ export class ReceiveItemsLotsBatchesComponent implements OnInit {
       const rilb = new RecvdItemLotBatch();
       rilb.rilbReceivingItemId = item.receivingItemId;
       rilb.pricePerRlbQty = item.pricePerOrderedQty;
+      rilb.rlbConversionRate = item.orderedConversionRate;
       rilb.batchLots = JSON.parse(JSON.stringify(itemLb.batchLots));
       item.recvdItemLotsBatches.push(rilb);
     }

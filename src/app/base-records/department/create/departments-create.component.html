@@ -1,0 +1,7 @@
+<app-Departments-form [action]="operations.Create"
+                       (submitted)="onSubmitted()"
+                       [isLoading]="isLoading">
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{errorMessage}}
+  </div>
+</app-Departments-form>

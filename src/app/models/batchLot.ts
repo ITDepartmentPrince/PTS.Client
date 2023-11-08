@@ -4,6 +4,7 @@ import {MeasurementUnit} from "./measurement-unit";
 import {CreateUser} from "./create-user";
 import {LastUser} from "./last-user";
 import {InventoryIntel} from "./inventoryIntel";
+import {ShelfStorage} from "./shelfStorage";
 
 export class BatchLot {
   batchLotId: number;
@@ -16,6 +17,7 @@ export class BatchLot {
   blUom: MeasurementUnit;
   expireDate: Date;
   inventoryIntels: Array<InventoryIntel>
+  shelfStorage: Array<ShelfStorage>
   createDate: Date;
   createUserId: number;
   createUser: CreateUser;

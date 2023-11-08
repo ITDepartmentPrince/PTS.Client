@@ -7,7 +7,7 @@ import {ReceivingService} from "../../../services/receiving.service";
 import {MaterialsService} from "../../../services/materials.service";
 import {FixNgSelectPlacement} from "../../../shared/fix-ng-select-placement";
 import {ControlContainer, NgForm} from "@angular/forms";
-import {SiteService} from "../../../services/site-service";
+import {SitesService} from "../../../services/sites.service";
 import {Subscription} from "rxjs";
 
 @Component({
@@ -25,7 +25,7 @@ export class AddSponsorReceivingItemsMaterialsComponent implements OnDestroy {
   constructor(public asrService: AddSponsorReceivingService,
               private receivingService: ReceivingService,
               private materialsService: MaterialsService,
-              private siteService: SiteService) {
+              private siteService: SitesService) {
   }
 
   ngOnDestroy(): void {
@@ -65,7 +65,7 @@ export class AddSponsorReceivingItemsMaterialsComponent implements OnDestroy {
 
   onAddItem() {
     const recItem = new ReceivingItem();
-    recItem.riSiteId = this.siteService.site;
+    recItem.riSiteId = this.siteService.localSite;
     this.asrService.receiving.receivingItems.push(recItem);
   }
 

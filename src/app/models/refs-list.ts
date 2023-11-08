@@ -8,6 +8,10 @@ import {MeasurementUnit} from "./measurement-unit";
 import {TaxRate} from "./tax-rate";
 import {BatchLot} from "./batchLot";
 import {Sponsor} from "./sponsor";
+import {Department} from "./department";
+import {Shipping} from "./shipping";
+import {PayTerm} from "./pay-term";
+import {Site} from "./site";
 
 export class RefsList {
   vendors: Vendor[];
@@ -20,4 +24,8 @@ export class RefsList {
   measurementUnits: MeasurementUnit[];
   taxRates: TaxRate[];
   batchesLots: BatchLot[];
+  departments: Array<Department>;
+  shippings: Array<Shipping>;
+  payTerms: Array<PayTerm>;
+  sites: Array<Site>;
 }

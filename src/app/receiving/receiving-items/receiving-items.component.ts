@@ -13,6 +13,7 @@ import {ReceivingItem} from "../../models/receivingItem";
 })
 export class ReceivingItemsComponent implements OnInit {
   @Input() receivingItems: Array<ReceivingItem>;
+  @Input() ShowBatchesLots = false;
   materials: Array<Material>;
   measurementUnits: Array<MeasurementUnit>;
   taxRates: Array<TaxRate>;

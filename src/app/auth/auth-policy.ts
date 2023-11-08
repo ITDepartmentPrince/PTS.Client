@@ -15,6 +15,14 @@ export class AuthPolicy {
   }
 
   public static canUserApprovePr() {
-    return ['Admin', 'PrApprove'];
+    return ['Admin', 'PRApprover'];
+  }
+
+  public static canUserApprovePo() {
+    return ['Admin', 'POApprover'];
+  }
+
+  public static canUserExecApprovePo() {
+    return ['Admin', 'ExecutiveApprover'];
   }
 }

@@ -96,6 +96,7 @@ export class PurchaseReqsComponent implements AfterViewInit {
       case Operations.Delete:
         if (this.dataSource.row) {
           this.modalService.show(this.modal.viewContainerRef, {
+            btnSuccess: true,
             successCallback: () => {
               this.dataSource.isLoading.next(true);
 
@@ -107,7 +108,7 @@ export class PurchaseReqsComponent implements AfterViewInit {
                   },
                   error: _ => {
                     this.modalService.show(this.modal.viewContainerRef,
-                      {btnSuccess: true},
+                      {btnSuccess: false},
                       BodyDeleteFailedComponent);
 
                     this.dataSource.isLoading.next(false);
@@ -123,6 +124,7 @@ export class PurchaseReqsComponent implements AfterViewInit {
   onPrStatusChange(row: PurchaseReq, status: PrStatus) {
     if (status === PrStatus.Submitted) {
       this.modalService.show(this.modal.viewContainerRef, {
+        btnSuccess: true,
         successCallback: (form) => {
           this.dataSource.isLoading.next(true);
 
@@ -143,6 +145,7 @@ export class PurchaseReqsComponent implements AfterViewInit {
 
     if (status === PrStatus.Approved) {
       this.modalService.show(this.modal.viewContainerRef, {
+        btnSuccess: true,
         successCallback: (form) => {
           this.dataSource.isLoading.next(true);
 
@@ -160,6 +163,7 @@ export class PurchaseReqsComponent implements AfterViewInit {
 
     if (status === PrStatus.Disapproved) {
       this.modalService.show(this.modal.viewContainerRef, {
+        btnSuccess: true,
         successCallback: (form) => {
           this.dataSource.isLoading.next(true);
 

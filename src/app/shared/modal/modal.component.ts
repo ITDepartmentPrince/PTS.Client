@@ -10,7 +10,7 @@ export class ModalComponent implements AfterViewInit {
   @Input() title? = 'Confirmation';
   @Input() btnCloseLabel? = 'Close';
   @Input() btnSuccessLabel? = 'Yes';
-  @Input() btnSuccess? = false;
+  @Input() btnSuccess? = true;
   @Input() btnClose? = false;
   @Input() modalSize?: string;
   @Output() closed = new EventEmitter<void>();

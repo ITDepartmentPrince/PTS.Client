@@ -7,6 +7,7 @@ export class RecvdItemLotBatch {
   recvdItemLotBatchId: number;
   rilbReceivingItemId: number;
   receivingItem: ReceivingItem;
+  rlbConversionRate = 0;
   rlbQty = 0;
   pricePerRlbQty = 0;
   batchLotId: number;
@@ -16,9 +17,16 @@ export class RecvdItemLotBatch {
   expireDate: Date;
   isDamage = false;
   recvdBlockNo: string;
-  recvdBlockDate = new Date();
+  recvdBlockDate: any;
   createUserId: number;
   createUser: CreateUser;
   batchLots: Array<BatchLot> = [];
   isLoading = false;
+
+  constructor() {
+    const dateTime = new Date();
+    this.recvdBlockDate = new Date(dateTime
+      .toLocaleDateString() + ' ' + dateTime
+      .toLocaleTimeString() + ' UTC');
+  }
 }

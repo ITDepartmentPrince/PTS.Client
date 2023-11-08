@@ -1,0 +1,174 @@
+<div *ngIf="isLoading" class="text-center">
+  <app-loading-spinner></app-loading-spinner>
+</div>
+
+<div class="trans trans-ss" *ngIf="!isLoading">
+  <div class="trans-items-container">
+    <div class="trans-items">
+      <div *ngIf="ssService.shelfStorage.length > 0">
+        <div class="position-relative">
+          <hr class="mt-4 mb-5">
+          <div style="font-weight: bold; position: absolute; top: -11px; left: 25px;
+           background-color: #fff; padding: 0 1rem;">Items available on shelf {{ssService.shelfCode}}</div>
+        </div>
+
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <th>Batch / Lot #</th>
+            <th>Item</th>
+            <th>Stored qty</th>
+<!--            <th>UOM</th>-->
+            <th>Expiration</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let item of ssService.shelfStorage; let i = index;">
+            <td>
+              <input class="form-control"
+                     type="text"
+                     [value]=item.batchLot.batchLotNumber
+                     [readonly]=true>
+            </td>
+            <td>
+              <ng-select [items]="materials"
+                         bindLabel="catalogDescription"
+                         bindValue="materialId"
+                         name="blMaterialId{{i}}"
+                         [ngModel]="item.batchLot.materialId"
+                         [readonly]=true>
+              </ng-select>
+            </td>
+            <td>
+              <input type="number"
+                     class="form-control text-end"
+                     [value]="item.qty"
+                     [readOnly]=true>
+            </td>
+            <!--<td>
+              <ng-select [items]="units"
+                         bindLabel="longUnit"
+                         bindValue="unitId"
+                         name="blUomId{{i}}"
+                         [ngModel]="item.batchLot.blUomId"
+                         [readonly]=true>
+              </ng-select>
+            </td>-->
+            <td>
+              <input type="date"
+                     class="form-control"
+                     [value]="item.batchLot.expireDate | date: 'yyyy-MM-dd'"
+                     [readOnly]=true>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="ssService.shelfStorage.length === 0 ||
+       ssService.toAddShelfStorage.length > 0">
+        <div class="position-relative">
+          <hr class="mt-5 mb-5">
+          <div style="font-weight: bold; position: absolute; top: -11px; left: 25px;
+           background-color: #fff; padding: 0 1rem;">Add items</div>
+        </div>
+
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <th>Batch / Lot #</th>
+            <th>Item</th>
+            <th>To store qty</th>
+<!--            <th>UOM</th>-->
+            <th>Expiration</th>
+            <th>Qty left</th>
+            <th style="width: 3rem;"></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let item of ssService.toAddShelfStorage; let i = index;">
+            <td>
+              <ng-select [items]="batchLots"
+                         bindLabel="batchLotNumber"
+                         bindValue="batchLotId"
+                         name="batchLotId{{i}}"
+                         [(ngModel)]="item.batchLotId"
+                         required
+                         #batchLotId="ngModel"
+                         [ngClass]="{input_danger: !batchLotId.valid && batchLotId.touched}"
+                         (change)="onBlNumberChange(item)">
+              </ng-select>
+            </td>
+            <td>
+              <ng-select [items]="materials"
+                         bindLabel="catalogDescription"
+                         bindValue="materialId"
+                         name="materialId{{i}}"
+                         [ngModel]="item.materialId"
+                         [readonly]=true>
+              </ng-select>
+            </td>
+            <td>
+              <input type="number"
+                     [min]=1
+                     [max]=item.blQty
+                     class="form-control text-end"
+                     name="qty{{i}}"
+                     [ngModel]="item.qty"
+                     (click)="$any($event.target).select()"
+                     (focusout)="onToShelf($event, item)"
+                     required
+                     #qty="ngModel"
+                     [ngClass]="{input_danger: !qty.valid && qty.touched}">
+            </td>
+            <!--<td>
+              <ng-select [items]="units"
+                         bindLabel="longUnit"
+                         bindValue="unitId"
+                         name="unitId{{i}}"
+                         [ngModel]="item.unitId"
+                         [readonly]=true>
+              </ng-select>
+            </td>-->
+            <td>
+              <input type="date"
+                     class="form-control"
+                     [value]="item.expireDate | date: 'yyyy-MM-dd'"
+                     [readOnly]=true>
+            </td>
+            <td>
+              <input type="number"
+                     class="form-control text-end"
+                     [value]="item.blQty - item.qty"
+                     [readOnly]=true>
+            </td>
+            <td class="text-center">
+              <span *ngIf="i > 0"
+                    class="btn-del"
+                    (click)="onRemoveItem(i)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                  <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                </svg>
+              </span>
+            </td>
+          </tr>
+
+          <tr style="line-height: 2.5;"
+              *ngIf="ssService.toAddShelfStorage.length === 0">
+            <td class="text-center"
+                [colSpan]="6">
+              No data available in table
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="btn-add-item" (click)="onAddItem()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+      </svg>
+      <span>Add row</span>
+    </div>
+  </div>
+</div>

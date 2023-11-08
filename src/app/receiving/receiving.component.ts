@@ -101,6 +101,7 @@ export class ReceivingComponent implements OnInit, AfterViewInit, OnDestroy {
       case Operations.Delete:
         if (this.dataSource.row) {
           this.modalService.show(this.modal.viewContainerRef, {
+            btnSuccess: true,
             successCallback: () => {
               this.dataSource.isLoading.next(true);
 
@@ -112,7 +113,7 @@ export class ReceivingComponent implements OnInit, AfterViewInit, OnDestroy {
                   },
                   error: _ => {
                     this.modalService.show(this.modal.viewContainerRef,
-                      {btnSuccess: true},
+                      {btnSuccess: false},
                       BodyDeleteFailedComponent);
 
                     this.dataSource.isLoading.next(false);

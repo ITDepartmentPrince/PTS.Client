@@ -4,6 +4,8 @@ import {IFormModel} from "../../../shared/interface/IFormModel";
 import {Router} from "@angular/router";
 import {PurchaseReq} from "../../../models/purchase-req";
 import {PurchaseReqsService} from "../../../services/purchase-reqs.service";
+import {UserService} from "../../../services/user-service";
+import {ApproveUser} from "../../../models/approve-user";
 
 @Component({
   selector: 'app-purchase-reqs-view',
@@ -15,6 +17,7 @@ export class PurchaseReqsViewComponent {
   isLoading = true;
 
   constructor(private router: Router,
+              private userService: UserService,
               private purchaseReqsService: PurchaseReqsService) {
   }
 
@@ -33,12 +36,25 @@ export class PurchaseReqsViewComponent {
                 this.purchaseReq.classifications = refs.classifications;
                 this.purchaseReq.vendors = refs.vendors;
                 this.purchaseReq.vendorContacts = refs.vendorContacts;
+                this.purchaseReq.departments = refs.departments;
+                this.purchaseReq.payTerms = refs.payTerms;
+                this.purchaseReq.shippings = refs.shippings;
+                this.purchaseReq.sites = refs.sites;
                 this.isLoading = false;
               },
               error: _ => {
                 this.isLoading = false;
               }
             });
+
+          if (this.purchaseReq.approveUserId)
+            this.userService.get(this.purchaseReq.approveUserId)
+              .subscribe(res => {
+                const aUser = new ApproveUser();
+                aUser.auFirstName = res.firstName;
+                aUser.auLastName = res.lastName;
+                this.purchaseReq.approveUser = aUser;
+              });
         },
         error: _ => {
           this.isLoading = false;

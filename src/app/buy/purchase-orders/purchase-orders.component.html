@@ -42,11 +42,81 @@
         </span>
         </th>
         <td mat-cell *matCellDef="let row">
-          <span>{{row['poNumber']}}</span>
+          <span>PO {{row['poNumber']}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="CompanyName">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>Vendor</span>
+          <span class="search-container">
+            <app-column-search column="CompanyName"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>{{row['purchaseReq']['vendor']['companyName']}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="TotalPurchaseValue">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>Total order value</span>
+          <span class="search-container">
+            <app-column-search column="TotalPurchaseValue"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row" class="text-end">
+          <div class="d-inline-block">{{row['purchaseReq']['totalPurchaseValue'].toFixed(2)}}</div>
+          <div style="display: inline-block; font-size: 1.3rem; margin-left: 0.7rem;">USD</div>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="PrNumber">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>PR #</span>
+          <span class="search-container">
+            <app-column-search column="PrNumber"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>PR {{row['purchaseReq']['prNumber']}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="DeliveryDate">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>{{deliveryColHeader}}</span>
+          <span class="search-container">
+            <app-column-search column="DeliveryDate"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               type="date"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>{{row['purchaseReq']['deliveryDate'] | date:'MM-dd-yyyy'}}</span>
         </td>
       </ng-container>
       <ng-container matColumnDef="Status">
-        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true" style="width: 18rem;">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true" style="width: 20rem;">
         <span class="cell-data">
           <span mat-sort-header>Status</span>
           <span class="search-container">
@@ -59,43 +129,53 @@
         </span>
         </th>
         <td mat-cell *matCellDef="let row" class="status-col">
-          <!--<div *ngIf="!row['isSubmitted']" class="dropdown">
-            <button class="btn btn-danger dropdown-toggle w-100 btn-status"
-                    data-bs-popper-config='{"strategy":"fixed"}'
-                    type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Not submitted
-            </button>
-            <ul class="dropdown-menu shadow">
-              <li (click)="onPrStatusChange(row, prStatus.Submitted)">
-                <div class="dropdown-item p-3" style="cursor: pointer;">Submitted</div>
-              </li>
-            </ul>
-          </div>
-
-          <div *ngIf="row['isSubmitted']" class="dropdown">
-            <div *appAuth="AuthPolicy.canUserApprovePr()">
+          <div *ngIf="!row['approveUserId'] || row['purchaseReq']['totalPurchaseValue'] <= 5000">
+            <div *appAuth="AuthPolicy.canUserApprovePo(); else restUsers">
               <button class="btn {{row['approveUserId'] ? 'btn-success' : 'btn-secondary'}} dropdown-toggle btn-status"
                       data-bs-popper-config='{"strategy":"fixed"}'
                       type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {{row['approveUserId'] ? 'Approved' : 'Pending'}}
               </button>
-              <ul class="dropdown-menu shadow">
-                <li *ngIf="!row['approveUserId']" (click)="onPrStatusChange(row, prStatus.Approved)">
+              <ul class="dropdown-menu shadow" style="font-size: 1.4rem;">
+                <li *ngIf="!row['approveUserId']" (click)="onPoStatusChange(row, poStatus.Approved)">
                   <div class="dropdown-item p-3" style="cursor: pointer;">Approved</div>
                 </li>
-                <li (click)="onPrStatusChange(row, prStatus.Disapproved)">
+                <li (click)="onPoStatusChange(row, poStatus.Disapproved)">
                   <div class="dropdown-item p-3" style="cursor: pointer;">Disapproved</div>
                 </li>
               </ul>
             </div>
-
-            <div *appAuthReverse="AuthPolicy.canUserApprovePr()">
+            <ng-template #restUsers>
               <button class="btn {{row['approveUserId'] ? 'btn-success' : 'btn-secondary'}} btn-status"
                       type="button">
                 {{row['approveUserId'] ? 'Approved' : 'Pending'}}
               </button>
+            </ng-template>
+          </div>
+
+          <div *ngIf="row['approveUserId'] && row['purchaseReq']['totalPurchaseValue'] > 5000">
+            <div *appAuth="AuthPolicy.canUserExecApprovePo(); else restUsersExec">
+              <button class="btn {{row['execApproveUserId'] ? 'btn-success' : 'btn-secondary'}} dropdown-toggle btn-status"
+                      data-bs-popper-config='{"strategy":"fixed"}'
+                      type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{row['execApproveUserId'] ? 'Approved' : 'Exec approval required'}}
+              </button>
+              <ul class="dropdown-menu shadow" style="font-size: 1.4rem;">
+                <li *ngIf="!row['execApproveUserId']" (click)="onPoStatusChange(row, poStatus.ExecApproved)">
+                  <div class="dropdown-item p-3" style="cursor: pointer;">Approved</div>
+                </li>
+                <li (click)="onPoStatusChange(row, poStatus.Disapproved)">
+                  <div class="dropdown-item p-3" style="cursor: pointer;">Disapproved</div>
+                </li>
+              </ul>
             </div>
-          </div>-->
+            <ng-template #restUsersExec>
+              <button class="btn {{row['execApproveUserId'] ? 'btn-success' : 'btn-secondary'}} btn-status"
+                      type="button">
+                {{row['execApproveUserId'] ? 'Approved' : 'Exec approval required'}}
+              </button>
+            </ng-template>
+          </div>
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>

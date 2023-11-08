@@ -37,6 +37,10 @@ export class PurchaseReqsEditComponent {
                 this.purchaseReq.vendors = refs.vendors;
                 this.purchaseReq.vendorContacts = refs.vendorContacts;
                 this.purchaseReq.otherCharges = refs.otherCharges;
+                this.purchaseReq.departments = refs.departments;
+                this.purchaseReq.payTerms = refs.payTerms;
+                this.purchaseReq.shippings = refs.shippings;
+                this.purchaseReq.sites = refs.sites;
                 this.isLoading = false;
               },
               error: _ => {

@@ -7,12 +7,13 @@ import {Router} from "@angular/router";
   template: '<div></div>'
 })
 export class LogoutCallbackComponent implements OnInit {
-  constructor(private authService: OidcSecurityService, private router: Router) {}
+  constructor(private authService: OidcSecurityService,
+              private router: Router) {}
 
   ngOnInit() {
     this.authService
-      .checkAuth()
-      .subscribe(({ isAuthenticated }) => {
+      .isAuthenticated()
+      .subscribe(isAuthenticated => {
         if (!isAuthenticated)
           this.authService.logoffLocal();
 

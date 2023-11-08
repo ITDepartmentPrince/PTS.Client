@@ -25,6 +25,7 @@ export class CommandBarComponent {
   @Input() reports = false;
   @Input() edit = true;
   @Input() create = true;
+  @Input() view = true;
   @Output() operations = new EventEmitter<Operations>();
   @ViewChild('cbToggler') cbToggler: ElementRef;
   @ViewChild('show') show: ElementRef;

@@ -1,10 +1,10 @@
 ﻿export class ApproveUser {
-  public name = '';
+  id: number;
+  auFirstName: string;
+  auLastName: string;
+  auJobTitle: string;
 
-  constructor(public id: number,
-              public auFirstName: string,
-              public auLastName: string,
-              public auJobTitle: string,) {
-    this.name = `${this.auFirstName} ${this.auLastName}`;
+  get name() {
+    return `${this.auFirstName} ${this.auLastName}`;
   }
 }

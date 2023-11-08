@@ -9,7 +9,7 @@
         <thead>
         <tr>
           <th style="width: 3rem;">#</th>
-          <th style="min-width: 20rem;">Item</th>
+          <th style="width: 45rem;">Item</th>
           <th style="width: 10rem;">Quantity</th>
           <th style="width: 10rem;">UOM</th>
           <th style="width: 10rem;">Price per qty</th>
@@ -30,50 +30,106 @@
           </td>
         </tr>
 
-        <tr *ngFor="let item of receivingItems; let i = index;">
-          <td style="padding: 0 0.8rem;">{{i+1}}</td>
-          <td class="text-start">
-            <ng-select [items]="materials"
-                       bindLabel="catalogDescription"
-                       bindValue="materialId"
-                       name="materialId{{i+1}}"
-                       [ngModel]="item.materialId"
-                       [readonly]=true>
-            </ng-select>
+        <tr *ngFor="let item of receivingItems; let i = index;"
+            [ngStyle]="{'border-bottom': ShowBatchesLots ? '0.25rem solid var(--bs-border-color)' : ''}">
+          <td style="padding: 0.9rem;"
+              [ngClass]="{'vertical-top': ShowBatchesLots}">
+            {{i+1}}
           </td>
-          <td>
-            <input type="number"
-                   class="form-control text-end"
-                   name="quantity{{i+1}}"
-                   [value]="item.orderedQty"
-                   [readonly]=true>
+          <td class="text-start" [ngClass]="{'vertical-top': ShowBatchesLots}">
+            <div class="row">
+              <div class="w-100">
+                <ng-select [items]="materials"
+                           [ngClass]="{'border-bottom': ShowBatchesLots}"
+                           bindLabel="catalogDescription"
+                           bindValue="materialId"
+                           name="materialId{{i+1}}"
+                           [ngModel]="item.materialId"
+                           [readonly]=true>
+                </ng-select>
+              </div>
+            </div>
+            <div class="row" *ngIf="ShowBatchesLots">
+              <div class="w-100">
+                <table class="w-100">
+                  <thead>
+                    <tr style="border-bottom: 1px solid var(--bs-border-color);">
+                      <th>Lot / Batch #</th>
+                      <th>Qty received</th>
+                      <th>Qty status</th>
+                      <th>Expiration</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let itemLb of item.recvdItemLotsBatches; let j = index"
+                        [ngClass]="{'border-bottom': j !== item.recvdItemLotsBatches.length - 1}">
+                      <td>
+                        <input class="form-control"
+                               [readonly]=true
+                               [value]="itemLb.batchLot.batchLotNumber">
+                      </td>
+                      <td>
+                        <input class="form-control"
+                               [readonly]=true
+                               [value]="itemLb.rlbQty">
+                      </td>
+                      <td>
+                        <input class="form-control"
+                               [readonly]=true
+                               [value]="itemLb.isDamage ? 'Not Accepted' : 'Accepted'">
+                      </td>
+                      <td>
+                        <input class="form-control"
+                               [readonly]=true
+                               [value]="itemLb.expireDate | date: 'MM-dd-yyyy'">
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </td>
-          <td>
+          <td [ngClass]="{'vertical-top': ShowBatchesLots}">
+            <div [ngClass]="{'border-bottom': ShowBatchesLots}">
+              <input type="text"
+                     class="form-control text-end"
+                     name="quantity{{i+1}}"
+                     [value]="item.orderedQty"
+                     [readonly]=true>
+            </div>
+          </td>
+          <td [ngClass]="{'vertical-top': ShowBatchesLots}">
             <ng-select [items]="measurementUnits"
                        bindLabel="longUnit"
                        bindValue="unitId"
+                       [ngClass]="{'border-bottom': ShowBatchesLots}"
                        name="unitId{{i+1}}"
                        [ngModel]="item.orderedUomId"
                        [readonly]=true>
             </ng-select>
           </td>
-          <td>
-            <input type="number"
-                   class="form-control text-end"
-                   name="pricePerQty{{i+1}}"
-                   [ngModel]="item.pricePerOrderedQty.toFixed(2)"
-                   [readonly]=true>
+          <td [ngClass]="{'vertical-top': ShowBatchesLots}">
+            <div [ngClass]="{'border-bottom': ShowBatchesLots}">
+              <input type="number"
+                     class="form-control text-end"
+                     name="pricePerQty{{i+1}}"
+                     [ngModel]="item.pricePerOrderedQty.toFixed(2)"
+                     [readonly]=true>
+            </div>
           </td>
-          <td>
-            <input type="number"
-                   class="form-control text-end"
-                   [value]="(item.orderedQty * item.pricePerOrderedQty).toFixed(2)"
-                   [readonly]=true>
+          <td [ngClass]="{'vertical-top': ShowBatchesLots}">
+            <div [ngClass]="{'border-bottom': ShowBatchesLots}">
+              <input type="number"
+                     class="form-control text-end"
+                     [value]="(item.orderedQty * item.pricePerOrderedQty).toFixed(2)"
+                     [readonly]=true>
+            </div>
           </td>
-          <td>
+          <td [ngClass]="{'vertical-top': ShowBatchesLots}">
             <ng-select [items]="taxRates"
                        bindLabel="nameTaxRate"
                        bindValue="taxId"
+                       [ngClass]="{'border-bottom': ShowBatchesLots}"
                        name="taxId{{i+1}}"
                        [ngModel]="item.taxId"
                        [readonly]=true>

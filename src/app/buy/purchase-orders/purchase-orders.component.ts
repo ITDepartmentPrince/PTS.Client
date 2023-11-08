@@ -10,6 +10,13 @@ import {BodyDeleteFailedComponent} from "../../shared/body-delete-failed/body-de
 import {AuthPolicy} from "../../auth/auth-policy";
 import {PurchaseOrder} from "../../models/purchase-order";
 import {PurchaseOrdersService} from "../../services/purchase-orders.service";
+import {BodyNotesComponent} from "../../shared/body-notes/body-notes.component";
+
+export enum PoStatus {
+  Approved = 1,
+  Disapproved = 2,
+  ExecApproved = 3,
+}
 
 @Component({
   selector: 'app-purchase-orders',
@@ -17,17 +24,19 @@ import {PurchaseOrdersService} from "../../services/purchase-orders.service";
 })
 export class PurchaseOrdersComponent implements AfterViewInit {
   protected readonly AuthPolicy = AuthPolicy;
-  displayedColumns = ['CreateDate', 'PoNumber', 'Status'];
+  displayedColumns = ['CreateDate', 'PoNumber', 'CompanyName', 'TotalPurchaseValue', 'PrNumber',
+    'DeliveryDate', 'Status'];
   dataSource: DataTable<PurchaseOrder>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(ModalDirective) modal: ModalDirective;
+  poStatus = PoStatus;
   deliveryColHeader: string;
   jsonData = {
     value: ''
   };
 
-  constructor(private purchaseOrdersService: PurchaseOrdersService,
+  constructor(private poService: PurchaseOrdersService,
               private router: Router,
               private route: ActivatedRoute,
               private modalService: ModalService) {
@@ -42,7 +51,7 @@ export class PurchaseOrdersComponent implements AfterViewInit {
 
     this.dataSource =
       new DataTable<PurchaseOrder>(this.displayedColumns,
-        this.purchaseOrdersService,
+        this.poService,
         this.router,
         this.route,
         JSON.stringify(this.jsonData));
@@ -75,10 +84,11 @@ export class PurchaseOrdersComponent implements AfterViewInit {
       case Operations.Delete:
         if (this.dataSource.row) {
           this.modalService.show(this.modal.viewContainerRef, {
+            btnSuccess: true,
             successCallback: () => {
               this.dataSource.isLoading.next(true);
 
-              this.purchaseOrdersService.delete(this.dataSource.row?.poNumber)
+              this.poService.delete(this.dataSource.row?.poNumber)
                 .subscribe({
                   next: _ => {
                     this.dataSource.loadData();
@@ -86,7 +96,7 @@ export class PurchaseOrdersComponent implements AfterViewInit {
                   },
                   error: _ => {
                     this.modalService.show(this.modal.viewContainerRef,
-                      {btnSuccess: true},
+                      {btnSuccess: false},
                       BodyDeleteFailedComponent);
 
                     this.dataSource.isLoading.next(false);
@@ -97,5 +107,47 @@ export class PurchaseOrdersComponent implements AfterViewInit {
         }
         break;
     }
+  }
+
+  onPoStatusChange(po: PurchaseOrder, poStatus: PoStatus) {
+    this.modalService.show(this.modal.viewContainerRef, {
+      btnSuccess: true,
+      successCallback: (form) => {
+        this.dataSource.isLoading.next(true);
+
+        switch (poStatus) {
+          case PoStatus.Approved:
+            this.poService.approvePo(po.poNumber, form.value.notes)
+              .subscribe({
+                next: _ => {
+                  this.dataSource.loadData();
+                  this.dataSource.row = null;
+                },
+                error: _ => {this.dataSource.isLoading.next(false);},
+              });
+            break;
+          case PoStatus.Disapproved:
+            this.poService.disApprovePo(po.poNumber, form.value.notes)
+              .subscribe({
+                next: _ => {
+                  this.dataSource.loadData();
+                  this.dataSource.row = null;
+                },
+                error: _ => {this.dataSource.isLoading.next(false);},
+              });
+            break;
+          case PoStatus.ExecApproved:
+            this.poService.execApprovePo(po.poNumber, form.value.notes)
+              .subscribe({
+                next: _ => {
+                  this.dataSource.loadData();
+                  this.dataSource.row = null;
+                },
+                error: _ => {this.dataSource.isLoading.next(false);},
+              });
+            break;
+        }
+      }
+    }, BodyNotesComponent);
   }
 }

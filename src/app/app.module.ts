@@ -51,7 +51,6 @@ import {
 import {
   MatlClassificationsEditComponent
 } from "./materials-management/matl-classifications/edit/matl-classifications-edit.component";
-import {ManageVendorsComponent} from "./manage-vendors/manage-vendors.component";
 import {CountriesComponent} from "./manage-vendors/countries/countries.component";
 import {countriesFormComponent} from "./manage-vendors/countries/form/countries-form.component";
 import {CountriesCreateComponent} from "./manage-vendors/countries/create/countries-create.component";
@@ -89,7 +88,6 @@ import {MaterialsEditComponent} from "./materials-management/materials/edit/mate
 import {PurchaseReqsNavComponent} from "./buy/purchase-reqs/purchase-reqs-nav.component";
 import {PurchaseReqsComponent} from "./buy/purchase-reqs/purchase-reqs.component";
 import {PurchaseReqsCreateComponent} from "./buy/purchase-reqs/create/purchase-reqs-create.component";
-import {PurchaseReqsFormComponent} from "./buy/purchase-reqs/form/purchase-reqs-form.component";
 import { ItemsMaterialsComponent } from './buy/purchase-reqs/items-materials/items-materials.component';
 import {PurchaseReqsViewComponent} from "./buy/purchase-reqs/view/purchase-reqs-view.component";
 import {PurchaseReqsEditComponent} from "./buy/purchase-reqs/edit/purchase-reqs-edit.component";
@@ -116,6 +114,32 @@ import {NgOptimizedImage} from "@angular/common";
 import {AppRouteReuseStrategy} from "./shared/app-route-reuse-strategy";
 import { AddSponsorReceivingComponent } from './receiving/add-sponsor-receiving/add-sponsor-receiving.component';
 import { AddSponsorReceivingItemsMaterialsComponent } from './receiving/add-sponsor-receiving/add-sponsor-receiving-items/add-sponsor-receiving-items-materials.component';
+import { InventoryComponent } from './inventory/inventory.component';
+import {InventoryNavComponent} from "./inventory/inventory-nav.component";
+import { AddViewShelfComponent } from './inventory/add-view-shelf/add-view-shelf.component';
+import { ShelfNotAvailableComponent } from './inventory/shelf-not-available/shelf-not-available.component';
+import {DepartmentsComponent} from "./base-records/department/departments.component";
+import {DepartmentsFormComponent} from "./base-records/department/form/departments-form.component";
+import {DepartmentsEditComponent} from "./base-records/department/edit/departments-edit.component";
+import {DepartmentsViewComponent} from "./base-records/department/view/departments-view.component";
+import {DepartmentsCreateComponent} from "./base-records/department/create/departments-create.component";
+import {ShippingsComponent} from "./base-records/shippings/shippings.component";
+import {ShippingsFormComponent} from "./base-records/shippings/form/shippings-form.component";
+import {ShippingsEditComponent} from "./base-records/shippings/edit/shippings-edit.component";
+import {ShippingsViewComponent} from "./base-records/shippings/view/shippings-view.component";
+import {ShippingsCreateComponent} from "./base-records/shippings/create/shippings-create.component";
+import {SitesComponent} from "./base-records/sites/sites.component";
+import {SitesFormComponent} from "./base-records/sites/form/sites-form.component";
+import {SitesEditComponent} from "./base-records/sites/edit/sites-edit.component";
+import {SitesViewComponent} from "./base-records/sites/view/sites-view.component";
+import {SitesCreateComponent} from "./base-records/sites/create/sites-create.component";
+import {PayTermsComponent} from "./manage-vendors/pay-terms/pay-terms.component";
+import {PayTermsFormComponent} from "./manage-vendors/pay-terms/form/pay-terms-form.component";
+import {PayTermsEditComponent} from "./manage-vendors/pay-terms/edit/pay-terms-edit.component";
+import {PayTermsViewComponent} from "./manage-vendors/pay-terms/view/pay-terms-view.component";
+import {PayTermsCreateComponent} from "./manage-vendors/pay-terms/create/pay-terms-create.component";
+import {ManageVendorsComponent} from "./manage-vendors/manage-vendors.component";
+import {PurchaseReqsFormComponent} from "./buy/purchase-reqs/form/purchase-reqs-form.component";
 
 @NgModule({
   declarations: [
@@ -212,6 +236,30 @@ import { AddSponsorReceivingItemsMaterialsComponent } from './receiving/add-spon
     ReceiveItemsLotsBatchesComponent,
     AddSponsorReceivingComponent,
     AddSponsorReceivingItemsMaterialsComponent,
+    InventoryComponent,
+    InventoryNavComponent,
+    AddViewShelfComponent,
+    ShelfNotAvailableComponent,
+    DepartmentsComponent,
+    DepartmentsFormComponent,
+    DepartmentsEditComponent,
+    DepartmentsViewComponent,
+    DepartmentsCreateComponent,
+    ShippingsComponent,
+    ShippingsFormComponent,
+    ShippingsEditComponent,
+    ShippingsViewComponent,
+    ShippingsCreateComponent,
+    SitesComponent,
+    SitesFormComponent,
+    SitesEditComponent,
+    SitesViewComponent,
+    SitesCreateComponent,
+    PayTermsComponent,
+    PayTermsFormComponent,
+    PayTermsEditComponent,
+    PayTermsViewComponent,
+    PayTermsCreateComponent,
 
   ],
     imports: [
