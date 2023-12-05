@@ -7,14 +7,14 @@ export class RecvdItemLotBatch {
   recvdItemLotBatchId: number;
   rilbReceivingItemId: number;
   receivingItem: ReceivingItem;
-  rlbConversionRate = 0;
+  rlbConversionRate? = 0;
   rlbQty = 0;
-  pricePerRlbQty = 0;
+  pricePerRlbQty? = 0;
   batchLotId: number;
   batchLot: BatchLot;
   batchLotSiteId: number;
   batchLotSite: Site;
-  expireDate: Date;
+  expireDate: Date | null;
   isDamage = false;
   recvdBlockNo: string;
   recvdBlockDate: any;

@@ -1,14 +1,15 @@
-﻿import {CreateUser} from "./create-user";
-import {LastUser} from "./last-user";
-import {ItemType} from "../shared/item-type";
+﻿import {ItemType} from "../shared/item-type";
+import {User} from "./user";
 
 export class MatlClassification {
-  constructor(public classificationId?: number,
-              public classificationName?: string,
-              public classifiedAs?: ItemType,
-              public inActive?: boolean,
-              public createDate?: Date,
-              public createUser?: CreateUser,
-              public lastUpdate?: Date,
-              public lastUser?: LastUser) {}
+  classificationId: number;
+  classificationName: string;
+  classifiedAs: ItemType;
+  inActive: boolean;
+  createDate: Date;
+  createUserId: number
+  createUser: User;
+  lastUpdate: Date;
+  lastUserId: number
+  lastUser: User;
 }

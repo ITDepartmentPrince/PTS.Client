@@ -7,10 +7,11 @@ import {Receiving, ReceivingStatus} from "../../models/receiving";
 import {AuthPolicy} from "../../auth/auth-policy";
 import {MatlClassification} from "../../models/matl-classification";
 import {Vendor} from "../../models/vendor";
-import {Source} from "../../models/source";
 import {SourceType} from "../../shared/source-type";
 import {ModalDirective} from "../../shared/modal/modal.directive";
-import {ReceivingService} from "../../services/receiving.service";
+import {MatlClassificationsService} from "../../services/matl-classifications.service";
+import {VendorsService} from "../../services/vendors.service";
+import {zip} from "rxjs";
 
 @Component({
   selector: 'app-receiving-form',
@@ -28,12 +29,12 @@ export class ReceivingFormComponent implements OnInit {
   operations = Operations;
   classifications: Array<MatlClassification>;
   vendors: Array<Vendor>;
-  sources: Array<Source>;
 
   constructor(public router: Router,
               public route: ActivatedRoute,
-              private receivingService: ReceivingService,
-              public rfsService: ReceivingForSiteService) {
+              public rfsService: ReceivingForSiteService,
+              private clasService: MatlClassificationsService,
+              private vendorService: VendorsService) {
   }
 
   onSubmit() {
@@ -46,13 +47,11 @@ export class ReceivingFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.receivingService.getRefsList()
-      .subscribe({
-        next: refs => {
-          this.classifications = refs.classifications;
-          this.vendors = refs.vendors;
-          this.sources = refs.sources;
-        }
+    zip(this.clasService.getAll(),
+      this.vendorService.getAll())
+      .subscribe(res => {
+          this.classifications = res[0];
+          this.vendors = res[1];
       });
 
     this.setItemsType();

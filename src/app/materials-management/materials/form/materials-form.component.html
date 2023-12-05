@@ -9,16 +9,16 @@
         One or more inputs are incorrect
       </div>
       <div class="mb-4">
-        <label for="materialDescription" class="form-label">Description</label>
+        <label for="description" class="form-label">Description</label>
         <input type="text"
                class="form-control"
-               id="materialDescription"
-               name="materialDescription"
-               [ngModel]="model.materialDescription"
+               id="description"
+               name="description"
+               [(ngModel)]="matService.material.description"
                required
                maxlength="300"
-               #materialDescription="ngModel"
-               [ngClass]="{input_danger: !materialDescription.valid && materialDescription.touched}"
+               #description="ngModel"
+               [ngClass]="{input_danger: !description.valid && description.touched}"
                [disabled]="controlState">
       </div>
       <div class="mb-4">
@@ -27,7 +27,7 @@
                class="form-control"
                id="catalogNumber"
                name="catalogNumber"
-               [ngModel]="model.catalogNumber"
+               [(ngModel)]="matService.material.catalogNumber"
                required
                maxlength="50"
                #catalogNumber="ngModel"
@@ -36,12 +36,12 @@
       </div>
       <div class="mb-4">
         <label for="uomId" class="form-label">Unit of measure</label>
-        <ng-select [items]="model.measurementUnits"
+        <ng-select [items]="measurementUnits"
                    bindLabel="longUnit"
                    bindValue="unitId"
                    id="uomId"
                    name="uomId"
-                   [ngModel]="model.uomId"
+                   [(ngModel)]="matService.material.uomId"
                    required
                    #uomId="ngModel"
                    [ngClass]="{input_danger: !uomId.valid && uomId.touched}"
@@ -50,12 +50,12 @@
       </div>
       <div class="mb-4">
         <label for="classificationId" class="form-label">Classification</label>
-        <ng-select [items]="model.classifications"
+        <ng-select [items]="classifications"
                    bindLabel="classificationName"
                    bindValue="classificationId"
                    id="classificationId"
                    name="classificationId"
-                   [ngModel]="model.classificationId"
+                   [(ngModel)]="matService.material.classificationId"
                    required
                    #classificationId="ngModel"
                    [ngClass]="{input_danger: !classificationId.valid && classificationId.touched}"
@@ -63,41 +63,49 @@
         </ng-select>
       </div>
       <div class="mb-4">
-        <label for="categoryId" class="form-label">Category</label>
-        <ng-select [items]="model.matlCategories"
+        <label for="categoryId" class="form-label">Category (optional)</label>
+        <ng-select [items]="matlCategories"
                    bindLabel="categoryName"
                    bindValue="categoryId"
                    id="categoryId"
                    name="categoryId"
-                   [ngModel]="model.categoryId"
-                   required
-                   #categoryId="ngModel"
-                   [ngClass]="{input_danger: !categoryId.valid && categoryId.touched}"
+                   [(ngModel)]="matService.material.categoryId"
                    [disabled]="controlState">
         </ng-select>
       </div>
       <div class="mb-4">
-        <label for="sizeId" class="form-label">Size Variant</label>
-        <ng-select [items]="model.sizeVariants"
+        <label for="sizeId" class="form-label">Size Variant (optional)</label>
+        <ng-select [items]="sizeVariants"
                    bindLabel="sizeDescription"
                    bindValue="sizeId"
                    id="sizeId"
                    name="sizeId"
-                   [ngModel]="model.sizeId"
-                   required
-                   #sizeId="ngModel"
-                   [ngClass]="{input_danger: !sizeId.valid && sizeId.touched}"
+                   [(ngModel)]="matService.material.sizeId"
                    [disabled]="controlState">
         </ng-select>
       </div>
       <div class="mb-4">
-        <label for="vendorId" class="form-label">Vendor</label>
-        <ng-select [items]="model.vendors"
+        <label for="refersTo" class="form-label">Refers to</label>
+        <ng-select [items]="refersToList"
+                   bindLabel="name"
+                   bindValue="id"
+                   id="refersTo"
+                   name="refersTo"
+                   [(ngModel)]="matService.material.refersTo"
+                   required
+                   #refersTo="ngModel"
+                   [ngClass]="{input_danger: !refersTo.valid && refersTo.touched}"
+                   [disabled]="controlState">
+        </ng-select>
+      </div>
+      <div class="mb-4">
+        <label for="vendorId" class="form-label">Vendor / Sponsor</label>
+        <ng-select [items]="vendors"
                    bindLabel="companyName"
                    bindValue="vendorId"
                    id="vendorId"
                    name="vendorId"
-                   [ngModel]="model.vendorId"
+                   [(ngModel)]="matService.material.vendorId"
                    required
                    #vendorId="ngModel"
                    [ngClass]="{input_danger: !vendorId.valid && vendorId.touched}"
@@ -108,33 +116,33 @@
         <div class="form-check">
           <input type="checkbox"
                  class="form-check-input"
-                 id="differentUom"
-                 name="differentUom"
-                 [(ngModel)]="model.isPurchaseDifferent"
+                 id="convertToUom"
+                 name="convertToUom"
+                 [(ngModel)]="matService.material.isUomConverted"
                  [disabled]="controlState">
-          <label for="differentUom">Do you buy this item in a different unit of measure?</label>
+          <label for="convertToUom">Do you buy / make this item in a different unit of measure?</label>
         </div>
-        <div *ngIf="model.isPurchaseDifferent">
+        <div *ngIf="matService.material.isUomConverted">
           <div class="mb-4 mt-2">
-            <label for="defaultUomUnitId" class="form-label">Default purchase unit of measure</label>
-            <ng-select [items]="model.defaultUomUnits"
+            <label for="convertToUomId" class="form-label">Default purchase unit of measure</label>
+            <ng-select [items]="measurementUnits"
                        bindLabel="longUnit"
                        bindValue="unitId"
-                       id="defaultUomUnitId"
-                       name="defaultUomUnitId"
-                       [(ngModel)]="model.defaultUomUnitId"
+                       id="convertToUomId"
+                       name="convertToUomId"
+                       [(ngModel)]="matService.material.convertToUomId"
                        [disabled]="controlState">
             </ng-select>
           </div>
           <div>
             <label for="conversionRate" class="form-label">Unit conversion rate</label>
             <div class="d-flex align-items-center outer-border p-1 px-3">
-              <span class="me-3">1 {{defaultLongUnit ?? '?'}} = </span>
+              <span class="me-3">1 {{convertedLongUnit ?? '?'}} = </span>
               <input type="number"
                      class="form-control w-25"
                      id="conversionRate"
                      name="conversionRate"
-                     [ngModel]="model.conversionRate"
+                     [(ngModel)]="matService.material.conversionRate"
                      [disabled]="controlState">
               <span class="ms-3">{{uomLongUnit ?? '?'}}</span>
             </div>
@@ -146,7 +154,7 @@
                class="form-check-input"
                id="inActive"
                name="inActive"
-               [ngModel]="model.inActive"
+               [(ngModel)]="matService.material.inActive"
                [disabled]="controlState">
         <label for="inActive">Inactive</label>
       </div>

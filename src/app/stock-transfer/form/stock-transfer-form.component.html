@@ -1,0 +1,186 @@
+<div class="trans trans-ss">
+  <div class="row t-mb justify-content-between pb-2 border-bottom border-4">
+    <div class="col-md-4 align-self-end">
+      <div>
+        <div class="fw-bold fs-4">
+          Stock transfer
+          <span class="fw-normal">
+            {{action === operations.Create ? '(create)' : ''}}
+            {{action === operations.View ? '(read only)' : ''}}
+            {{action === operations.Edit ? '(edit)' : ''}}
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4" *ngIf="!isLoading">
+      <!--<div class="row">
+        <div class="col-auto" *ngIf="action === operations.Edit">
+          <div *ngIf="rfsService.isNotReceived()" class="dropdown">
+            <button class="btn btn-danger dropdown-toggle w-100 btn-status"
+                    type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                    style="width: 12rem !important;">
+              Not received
+            </button>
+            <ul class="dropdown-menu shadow w-100">
+              <li (click)="rfsService.onRoStatusChange(ReceivingStatus.ReceivedAll, modal)">
+                <div class="dropdown-item p-3" style="cursor: pointer;">Receive all</div>
+              </li>
+            </ul>
+          </div>
+
+          <div *ngIf="rfsService.isReceivedAll()" class="dropdown">
+            <button class="btn btn-success dropdown-toggle w-100 btn-status"
+                    type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                    style="width: 12rem !important;">
+              Received all
+            </button>
+            <ul class="dropdown-menu shadow w-100">
+              <li (click)="rfsService.onRoStatusChange(ReceivingStatus.NotReceived, modal)">
+                <div class="dropdown-item p-3" style="cursor: pointer;">Not received</div>
+              </li>
+            </ul>
+          </div>
+
+          <div *ngIf="rfsService.isPartiallyReceived()" class="dropdown">
+            <button class="btn btn-warning dropdown-toggle w-100 btn-status"
+                    type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                    style="width: 15rem !important;">
+              Partially received
+            </button>
+            <ul class="dropdown-menu shadow w-100">
+              <li (click)="rfsService.onRoStatusChange(ReceivingStatus.NotReceived, modal)">
+                <div class="dropdown-item p-3" style="cursor: pointer;">Not received</div>
+              </li>
+              <li (click)="rfsService.onRoStatusChange(ReceivingStatus.ReceivedAll, modal)">
+                <div class="dropdown-item p-3" style="cursor: pointer;">Receive all</div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-4">
+          &lt;!&ndash;Hello&ndash;&gt;
+        </div>
+      </div>-->
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
+  <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isLoading">
+    <div class="row justify-content-between" style="width: 80%;">
+      <div class="col-md-3">
+        <div class="t-mb">
+          <label class="form-label">Stock transfer #</label>
+          <div class="form-control d-flex">
+            <span *ngIf="action !== operations.Create"
+                  style="font-size: 1.4rem; margin-right: 0.3rem;">ST</span>
+            <input type="text"
+                   style="border: none; outline: none; width: 100%;"
+                   name="roNumber"
+                   [placeholder]="action === operations.Create ? '-- new --' : ''"
+                   [ngModel]="stService.stockTransfer.number"
+                   [readOnly]=true>
+          </div>
+        </div>
+        <div class="t-mb">
+          <label class="form-label">Transfer date</label>
+          <input type="date"
+                 class="form-control"
+                 name="createDate"
+                 [ngModel]="stService.stockTransfer.createDate | date: 'yyyy-MM-dd'"
+                 (change)="onTransferDateChange($event)"
+                 [readonly]=controlState>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="t-mb">
+          <label class="form-label">Items type</label>
+          <ng-select [items]="classifications"
+                     bindLabel="classificationName"
+                     bindValue="classificationId"
+                     name="classificationId"
+                     placeholder="-- select --"
+                     [(ngModel)]="stService.stockTransfer.classificationId"
+                     (change)="onClassificationChange()"
+                     required
+                     #classificationId="ngModel"
+                     [ngClass]="{input_danger: !classificationId.valid && classificationId.touched}"
+                     [readonly]="controlState">
+          </ng-select>
+        </div>
+        <div class="t-mb">
+          <label class="form-label">Vendor</label>
+          <ng-select [items]="vendors"
+                     bindLabel="companyName"
+                     bindValue="vendorId"
+                     id="vendorId"
+                     name="vendorId"
+                     placeholder="-- select --"
+                     [(ngModel)]="stService.stockTransfer.vendorId"
+                     (change)="onVendorChange()"
+                     required
+                     #vendorId="ngModel"
+                     [ngClass]="{input_danger: !vendorId.valid && vendorId.touched}"
+                     [readonly]="controlState">
+          </ng-select>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="t-mb">
+          <label class="form-label">Origin</label>
+          <ng-select [items]="sites"
+                     bindLabel="siteName"
+                     bindValue="siteId"
+                     name="originSiteId"
+                     placeholder="{{stService.stockTransfer.originSiteId}}"
+                     [ngModel]="stService.stockTransfer.originSiteId"
+                     [readonly]=true>
+          </ng-select>
+        </div>
+        <div class="t-mb">
+          <label class="form-label">Destination</label>
+          <ng-select [items]="DesSites"
+                     bindLabel="siteName"
+                     bindValue="siteId"
+                     name="destinationSiteId"
+                     placeholder="-- select --"
+                     [(ngModel)]="stService.stockTransfer.destinationSiteId"
+                     required
+                     #destinationSiteId="ngModel"
+                     [ngClass]="{input_danger: !destinationSiteId.valid && destinationSiteId.touched}"
+                     [readonly]="controlState">
+          </ng-select>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-4">
+      <div class="position-relative">
+        <hr class="mt-5 mb-5">
+        <div class="text-bg-secondary line-separate">Transfer items</div>
+      </div>
+      <app-stock-transfer-items [controlState]="controlState" [action]="action"></app-stock-transfer-items>
+    </div>
+
+    <div class="my-4">
+      <button class="btn btn-primary me-2"
+              type="submit"
+              *appAuth="AuthPolicy.canUserEdit()"
+              [disabled]="f.invalid || !stService.stockTransfer.itemsValid">
+        <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
+        <span *ngIf="action === operations.View">Edit</span>
+      </button>
+      <button class="btn btn-primary"
+              type="button"
+              (click)="router.navigate(['/stock-transfer'],
+              {queryParamsHandling: 'preserve'})">
+        Back
+      </button>
+    </div>
+  </form>
+</div>
+<ng-container appModal></ng-container>

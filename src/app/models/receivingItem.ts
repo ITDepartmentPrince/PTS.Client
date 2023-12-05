@@ -15,9 +15,9 @@ export class ReceivingItem {
   riSite: Site;
   materialId: number;
   material: Material;
-  orderedUomId: number;
+  orderedUomId?: number;
   orderedUom: MeasurementUnit;
-  orderedConversionRate: number;
+  orderedConversionRate?: number;
   orderedQty = 0;
   pricePerOrderedQty = 0;
   recvdItemLotsBatches: Array<RecvdItemLotBatch> = [];

@@ -10,42 +10,46 @@ import {MeasurementUnit} from "../../models/measurement-unit";
 import {ControlContainer, NgForm} from "@angular/forms";
 import {MeasurementUnitsService} from "../../services/measurement-units.service";
 import {InventoryIntel} from "../../models/inventoryIntel";
-import {ItemType} from "../../shared/item-type";
+import {zip} from "rxjs";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-add-view-shelf',
   templateUrl: './add-view-shelf.component.html',
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
-
 })
 export class AddViewShelfComponent implements OnInit {
   isLoading = true;
   batchLots: Array<BatchLot>;
   materials: Array<Material>;
   units: Array<MeasurementUnit>;
+  refersTo = 1;
 
   constructor(public ssService: ShelfStorageService,
+              private route: ActivatedRoute,
               private blService: BatchesLotsService,
               private siteService: SitesService,
               private materialsService: MaterialsService,
               private muService: MeasurementUnitsService) {
+    if (this.route.snapshot.url[0].path === 'sponsor-materials')
+      this.refersTo = 2;
   }
 
   ngOnInit(): void {
-    this.ssService.getMaterialsShelved()
+    this.ssService.toAddShelfStorage = [];
+
+    zip(this.ssService.getMaterialsShelved(),
+      this.blService.GetBatchesLotsForUnStoredMaterials(this.siteService.localSite, this.refersTo),
+      this.materialsService.getAll(),
+      this.muService.getAll())
       .subscribe(res => {
-        this.ssService.shelfStorage = res;
+        this.ssService.shelfStorage = res[0];
+        this.batchLots = res[1];
+        this.materials = res[2];
+        this.units = res[3];
+
         this.isLoading = false;
       });
-
-    this.blService.getUnStoredMaterials(this.siteService.localSite)
-      .subscribe(res => this.batchLots = res);
-
-    this.materialsService.getAll()
-      .subscribe(res => this.materials = res);
-
-    this.muService.getAll()
-      .subscribe(res => this.units = res);
   }
 
   onAddItem() {
@@ -68,11 +72,11 @@ export class AddViewShelfComponent implements OnInit {
   }
 
   getIiQty(inventoryIntels: Array<InventoryIntel>) {
-    return inventoryIntels.reduce((acc, curr) => acc + curr.qty, 0);
+    return inventoryIntels?.reduce((acc, curr) => acc + curr.qty, 0) ?? 0;
   }
 
   getSsQty(shelfStorage: Array<ShelfStorage>) {
-    return shelfStorage.reduce((acc, curr) => acc + curr.qty, 0);
+    return shelfStorage?.reduce((acc, curr) => acc + curr.qty, 0) ?? 0;
   }
 
   onToShelf(event: any, item: ShelfStorage) {
@@ -81,5 +85,24 @@ export class AddViewShelfComponent implements OnInit {
       return;
 
     item.qty = recvdValue;
+  }
+
+  displayMaterial(id: number) {
+    return this.getMaterial(id)?.catalogDescription;
+  }
+
+  getLongUnit(unitId: number) {
+    return this.units
+      .find(mu => mu.unitId === unitId)
+      ?.longUnit
+      ?.toLowerCase();
+  }
+
+  getMaterial(id: number) {
+    return this.materials.find(m => m.id === id);
+  }
+
+  getBatchLot(id: number) {
+    return this.batchLots.find(bl => bl.batchLotId === id);
   }
 }

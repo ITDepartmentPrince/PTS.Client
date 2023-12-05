@@ -1,0 +1,89 @@
+<div *ngIf="isLoading" class="text-center">
+  <app-loading-spinner></app-loading-spinner>
+</div>
+
+<div class="trans-ss-items trans-items-container" *ngIf="!isLoading">
+  <div class="trans-items table-responsive">
+    <table class="table table-bordered">
+      <thead>
+      <tr>
+        <th style="width: 3rem;">#</th>
+        <th style="width: 50rem;">Item</th>
+        <th>In stock at origin</th>
+        <th>To transfer qty</th>
+        <th style="width: 3rem;" *ngIf="action !== operations.View">Task</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!--<tr *ngIf="items.length > 0" class="fw-bold" style="line-height: 2;">
+        <td colspan="2" style="padding: 0 3.5rem;">Total:</td>
+        <td colspan="6" class="text-end" style="padding: 0 0.8rem;">{{prService.getTotalQty()}}</td>
+        <td colspan="2" class="text-end" style="padding: 0 0.8rem;">{{prService.getTotalPricePerQty().toFixed(2)}}</td>
+        <td class="text-end" style="padding: 0 0.8rem;">{{prService.getTotal().toFixed(2)}}</td>
+        <td class="text-end" style="padding: 0 0.8rem;">{{prService.getTotalTaxRate().toFixed(2)}}</td>
+        <td></td>
+      </tr>-->
+
+      <tr *ngFor="let item of stService.stockTransfer.stockTransferItems; let i = index;">
+        <td style="padding: 0 0.8rem;">{{i+1}}</td>
+        <td class="text-start">
+          <ng-select [items]="materials"
+                     bindLabel="catalogDescription"
+                     bindValue="id"
+                     name="materialId{{i+1}}"
+                     placeholder="-- select --"
+                     [(ngModel)]="item.materialId"
+                     (change)="onMaterialChange(item)"
+                     (close)="onMaterialsDdClose()"
+                     appendTo="body"
+                     required
+                     #materialId="ngModel"
+                     [ngClass]="{input_danger: !materialId.valid && materialId.touched}"
+                     [readonly]="controlState">
+          </ng-select>
+        </td>
+        <td>
+          <div class="form-control d-flex justify-content-end align-items-center">
+            <div class="me-2">{{item.totalOriginQty}}</div>
+            <div class="fs-5">
+              {{getMaterialBaseLU(item.materialId)}}
+            </div>
+          </div>
+        </td>
+        <td class="text-center"
+            style="cursor: pointer;"
+            (click)="OnAddQty(item)">
+          <div class="d-flex justify-content-end align-items-center">
+            <div class="me-2">{{item.destQty}}</div>
+            <div class="me-3 fs-5">
+              {{getMaterialBaseLU(item.materialId)}}
+            </div>
+          </div>
+        </td>
+        <td class="text-center" *ngIf="action !== operations.View">
+          <span class="btn-del" (click)="onRemoveItem(i)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+              <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+            </svg>
+          </span>
+        </td>
+      </tr>
+
+      <tr *ngIf="stService.stockTransfer.stockTransferItems.length === 0"
+          style="line-height: 2.5;">
+        <td class="text-center"
+            [colSpan]="13">
+          No data available in table
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="action !== operations.View" class="btn-add-item" (click)="onAddItem()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+    </svg>
+    <span>Add row</span>
+  </div>
+</div>
+<ng-container appModal></ng-container>

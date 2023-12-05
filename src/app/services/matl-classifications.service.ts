@@ -24,7 +24,7 @@ export class MatlClassificationsService implements IService<MatlClassification> 
   }
 
   get(classificationId: number): Observable<MatlClassification> {
-    return this.httpClient.get(AuthConstant.apiRoot + `/MatlClassifications/${classificationId}`);
+    return this.httpClient.get<MatlClassification>(AuthConstant.apiRoot + `/MatlClassifications/${classificationId}`);
   }
 
   create(model: MatlClassification): Observable<any> {

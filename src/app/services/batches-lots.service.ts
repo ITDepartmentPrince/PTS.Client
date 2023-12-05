@@ -6,39 +6,50 @@ import {BatchLot} from "../models/batchLot";
 import {IService} from "../shared/interface/IService";
 import {QueryParams} from "../models/query-params";
 import {DatatableResponse} from "../models/datatable-response";
-import {SitesService} from "./sites.service";
 
 @Injectable({providedIn: 'root'})
 export class BatchesLotsService implements IService<BatchLot> {
-  constructor(private httpClient: HttpClient,
-              private siteService: SitesService) { }
+  siteId: number;
+
+  constructor(private httpClient: HttpClient) { }
 
   getRequired(qp: QueryParams): Observable<DatatableResponse<BatchLot>> {
     return this.httpClient
       .post<DatatableResponse<BatchLot>>(
-        AuthConstant.apiRoot + `/BatchesLots/GetRequired/${this.siteService.localSite}`,
+        AuthConstant.apiRoot + `/Sites/${this.siteId}/BatchesLots/GetRequired`,
         qp,
         { headers: new HttpHeaders().set('Content-Type', 'application/json') });
   }
 
   get(batchLotId: number, siteId: number): Observable<BatchLot> {
-    return this.httpClient.get<BatchLot>(AuthConstant.apiRoot + `/BatchesLots/${batchLotId}/${siteId}`);
+    return this.httpClient.get<BatchLot>(AuthConstant.apiRoot +
+        `/Sites/${siteId}/BatchesLots/${batchLotId}`);
   }
 
-  getAllByMaterial(siteId: number, materialId: number): Observable<Array<BatchLot>> {
+  GetBatchesLotsByMaterialWithInventory(siteId: number, materialId: number): Observable<Array<BatchLot>> {
     return this.httpClient.get<Array<BatchLot>>(AuthConstant.apiRoot +
-      `/BatchesLots/${siteId}/Materials/${materialId}`);
+      `/Sites/${siteId}/BatchesLots/Materials/${materialId}/Inventory`);
   }
 
-  getUnStoredMaterials(siteId: number): Observable<Array<BatchLot>> {
+  GetBatchesLotsForUnStoredMaterials(siteId: number, refersTo: number): Observable<Array<BatchLot>> {
     return this.httpClient.get<Array<BatchLot>>(AuthConstant.apiRoot +
-      `/BatchesLots/GetUnStoredMaterials/${siteId}`);
+      `/Sites/${siteId}/BatchesLots/GetUnStoredMaterials/${refersTo}`);
   }
 
-  create(model: BatchLot): Observable<BatchLot> {
-    return this.httpClient.post<BatchLot>(AuthConstant.apiRoot + '/BatchesLots', model, {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-    });
+  GetBatchesLotsByMaterialWithInventory_StockTransfer(siteId: number, materialId: number) {
+    return this.httpClient.get<Array<BatchLot>>(AuthConstant.apiRoot +
+      `/Sites/${siteId}/BatchesLots/Materials/${materialId}/Inventory/StockTransfer`);
+  }
+
+  create(model: BatchLot, siteId: number): Observable<BatchLot> {
+    return this.httpClient.post<BatchLot>(AuthConstant.apiRoot +
+      `/Sites/${siteId}/BatchesLots`,
+      model,
+      { headers: new HttpHeaders().set('Content-Type', 'application/json') });
+  }
+
+  delete(batchLotId: number | undefined, siteId: number | undefined) {
+    return this.httpClient.delete(AuthConstant.apiRoot + `/BatchesLots/${batchLotId}/${siteId}`);
   }
 
   getShelves(batchLot: BatchLot): string {
@@ -63,7 +74,7 @@ export class BatchesLotsService implements IService<BatchLot> {
   }
 
   isIiAvailable(batchLot: BatchLot): boolean {
-    return batchLot.inventoryIntels?.length > 0;
+    return this.getBlQty(batchLot) > 0;
   }
 
   avgCost(batchLot: BatchLot) {
@@ -84,6 +95,10 @@ export class BatchesLotsService implements IService<BatchLot> {
     return this.getBlQty(batchLot).toLocaleString();
   }
 
+  qtyCommitted(batchLot: BatchLot) {
+    return this.getCommittedQty(batchLot).toLocaleString();
+  }
+
   uomToLower(value: string) {
     return value.toLowerCase();
   }
@@ -96,8 +111,13 @@ export class BatchesLotsService implements IService<BatchLot> {
     return batchLot?.shelfStorage?.reduce((acc, curr) => acc + curr.qty, 0);
   }
 
+  getCommittedQty(batchLot: BatchLot) {
+    return batchLot?.committed?.reduce((acc, curr) => acc + curr.qty, 0);
+  }
+
   private getAvgCost(batchLot: BatchLot) {
-    return +(batchLot?.inventoryIntels?.reduce((acc, curr) => acc + curr.pricePerQty, 0)
-      / batchLot?.inventoryIntels?.filter(ii => ii.qty > 0).length);
+    if (this.getBlQty(batchLot) > 0)
+      return batchLot?.pricePerQty;
+    return 0;
   }
 }

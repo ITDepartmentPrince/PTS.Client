@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Operations} from "../../../shared/operations";
 import {Router} from "@angular/router";
-import {IFormModel} from "../../../shared/interface/IFormModel";
 import {Utils} from "../../../shared/utils";
 import {PurchaseReq} from "../../../models/purchase-req";
 import {PurchaseReqsService} from "../../../services/purchase-reqs.service";
@@ -14,51 +13,23 @@ export class PurchaseReqsCreateComponent implements OnInit {
   operations = Operations;
   error = false;
   errorMessage: string;
-  purchaseReq = new PurchaseReq();
   isLoading = true;
 
   constructor(private router: Router,
-              private purchaseReqsService: PurchaseReqsService) {
-    if (!this.router.getCurrentNavigation()?.extras.state?.['duplicate'])
-      this.purchaseReqsService.purchaseReq = this.purchaseReq;
-    else
-      if (this.purchaseReqsService.purchaseReq)
-        this.purchaseReq = this.purchaseReqsService.purchaseReq;
-      else
-        this.purchaseReqsService.purchaseReq = this.purchaseReq;
+              private prService: PurchaseReqsService) {
   }
 
   ngOnInit(): void {
-    this.purchaseReqsService.getRefsList()
-      .subscribe({
-        next: refs => {
-          this.purchaseReq.classifications = refs.classifications;
-          this.purchaseReq.vendors = refs.vendors;
-          this.purchaseReq.otherCharges = refs.otherCharges;
-          this.purchaseReq.departments = refs.departments;
-          this.purchaseReq.payTerms = refs.payTerms;
-          this.purchaseReq.shippings = refs.shippings;
-          this.purchaseReq.sites = refs.sites;
-          this.isLoading = false;
+    if (!this.prService.isDuplicate)
+      this.prService.purchaseReq = new PurchaseReq();
 
-          //set the classificationId to raw materials by default.
-          const rawMaterial = refs.classifications?.find(c =>
-            c.classificationName?.includes('Raw Materials'))?.classificationId;
-
-          if (rawMaterial !== undefined) {
-            this.purchaseReq.classificationId = rawMaterial;
-            this.purchaseReq.rawMaterial = rawMaterial;
-          }
-        },
-        error: _ => {
-          this.isLoading = false;
-        }
-      });
+    this.prService.isDuplicate = false;
   }
 
-  onSubmitted(formModel: IFormModel<PurchaseReq>) {
+  onSubmitted() {
     this.isLoading = true;
-    this.purchaseReqsService.create(formModel.model)
+
+    this.prService.create()
       .subscribe({
         next: _ => {
           this.router?.navigate(['/purchase-requisitions'], {

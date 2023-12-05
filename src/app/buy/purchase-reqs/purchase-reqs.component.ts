@@ -9,7 +9,6 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {ModalService} from "../../shared/modal/modal.service";
 import {Operations} from "../../shared/operations";
 import {BodyDeleteFailedComponent} from "../../shared/body-delete-failed/body-delete-failed.component";
-import {ToPatch} from "../../models/to-patch";
 import {BodyNotesComponent} from "../../shared/body-notes/body-notes.component";
 import {AuthPolicy} from "../../auth/auth-policy";
 
@@ -39,7 +38,7 @@ export class PurchaseReqsComponent implements AfterViewInit {
 
   constructor(private purchaseReqsService: PurchaseReqsService,
               private router: Router,
-              private route: ActivatedRoute,
+              protected route: ActivatedRoute,
               private modalService: ModalService) {
     if (this.route.snapshot.url[0].path === 'done') {
       this.jsonData.value = 'Done';
@@ -128,10 +127,7 @@ export class PurchaseReqsComponent implements AfterViewInit {
         successCallback: (form) => {
           this.dataSource.isLoading.next(true);
 
-          this.purchaseReqsService.submitPr(row.prNumber,
-            new Array<ToPatch>(
-              new ToPatch('replace', 'isSubmitted', (!row.isSubmitted).toString()),
-              new ToPatch('replace', 'insideNotes', form.value.notes)))
+          this.purchaseReqsService.submitPr(row.prNumber, form.value.notes)
             .subscribe({
               next: _ => {
                 row.isSubmitted = !row.isSubmitted;

@@ -1,15 +1,16 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MatlClassification} from "../../models/matl-classification";
 import {SourceType} from "../../shared/source-type";
 import {Router} from "@angular/router";
-import {ReceivingService} from "../../services/receiving.service";
 import {Source} from "../../models/source";
 import {ItemType} from "../../shared/item-type";
 import {AddSponsorReceivingService} from "../../services/add-sponsor-receiving.service";
-import {Sponsor} from "../../models/sponsor";
-import {NgForm} from "@angular/forms";
 import {SitesService} from "../../services/sites.service";
 import {Utils} from "../../shared/utils";
+import {MatlClassificationsService} from "../../services/matl-classifications.service";
+import {Vendor} from "../../models/vendor";
+import {zip} from "rxjs";
+import {VendorsService} from "../../services/vendors.service";
 
 @Component({
   selector: 'app-add-sponsor-receiving',
@@ -21,13 +22,13 @@ export class AddSponsorReceivingComponent implements  OnInit {
   isLoading = true;
   sourcesType: { name: any; id: number }[];
   classifications: Array<MatlClassification>;
-  sponsors: Array<Sponsor>;
-  @ViewChild('f') form: NgForm;
+  sponsors: Array<Vendor>;
 
   constructor(public router: Router,
-              private receivingService: ReceivingService,
               public asrService: AddSponsorReceivingService,
-              private siteService: SitesService) {
+              private siteService: SitesService,
+              private clasService: MatlClassificationsService,
+              private vendorService: VendorsService) {
     this.asrService.receiving.siteId = this.siteService.localSite;
     this.asrService.receiving.deliveryDate = new Date();
     this.asrService.receiving.createDate = new Date();
@@ -37,22 +38,17 @@ export class AddSponsorReceivingComponent implements  OnInit {
   }
 
   ngOnInit(): void {
-    this.receivingService.getRefsList()
-      .subscribe({
-        next: refs => {
-          this.classifications = refs.classifications;
-          this.sponsors = refs.sponsors;
+    zip(this.clasService.getAll(),
+      this.vendorService.getAll())
+      .subscribe(refs => {
+        this.classifications = refs[0];
+        this.sponsors = refs[1];
 
-          this.asrService.receiving.classificationId = this.classifications?.find(c =>
-            c.classificationName?.
-            includes('Raw Materials'))
-            ?.classificationId as number;
+        this.asrService.receiving.classificationId = this.classifications
+          ?.find(c => c.classificationName.toLowerCase() === 'raw materials')
+          ?.classificationId as number;
 
-          this.isLoading = false;
-        },
-        error: _ => {
-          this.isLoading = false;
-        }
+        this.isLoading = false;
       });
 
     this.setItemsType();
@@ -66,7 +62,8 @@ export class AddSponsorReceivingComponent implements  OnInit {
 
   onSubmit() {
     this.isLoading = true;
-    this.receivingService.create(this.asrService.receiving)
+
+    this.asrService.create()
       .subscribe({
         next: _ => {
           this.router?.navigate(['/receiving'], {
@@ -80,15 +77,29 @@ export class AddSponsorReceivingComponent implements  OnInit {
       });
   }
 
-  isClassifiedAs(classificationId: number, classifiedAs: ItemType): boolean {
-    return !!this.classifications
-      ?.find(c =>
-        c.classificationId === classificationId &&
-        c.classifiedAs === classifiedAs);
+  isClassifiedAs(classificationId: number,
+                 vendorId: number | null,
+                 classifiedAs: ItemType): boolean {
+    return !!this.classifications.find(c =>
+            c.classificationId === classificationId
+            && c.classifiedAs === classifiedAs)
+        && !!vendorId;
   }
 
   onClassificationChange() {
     this.asrService.receiving.receivingItems = [];
     this.asrService.itemsChange.next();
+  }
+
+  onSponsorChange() {
+    this.onClassificationChange();
+  }
+
+  onCreateDateChange(event: any) {
+    this.asrService.receiving.createDate = event.target.value;
+  }
+
+  onDeliveryDateChange(event: any) {
+    this.asrService.receiving.deliveryDate = event.target.value;
   }
 }

@@ -7,14 +7,13 @@ import {DatatableResponse} from "../models/datatable-response";
 import {IService} from "../shared/interface/IService";
 import {PurchaseReq} from "../models/purchase-req";
 import {TaxRate} from "../models/tax-rate";
-import {ToPatch} from "../models/to-patch";
-import {RefsList} from "../models/refs-list";
 
 @Injectable({providedIn: 'root'})
 export class PurchaseReqsService implements IService<PurchaseReq> {
   purchaseReq: PurchaseReq;
   taxRates: TaxRate[];
   changeItems = new Subject<void>();
+  isDuplicate = false;
 
   constructor(private httpClient: HttpClient) {}
 
@@ -29,23 +28,23 @@ export class PurchaseReqsService implements IService<PurchaseReq> {
     return this.httpClient.get<PurchaseReq[]>(AuthConstant.apiRoot + `/PurchaseReqs`);
   }
 
-  getRefsList(): Observable<RefsList> {
+  /*getRefsList(): Observable<RefsList> {
     return this.httpClient.get<RefsList>(AuthConstant.apiRoot + `/PurchaseReqs/GetPurchaseReqsRefsList`);
-  }
+  }*/
 
   get(prNumber: string): Observable<PurchaseReq> {
     return this.httpClient.get<PurchaseReq>(AuthConstant.apiRoot + `/PurchaseReqs/${prNumber}`);
   }
 
-  create(model: PurchaseReq): Observable<any> {
+  create(): Observable<any> {
     return this.httpClient.post<PurchaseReq>(AuthConstant.apiRoot + '/PurchaseReqs',
-      model,
+      this.purchaseReq,
       { headers: new HttpHeaders().set('Content-Type', 'application/json') });
   }
 
-  edit(model: PurchaseReq): Observable<any> {
+  edit(): Observable<any> {
     return this.httpClient.put<PurchaseReq>(AuthConstant.apiRoot + '/PurchaseReqs',
-      model,
+      this.purchaseReq,
       { headers: new HttpHeaders().set('Content-Type', 'application/json') });
   }
 
@@ -53,9 +52,9 @@ export class PurchaseReqsService implements IService<PurchaseReq> {
     return this.httpClient.delete(AuthConstant.apiRoot + `/PurchaseReqs/${prNumber}`);
   }
 
-  submitPr(prNumber: string, model: Array<ToPatch>): Observable<any> {
-    return this.httpClient.patch(AuthConstant.apiRoot + `/PurchaseReqs/submitPr/${prNumber}`,
-      model,
+  submitPr(prNumber: string, notes: string): Observable<any> {
+    return this.httpClient.put(AuthConstant.apiRoot + `/PurchaseReqs/submitPr/${prNumber}`,
+      { notes: notes },
       { headers: new HttpHeaders().set('Content-Type', 'application/json') });
   }
 

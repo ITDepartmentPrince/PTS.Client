@@ -140,6 +140,16 @@ import {PayTermsViewComponent} from "./manage-vendors/pay-terms/view/pay-terms-v
 import {PayTermsCreateComponent} from "./manage-vendors/pay-terms/create/pay-terms-create.component";
 import {ManageVendorsComponent} from "./manage-vendors/manage-vendors.component";
 import {PurchaseReqsFormComponent} from "./buy/purchase-reqs/form/purchase-reqs-form.component";
+import {StockTransferNavComponent} from "./stock-transfer/stock-transfer-nav.component";
+import {StockTransferComponent} from "./stock-transfer/stock-transfer.component";
+import {StockTransferFormComponent} from "./stock-transfer/form/stock-transfer-form.component";
+import {StockTransferCreateComponent} from "./stock-transfer/create/stock-transfer-create.component";
+import {StockTransferItemsComponent} from "./stock-transfer/stock-transfer-items/stock-transfer-items.component";
+import { AddStockTransferQtyComponent } from './stock-transfer/stock-transfer-items/add-stock-transfer-qty/add-stock-transfer-qty.component';
+import {StockTransferViewComponent} from "./stock-transfer/view/stock-transfer-view.component";
+import {StockTransferEditComponent} from "./stock-transfer/edit/stock-transfer-edit.component";
+import { BellNotificationComponent } from './header/bell-notification/bell-notification.component';
+import {UserNotesComponent} from "./header/bell-notification/user-notes/user-notes.component";
 
 @NgModule({
   declarations: [
@@ -260,6 +270,17 @@ import {PurchaseReqsFormComponent} from "./buy/purchase-reqs/form/purchase-reqs-
     PayTermsEditComponent,
     PayTermsViewComponent,
     PayTermsCreateComponent,
+    StockTransferNavComponent,
+    StockTransferComponent,
+    StockTransferFormComponent,
+    StockTransferCreateComponent,
+    StockTransferItemsComponent,
+    AddStockTransferQtyComponent,
+    StockTransferViewComponent,
+    StockTransferEditComponent,
+    BellNotificationComponent,
+    UserNotesComponent,
+
 
   ],
     imports: [

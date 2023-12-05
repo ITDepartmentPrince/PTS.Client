@@ -8,7 +8,7 @@ import {ControlContainer, NgForm} from "@angular/forms";
 import {Operations} from "../../../shared/operations";
 import {TaxRateService} from "../../../services/tax-rates.service";
 import {PurchaseReqsService} from "../../../services/purchase-reqs.service";
-import {Subscription} from "rxjs";
+import {Subscription, zip} from "rxjs";
 
 @Component({
   selector: 'app-items-materials',
@@ -18,42 +18,45 @@ import {Subscription} from "rxjs";
 export class ItemsMaterialsComponent implements OnInit, OnDestroy {
   @Input() controlState: boolean;
   @Input() action: Operations;
+  isLoading = true;
   sub: Subscription;
-  items: PurchaseReqItem[];
   operations = Operations;
   materials: Material[];
   measurementUnits: MeasurementUnit[];
 
   constructor(public prService: PurchaseReqsService,
-              private materialsService: MaterialsService,
-              private measurementUnitsService: MeasurementUnitsService,
-              private taxRateService: TaxRateService) {
-    this.items = this.prService.purchaseReq.purchaseReqItems;
+              private matService: MaterialsService,
+              private muService: MeasurementUnitsService,
+              private trService: TaxRateService) {
   }
 
   ngOnInit(): void {
-    this.materialsService
-      .getAllByClassificationIdAndVendorId(this.prService.purchaseReq.classificationId,
-        this.prService.purchaseReq.vendorId)
-      .subscribe(materials => this.materials = materials);
+    zip(this.matService.getAllByClassificationIdAndVendorId(
+        this.prService.purchaseReq.classificationId,
+        this.prService.purchaseReq.vendorId),
+      this.muService.getAll(),
+      this.trService.getAll())
+      .subscribe(res => {
+        this.materials = res[0];
+        this.measurementUnits = res[1];
+        this.prService.taxRates = res[2];
 
-    this.measurementUnitsService.getAll()
-      .subscribe(measurementUnits => this.measurementUnits = measurementUnits);
-
-    this.taxRateService.getAll()
-      .subscribe(taxRates => {
-        this.prService.taxRates = taxRates;
+        this.isLoading = false;
       });
 
     this.sub = this.prService.changeItems
       .subscribe(_ => {
-        this.items = [];
-        this.items = this.prService.purchaseReq.purchaseReqItems;
+        this.isLoading = true;
+        this.prService.purchaseReq.purchaseReqItems = [];
 
-        this.materialsService
+        this.matService
           .getAllByClassificationIdAndVendorId(this.prService.purchaseReq.classificationId,
             this.prService.purchaseReq.vendorId)
-          .subscribe(materials => this.materials = materials);
+          .subscribe(res => {
+            this.materials = res
+
+            this.isLoading = false;
+          });
       });
   }
 
@@ -62,16 +65,16 @@ export class ItemsMaterialsComponent implements OnInit, OnDestroy {
   }
 
   onAddItem() {
-    this.items.push(new PurchaseReqItem());
+    this.prService.purchaseReq.purchaseReqItems.push(new PurchaseReqItem());
   }
 
-  onRemoveItem(item: PurchaseReqItem) {
-    this.items.splice(this.items.indexOf(item), 1);
+  onRemoveItem(index: number) {
+    this.prService.purchaseReq.purchaseReqItems.splice(index, 1);
   }
 
   onMaterialChange(item: PurchaseReqItem) {
     const material = this.getMaterial(item.materialId as number);
-    item.purchaseUomId = material?.defaultUomUnitId as number;
+    item.purchaseUomId = material?.convertToUomId as number;
     item.conversionRate = material?.conversionRate as number;
   }
 
@@ -86,7 +89,7 @@ export class ItemsMaterialsComponent implements OnInit, OnDestroy {
   }
 
   private getMaterial(materialId: number) {
-    return this.materials?.find(m => m.materialId === materialId);
+    return this.materials?.find(m => m.id === materialId);
   }
 
   private getMeasurementUnit(unitId: number) {

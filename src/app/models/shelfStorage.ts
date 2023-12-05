@@ -20,5 +20,5 @@ export class ShelfStorage {
   materialId: number;
   unitId: number;
   expireDate: Date;
-  blQty: number;
+  blQty = 0;
 }

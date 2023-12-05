@@ -15,7 +15,7 @@
     <div class="col-md-4" *ngIf="!isLoading">
       <div class="row justify-content-between align-items-center">
         <div class="col-auto" *ngIf="action === operations.View">
-          <div *ngIf="!model?.isSubmitted" class="dropdown">
+          <div *ngIf="!prService.purchaseReq?.isSubmitted" class="dropdown">
             <button class="btn btn-danger dropdown-toggle w-100 btn-status"
                     type="button" data-bs-toggle="dropdown" aria-expanded="false"
                     style="width: 12rem !important;">
@@ -28,16 +28,18 @@
             </ul>
           </div>
 
-          <div *ngIf="model?.isSubmitted" class="dropdown">
+          <div *ngIf="prService.purchaseReq?.isSubmitted" class="dropdown">
             <div *appAuth="AuthPolicy.canUserApprovePr()">
-              <div *ngIf="!model.purchaseOrder">
-                <button class="btn {{model && model.approveUserId ? 'btn-success' : 'btn-secondary'}} dropdown-toggle btn-status"
+              <div *ngIf="!prService.purchaseReq.purchaseOrder">
+                <button class="btn {{prService.purchaseReq && prService.purchaseReq.approveUserId
+                          ? 'btn-success'
+                          : 'btn-secondary'}} dropdown-toggle btn-status"
                         type="button" data-bs-toggle="dropdown" aria-expanded="false"
                         style="width: 12rem !important;">
-                  {{model && model.approveUserId ? 'Approved' : 'Pending'}}
+                  {{prService.purchaseReq && prService.purchaseReq.approveUserId ? 'Approved' : 'Pending'}}
                 </button>
                 <ul class="dropdown-menu shadow w-100">
-                  <li *ngIf="!model?.approveUserId" (click)="onPrStatusChange(prStatus.Approved)">
+                  <li *ngIf="!prService.purchaseReq?.approveUserId" (click)="onPrStatusChange(prStatus.Approved)">
                     <div class="dropdown-item p-3" style="cursor: pointer;">Approved</div>
                   </li>
                   <li (click)="onPrStatusChange(prStatus.Disapproved)">
@@ -45,21 +47,21 @@
                   </li>
                 </ul>
               </div>
-              <div *ngIf="model.purchaseOrder">
-                <button class="btn {{model && model.approveUserId ? 'btn-success' : 'btn-secondary'}}"
+              <div *ngIf="prService.purchaseReq.purchaseOrder">
+                <button class="btn {{prService.purchaseReq && prService.purchaseReq.approveUserId ? 'btn-success' : 'btn-secondary'}}"
                         style="padding: 0.6rem 1.2rem;"
                         type="button">
-                  {{model && model.approveUserId ? 'Approved' : 'Pending'}}
+                  {{prService.purchaseReq && prService.purchaseReq.approveUserId ? 'Approved' : 'Pending'}}
                 </button>
               </div>
             </div>
 
             <!--users without 'PO Approve' ability.-->
             <div *appAuthReverse="AuthPolicy.canUserApprovePr()">
-              <button class="btn {{model && model.approveUserId ? 'btn-success' : 'btn-secondary'}}"
+              <button class="btn {{prService.purchaseReq && prService.purchaseReq.approveUserId ? 'btn-success' : 'btn-secondary'}}"
                       style="padding: 0.6rem 1.2rem;"
                       type="button">
-                {{model && model.approveUserId ? 'Approved' : 'Pending'}}
+                {{prService.purchaseReq && prService.purchaseReq.approveUserId ? 'Approved' : 'Pending'}}
               </button>
             </div>
           </div>
@@ -111,10 +113,10 @@
                      class="form-check-input"
                      id="inActive"
                      name="inActive"
-                     [(ngModel)]="model.inActive"
+                     [(ngModel)]="prService.purchaseReq.inActive"
                      [disabled]="controlState">
               <label for="inActive"
-                     class="fw-bold {{model.inActive ? 'text-danger' : ''}}">
+                     class="fw-bold {{prService.purchaseReq.inActive ? 'text-danger' : ''}}">
                 cancelled
               </label>
             </span>
@@ -127,7 +129,7 @@
                    id="prNumber"
                    name="prNumber"
                    [placeholder]="action === operations.Create ? '-- new --' : ''"
-                   [ngModel]="model.prNumber"
+                   [ngModel]="prService.purchaseReq.prNumber"
                    [readOnly]=true>
           </div>
         </div>
@@ -137,7 +139,8 @@
                  class="form-control"
                  id="createDate"
                  name="createDate"
-                 [ngModel]="model.createDate | date: 'yyyy-MM-dd'"
+                 [ngModel]="prService.purchaseReq.createDate | date: 'yyyy-MM-dd'"
+                 (change)="onCreateDateChange($event)"
                  required
                  #createDate="ngModel"
                  [ngClass]="{input_danger: !createDate.valid && createDate.touched}"
@@ -148,12 +151,12 @@
       <div class="col-md-3">
         <div class="t-mb">
           <label class="form-label">Purchase items</label>
-          <ng-select [items]="model.classifications"
+          <ng-select [items]="classifications"
                      bindLabel="classificationName"
                      bindValue="classificationId"
                      id="classificationId"
                      name="classificationId"
-                     [(ngModel)]="model.classificationId"
+                     [(ngModel)]="prService.purchaseReq.classificationId"
                      (change)="onClassificationChange()"
                      required
                      #classificationId="ngModel"
@@ -163,13 +166,13 @@
         </div>
         <div class="t-mb">
           <label for="departmentId" class="form-label">Department</label>
-          <ng-select [items]="model.departments"
+          <ng-select [items]="departments"
                      bindLabel="name"
                      bindValue="id"
                      id="departmentId"
                      name="departmentId"
                      placeholder="-- select --"
-                     [(ngModel)]="model.departmentId"
+                     [(ngModel)]="prService.purchaseReq.departmentId"
                      required
                      #departmentId="ngModel"
                      [ngClass]="{input_danger: !departmentId.valid && departmentId.touched}"
@@ -184,28 +187,27 @@
           <input type="text"
                  class="form-control"
                  [readonly]=true
-                 [value]="model.approveUser?.name ?? 'pending'">
+                 [value]="prService.purchaseReq.approveUser?.name ?? 'pending'">
         </div>
       </div>
     </div>
 
     <div class="position-relative">
       <hr class="mt-5 mb-5">
-      <div style="font-weight: bold; position: absolute;
-      top: -11px; left: 25px; background-color: #fff; padding: 0 1rem;">Vendor's block</div>
+      <div class="text-bg-secondary line-separate">Vendor's block</div>
     </div>
 
     <div class="row justify-content-between" style="width: 80%;">
       <div class="col-md-3">
         <div class="t-mb">
           <label class="form-label">Vendor</label>
-          <ng-select [items]="model.vendors"
+          <ng-select [items]="vendors"
                      bindLabel="companyName"
                      bindValue="vendorId"
                      id="vendorId"
                      name="vendorId"
                      placeholder="-- select --"
-                     [(ngModel)]="model.vendorId"
+                     [(ngModel)]="prService.purchaseReq.vendorId"
                      (change)="onVendorChange()"
                      required
                      #vendorId="ngModel"
@@ -215,13 +217,13 @@
         </div>
         <div class="t-mb">
           <label class="form-label">Vendor contact</label>
-          <ng-select [items]="model.vendorContacts"
+          <ng-select [items]="vendorContacts"
                      bindLabel="name"
                      bindValue="contactId"
                      id="contactId"
                      name="contactId"
                      placeholder="-- select --"
-                     [(ngModel)]="model.contactId"
+                     [(ngModel)]="prService.purchaseReq.contactId"
                      required
                      #contactId="ngModel"
                      [ngClass]="{input_danger: !contactId.valid && contactId.touched}"
@@ -233,13 +235,13 @@
       <div class="col-md-3">
         <div class="t-mb">
           <label for="payTermId" class="form-label">Payment term</label>
-          <ng-select [items]="model.payTerms"
+          <ng-select [items]="payTerms"
                      bindLabel="name"
                      bindValue="id"
                      id="payTermId"
                      name="payTermId"
                      placeholder="-- select --"
-                     [(ngModel)]="model.payTermId"
+                     [(ngModel)]="prService.purchaseReq.payTermId"
                      required
                      #payTermId="ngModel"
                      [ngClass]="{input_danger: !payTermId.valid && payTermId.touched}"
@@ -248,13 +250,13 @@
         </div>
         <div class="t-mb">
           <label for="shippingId" class="form-label">Shipper account #</label>
-          <ng-select [items]="model.shippings"
+          <ng-select [items]="shippings"
                      bindLabel="nameWithAcc"
                      bindValue="id"
                      id="shippingId"
                      name="shippingId"
                      placeholder="-- select --"
-                     [(ngModel)]="model.shippingId"
+                     [(ngModel)]="prService.purchaseReq.shippingId"
                      required
                      #shippingId="ngModel"
                      [ngClass]="{input_danger: !shippingId.valid && shippingId.touched}"
@@ -270,7 +272,8 @@
                  class="form-control"
                  id="deliveryDate"
                  name="deliveryDate"
-                 [ngModel]="model.deliveryDate | date: 'yyyy-MM-dd'"
+                 [ngModel]="prService.purchaseReq.deliveryDate | date: 'yyyy-MM-dd'"
+                 (change)="onDeliveryDateChange($event)"
                  required
                  #deliveryDate="ngModel"
                  [ngClass]="{input_danger: !deliveryDate.valid && deliveryDate.touched}"
@@ -278,13 +281,13 @@
         </div>
         <div class="t-mb">
           <label for="shipToSiteId" class="form-label">Ship To</label>
-          <ng-select [items]="model.sites"
+          <ng-select [items]="sites"
                      bindLabel="siteName"
                      bindValue="siteId"
                      id="shipToSiteId"
                      name="shipToSiteId"
                      placeholder="-- select --"
-                     [(ngModel)]="model.shipToSiteId"
+                     [(ngModel)]="prService.purchaseReq.shipToSiteId"
                      required
                      #shipToSiteId="ngModel"
                      [ngClass]="{input_danger: !shipToSiteId.valid && shipToSiteId.touched}"
@@ -294,11 +297,12 @@
       </div>
     </div>
 
-    <div *ngIf="isClassifiedAs(model.classificationId, model.vendorId, ItemType.Material)">
+    <div *ngIf="isClassifiedAs(prService.purchaseReq.classificationId,
+      prService.purchaseReq.vendorId,
+      ItemType.Material)">
       <div class="position-relative">
         <hr class="mt-5 mb-5">
-        <div style="font-weight: bold; position: absolute;
-      top: -11px; left: 25px; background-color: #fff; padding: 0 1rem;">Purchase requisition items</div>
+        <div class="text-bg-secondary line-separate">Purchase requisition items</div>
       </div>
       <app-items-materials [controlState]="controlState"
                            [action]="action">
@@ -315,7 +319,7 @@
           <textarea class="form-control text-start"
                     placeholder="-- type comment here --"
                     name="notes"
-                    [(ngModel)]="model.notes"
+                    [(ngModel)]="prService.purchaseReq.notes"
                     style="font-size: 1.4rem; height: 100%;"
                     [readonly]="controlState"></textarea>
         </div>
@@ -345,7 +349,7 @@
                   <div class="uom-body">
                     <div class="mb-4 mt-2">
                       <label class="form-label">Additional charge</label>
-                      <ng-select [items]="model.otherCharges"
+                      <ng-select [items]="otherCharges"
                                  bindLabel="otherChargeName"
                                  bindValue="otherChargeId"
                                  id="otherChargeId"
@@ -379,7 +383,7 @@
           </div>
           <div class="border-bottom border-4"></div>
           <div>
-            <div *ngFor="let charge of model.purchaseReqCharges;">
+            <div *ngFor="let charge of prService.purchaseReq.purchaseReqCharges;">
               <div class="row justify-content-between py-3">
                 <div class="col fw-bold">
                   {{charge.otherCharge.otherChargeName}}
@@ -422,11 +426,11 @@
     </div>
 
     <div class="t-mb">
-      <div class="d-inline-block" *ngIf="!model.isSubmitted">
+      <div class="d-inline-block" *ngIf="!prService.purchaseReq.isSubmitted">
         <button class="btn btn-primary me-2"
                 type="submit"
                 *appAuth="AuthPolicy.canUserEdit()"
-                [disabled]="!f.valid && f.invalid || model.purchaseReqItems.length === 0">
+                [disabled]="!f.valid && f.invalid || prService.purchaseReq.purchaseReqItems.length === 0">
           <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
           <span *ngIf="action === operations.View">Edit</span>
         </button>

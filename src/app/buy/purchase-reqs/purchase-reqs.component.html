@@ -1,6 +1,7 @@
 <app-command-bar export="purchase-reqs"
                  [reports]=true
-                 [edit]="!dataSource.row?.isSubmitted"
+                 [edit]="route.snapshot.url[0].path !== 'done'"
+                 [disEdit]="!!dataSource.row?.isSubmitted"
                  (operations)="onOperate($event)">
   <ul class="dropdown-menu shadow">
     <li class="dropdown-item">Report One</li>

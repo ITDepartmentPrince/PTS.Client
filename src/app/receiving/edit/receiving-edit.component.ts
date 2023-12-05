@@ -15,6 +15,7 @@ export class ReceivingEditComponent implements OnInit, OnDestroy {
   isLoading = true;
   sub: Subscription;
   private _roNumber: string;
+
   constructor(private router: Router,
               private rfsService: ReceivingForSiteService) {
   }
@@ -22,6 +23,7 @@ export class ReceivingEditComponent implements OnInit, OnDestroy {
   @Input()
   set roNumber(roNumber: string) {
     this._roNumber = roNumber;
+
     this.rfsService.get(roNumber)
       .subscribe({
         next: ro => {
@@ -38,11 +40,11 @@ export class ReceivingEditComponent implements OnInit, OnDestroy {
     this.sub = this.rfsService.receiveStatusChanged
       .subscribe(_ => {
         this.isLoading = true;
+
         this.rfsService.get(this._roNumber)
           .subscribe({
             next: ro => {
               this.rfsService.receiving = ro;
-
               this.isLoading = false;
             },
             error: _ => {

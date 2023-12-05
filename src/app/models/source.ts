@@ -1,8 +1,8 @@
 ﻿import {Site} from "./site";
 import {SourceType} from "../shared/source-type";
 import {PurchaseOrder} from "./purchase-order";
-import {Sponsor} from "./sponsor";
 import {Receiving} from "./receiving";
+import {Vendor} from "./vendor";
 
 export class Source {
   srSiteId: number;
@@ -13,7 +13,5 @@ export class Source {
   poNumber: string;
   purchaseOrder: PurchaseOrder;
   sponsorId: number;
-  sponsor: Sponsor;
-  srcSiteId: number;
-  srcSite: Site;
+  sponsor: Vendor;
 }

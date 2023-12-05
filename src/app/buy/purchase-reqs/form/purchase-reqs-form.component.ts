@@ -1,8 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Operations} from "../../../shared/operations";
-import {IFormModel} from "../../../shared/interface/IFormModel";
-import {NgForm} from "@angular/forms";
-import {PurchaseReq} from "../../../models/purchase-req";
 import {AuthPolicy} from "../../../auth/auth-policy";
 import {Router} from "@angular/router";
 import {VendorContactsService} from "../../../services/vendor-contacts.service";
@@ -12,9 +9,23 @@ import {PurchaseReqsService} from "../../../services/purchase-reqs.service";
 import {ModalService} from "../../../shared/modal/modal.service";
 import {ModalDirective} from "../../../shared/modal/modal.directive";
 import {BodyNotesComponent} from "../../../shared/body-notes/body-notes.component";
-import {ToPatch} from "../../../models/to-patch";
 import {PrStatus} from "../purchase-reqs.component";
 import {ItemType} from "../../../shared/item-type";
+import {zip} from "rxjs";
+import {MatlClassificationsService} from "../../../services/matl-classifications.service";
+import {VendorsService} from "../../../services/vendors.service";
+import {OtherChargesService} from "../../../services/other-charges.service";
+import {DepartmentsService} from "../../../services/departments.service";
+import {PayTermsService} from "../../../services/pay-terms.service";
+import {ShippingsService} from "../../../services/shippings.service";
+import {SitesService} from "../../../services/sites.service";
+import {MatlClassification} from "../../../models/matl-classification";
+import {Vendor} from "../../../models/vendor";
+import {Department} from "../../../models/department";
+import {PayTerm} from "../../../models/pay-term";
+import {Shipping} from "../../../models/shipping";
+import {Site} from "../../../models/site";
+import {VendorContact} from "../../../models/vendor-contact";
 
 @Component({
   selector: 'app-purchase-reqs-form',
@@ -23,35 +34,68 @@ import {ItemType} from "../../../shared/item-type";
 export class PurchaseReqsFormComponent implements OnInit {
   operations = Operations;
   controlState: boolean;
-  @Input() isLoading = false;
+  @Input() isLoading = true;
   @Input() action: Operations;
-  @Input() model: PurchaseReq;
-  @Output() submitted = new EventEmitter<IFormModel<PurchaseReq>>();
-  @ViewChild('f') form: NgForm;
+  @Output() submitted = new EventEmitter<void>();
   @ViewChild(ModalDirective) modal: ModalDirective;
   prStatus = PrStatus;
   protected readonly AuthPolicy = AuthPolicy;
   protected readonly ItemType = ItemType;
+  classifications: Array<MatlClassification>;
+  vendors: Array<Vendor>;
+  otherCharges: Array<OtherCharge>;
+  departments: Array<Department>;
+  payTerms: Array<PayTerm>;
+  shippings: Array<Shipping>;
+  sites: Array<Site>;
+  vendorContacts: Array<VendorContact>;
 
   constructor(public prService: PurchaseReqsService,
               public router: Router,
               private modalService: ModalService,
-              private contactsService: VendorContactsService) {
+              private contactsService: VendorContactsService,
+              private mcService: MatlClassificationsService,
+              private vendorService: VendorsService,
+              private ocService: OtherChargesService,
+              private depService: DepartmentsService,
+              private ptService: PayTermsService,
+              private shipService: ShippingsService,
+              private siteService: SitesService) {
   }
 
   ngOnInit(): void {
     this.controlState = this.action === this.operations.View ||
       this.action === this.operations.Delete;
+
+    zip(this.mcService.getAll(),
+      this.vendorService.getAll(),
+      this.ocService.getAll(),
+      this.depService.getAll(),
+      this.ptService.getAll(),
+      this.shipService.getAll(),
+      this.siteService.getAll(),
+      this.contactsService.getAll())
+      .subscribe(res => {
+        this.classifications = res[0];
+        this.vendors = res[1];
+        this.otherCharges = res[2];
+        this.departments = res[3];
+        this.payTerms = res[4];
+        this.shippings = res[5];
+        this.sites = res[6];
+        this.vendorContacts = res[7];
+
+        if (this.action === Operations.Create && !this.prService.isDuplicate)
+          this.prService.purchaseReq.classificationId = this.classifications
+            ?.find(c => c.classificationName.toLowerCase() === 'raw materials')
+            ?.classificationId as number;
+
+        this.isLoading = false;
+      });
   }
 
   onSubmit() {
-    this.model.deliveryDate = this.form.value.deliveryDate;
-    this.model.createDate = this.form.value.createDate;
-
-    this.submitted.emit({
-      action: this.action,
-      model: this.model
-    });
+    this.submitted.emit();
   }
 
   onClassificationChange() {
@@ -60,13 +104,12 @@ export class PurchaseReqsFormComponent implements OnInit {
   }
 
   onVendorChange() {
-    this.model.contactId = null;
+    this.prService.purchaseReq.contactId = null;
     this.contactsService
-      .getContactsByVendorId(this.model.vendorId)
-      .subscribe(contacts => this.model.vendorContacts = contacts);
+      .getContactsByVendorId(this.prService.purchaseReq.vendorId)
+      .subscribe(contacts => this.vendorContacts = contacts);
 
-    this.prService.purchaseReq.purchaseReqItems = [];
-    this.prService.changeItems.next();
+    this.onClassificationChange();
   }
 
   onAddCharge(chargeId: any, amount: any, ocDd: any) {
@@ -75,16 +118,16 @@ export class PurchaseReqsFormComponent implements OnInit {
 
     const charge = new PurchaseReqCharges();
     charge.otherChargeId = chargeId as number;
-    charge.otherCharge = this.model.otherCharges.find(oc =>
+    charge.otherCharge = this.otherCharges.find(oc =>
       oc.otherChargeId === charge.otherChargeId) as OtherCharge;
     charge.amount = amount as number;
-    this.model.purchaseReqCharges.push(charge);
+    this.prService.purchaseReq.purchaseReqCharges.push(charge);
     ocDd.classList.remove('show');
   }
 
   onRemoveCharge(charge: PurchaseReqCharges) {
-    this.model.purchaseReqCharges
-      .splice(this.model.purchaseReqCharges.indexOf(charge), 1);
+    this.prService.purchaseReq.purchaseReqCharges
+      .splice(this.prService.purchaseReq.purchaseReqCharges.indexOf(charge), 1);
   }
 
   onPrStatusChange(status: PrStatus) {
@@ -94,10 +137,7 @@ export class PurchaseReqsFormComponent implements OnInit {
         successCallback: (form) => {
           this.isLoading = true;
 
-          this.prService.submitPr(this.model.prNumber,
-            new Array<ToPatch>(
-              new ToPatch('replace', 'isSubmitted', (!this.model.isSubmitted).toString()),
-              new ToPatch('replace', 'insideNotes', form.value.notes)))
+          this.prService.submitPr(this.prService.purchaseReq.prNumber, form.value.notes)
             .subscribe({
               next: _ => {this.router?.navigate(['/purchase-requisitions']);},
               error: _ => {this.isLoading = false;},
@@ -107,13 +147,13 @@ export class PurchaseReqsFormComponent implements OnInit {
     }
 
     if (status === PrStatus.Approved) {
-      if (!this.model.approveUserId) {
+      if (!this.prService.purchaseReq.approveUserId) {
         this.modalService.show(this.modal.viewContainerRef, {
           btnSuccess: true,
           successCallback: (form) => {
             this.isLoading = true;
 
-            this.prService.approvePr(this.model.prNumber, form.value.notes)
+            this.prService.approvePr(this.prService.purchaseReq.prNumber, form.value.notes)
               .subscribe({
                 next: _ => {this.router?.navigate(['/purchase-requisitions']);},
                 error: _ => {this.isLoading = false;},
@@ -129,7 +169,7 @@ export class PurchaseReqsFormComponent implements OnInit {
         successCallback: (form) => {
           this.isLoading = true;
 
-          this.prService.disApprovePr(this.model.prNumber, form.value.notes)
+          this.prService.disApprovePr(this.prService.purchaseReq.prNumber, form.value.notes)
             .subscribe({
               next: _ => {this.router?.navigate(['/purchase-requisitions']);},
               error: _ => {this.isLoading = false;},
@@ -142,14 +182,14 @@ export class PurchaseReqsFormComponent implements OnInit {
   isClassifiedAs(classificationId: number,
                  vendorId: number | null,
                  classifiedAs: ItemType): boolean {
-    return !!this.model.classifications.find(c =>
+    return !!this.classifications.find(c =>
       c.classificationId === classificationId
       && c.classifiedAs === classifiedAs)
       && !!vendorId;
   }
 
   onDuplicate() {
-    this.prService.purchaseReq = this.model;
+    this.prService.isDuplicate = true;
     this.prService.purchaseReq.prNumber = '';
     this.prService.purchaseReq.purchaseOrder = null;
     this.prService.purchaseReq.totalPurchaseValue = 0;
@@ -165,6 +205,14 @@ export class PurchaseReqsFormComponent implements OnInit {
     for (const item of this.prService.purchaseReq.purchaseReqCharges)
       item.prNumber = '';
 
-    this.router?.navigate(['/purchase-requisitions/create'], {state: {duplicate: true}});
+    this.router?.navigate(['/purchase-requisitions/create']);
+  }
+
+  onCreateDateChange(event: any) {
+    this.prService.purchaseReq.createDate = event.target.value;
+  }
+
+  onDeliveryDateChange(event: any) {
+    this.prService.purchaseReq.deliveryDate = event.target.value;
   }
 }

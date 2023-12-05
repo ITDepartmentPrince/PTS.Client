@@ -1,0 +1,7 @@
+<app-stock-transfer-form [action]="operations.Edit"
+                         (submitted)="onSubmitted()"
+                         [isLoading]="isLoading">
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    {{errorMessage}}
+  </div>
+</app-stock-transfer-form>

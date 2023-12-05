@@ -98,7 +98,7 @@ export class DataTable<T> implements DataSource<T> {
   }
 
   connect(): Observable<T[]> {
-    return this.data.asObservable();
+    return this.data;
   }
 
   disconnect(): void {

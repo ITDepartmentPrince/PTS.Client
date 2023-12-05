@@ -12,6 +12,7 @@ import {Receiving, ReceivingStatus} from "../models/receiving";
 import {ReceivingForSiteService} from "../services/receiving-for-site.service";
 import {SourceType} from "../shared/source-type";
 import {Subscription} from "rxjs";
+import {SitesService} from "../services/sites.service";
 
 @Component({
   selector: 'app-receiving',
@@ -21,7 +22,8 @@ export class ReceivingComponent implements OnInit, AfterViewInit, OnDestroy {
   protected readonly SourceType = SourceType;
   protected readonly AuthPolicy = AuthPolicy;
   protected readonly ReceivingStatus = ReceivingStatus;
-  displayedColumns = ['CreateDate', 'RoNumber', 'CompanyName', 'ClassificationName', 'SourceType', 'Status'];
+  displayedColumns = ['CreateDate', 'RoNumber', 'CompanyName', 'ClassificationName',
+    'SourceType', 'SourceReference', 'Status'];
   dataSource: DataTable<Receiving>;
   sub: Subscription;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -35,16 +37,17 @@ export class ReceivingComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(public rfsService: ReceivingForSiteService,
               public router: Router,
               private route: ActivatedRoute,
-              private modalService: ModalService) {
+              private modalService: ModalService,
+              private sitesService: SitesService) {
     if (this.route.snapshot.url[0].path === 'done') {
       this.jsonData.value = 'Done';
     }
     else {
       this.jsonData.value = 'Open';
-      this.displayedColumns.splice(5, 0, 'DeliveryDate');
+      this.displayedColumns.splice(6, 0, 'DeliveryDate');
     }
 
-    this.jsonData.siteId = 1; // get siteId from cookie;
+    this.jsonData.siteId = this.sitesService.localSite;
 
     this.dataSource =
       new DataTable<Receiving>(this.displayedColumns,
@@ -66,7 +69,11 @@ export class ReceivingComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnInit(): void {
     this.sub = this.rfsService.receiveStatusChanged
-      .subscribe(_ => this.dataSource.loadData());
+      .subscribe(_ => {
+        this.dataSource.isLoading.next(true);
+        this.dataSource.loadData();
+        this.dataSource.row = null;
+      });
   }
 
   ngAfterViewInit(): void {

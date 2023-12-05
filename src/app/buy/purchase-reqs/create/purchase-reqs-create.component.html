@@ -1,6 +1,5 @@
 <app-purchase-reqs-form [action]="operations.Create"
-                        [model]="purchaseReq"
-                        (submitted)="onSubmitted($event)"
+                        (submitted)="onSubmitted()"
                         [isLoading]="isLoading">
   <div *ngIf="error" class="alert alert-danger" role="alert">
     {{errorMessage}}

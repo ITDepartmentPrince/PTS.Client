@@ -55,6 +55,10 @@ form .mb-4 {
   font-size: 1.3rem;
 }
 
+.form-control {
+  font-size: 1.4rem;
+}
+
 .form-control:not(.nav-input),
 .ng-select-searchable .ng-select-container {
   padding: 0.475rem 0.85rem;
@@ -67,6 +71,43 @@ form .mb-4 {
 
 .vertical-top {
   vertical-align: top;
+}
+
+.merge-border-input .ng-select .ng-select-container {
+  border: none;
+}
+
+.merge-border-input .ng-select .ng-select-container .ng-arrow-wrapper {
+  padding: 0;
+}
+
+.merge-border-input .ng-select .ng-dropdown-panel{
+  box-shadow: var(--bs-box-shadow);
+}
+
+/*nested-table*/
+.nested-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.nested-table td,
+.nested-table th {
+  border: 1px solid var(--bs-border-color);
+}
+
+.nested-table td table td {
+  border: none;
+  border-bottom: 1px solid var(--bs-border-color);
+  border-right: 1px solid var(--bs-border-color);
+}
+
+.nested-table td table tr:last-child td {
+  border-bottom: 0;
+}
+
+.nested-table td table td:last-child {
+  border-right: 0;
 }
 
 /*Dropdown*/
@@ -144,6 +185,19 @@ form .mb-4 {
 .ng-select .ng-clear-wrapper .ng-clear {
   font-size: 14px !important;
 }
+
+.ng-select-multiple .ng-value-container {
+  padding: 0 !important;
+}
+
+.ng-select-multiple .ng-value {
+  margin-bottom: 0 !important;
+}
+
+.ng-select-multiple .ng-input {
+  padding-bottom: 0 !important;;
+}
+
 
 /*Scrollbar*/
 ::-webkit-scrollbar {
@@ -228,7 +282,8 @@ a {
 
 .trans.trans-receiving .trans-receiving-items .ng-select.ng-select-disabled>.ng-select-container,
 .trans-receiving-items-lb .ng-select.ng-select-disabled>.ng-select-container,
-.trans.trans-ss .ng-select.ng-select-disabled>.ng-select-container {
+.trans.trans-ss .trans-ss-items .ng-select.ng-select-disabled>.ng-select-container,
+.trans.trans-ss .trans-ss-item-qtys .ng-select.ng-select-disabled>.ng-select-container {
   border-color: transparent;
 }
 
@@ -237,7 +292,6 @@ a {
   position: absolute;
   top: -11px;
   left: 25px;
-  width: 17rem;
   text-align: center;
   background-color: #fff;
   padding: 0 2rem;
@@ -418,7 +472,7 @@ a {
 }
 
 .data-table .search-container {
-  margin: 2px 15px 0 0;
+  /*margin: 2px 0 0 0;*/
 }
 
 .data-table .status-col {

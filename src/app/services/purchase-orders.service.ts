@@ -33,14 +33,14 @@ export class PurchaseOrdersService implements IService<PurchaseOrder> {
 
   approvePo(poNumber: string, notes: string): Observable<any> {
     return this.httpClient.post(AuthConstant.apiRoot +
-        `/PurchaseOrders/ApprovePo/${poNumber}/CreateReceivingForSite/${this.sitesService.localSite}`,
+        `/PurchaseOrders/ApprovePo/${poNumber}/CreateReceiving/${this.sitesService.localSite}`,
       {notes: notes},
       {headers: new HttpHeaders().set('Content-Type', 'application/json')});
   }
 
   execApprovePo(poNumber: string, notes: string): Observable<any> {
     return this.httpClient.post(AuthConstant.apiRoot +
-      `/PurchaseOrders/ExecApprovePo/${poNumber}/CreateReceivingForSite/${this.sitesService.localSite}`,
+      `/PurchaseOrders/ExecApprovePo/${poNumber}/CreateReceiving/${this.sitesService.localSite}`,
       {notes: notes},
       {headers: new HttpHeaders().set('Content-Type', 'application/json')});
   }

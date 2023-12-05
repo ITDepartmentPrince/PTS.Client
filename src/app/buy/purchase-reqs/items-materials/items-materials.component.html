@@ -1,4 +1,8 @@
-<div class="trans-items-container">
+<div *ngIf="isLoading" class="text-center">
+  <app-loading-spinner></app-loading-spinner>
+</div>
+
+<div class="trans-items-container" *ngIf="!isLoading">
   <div class="trans-items table-responsive">
     <table class="table table-bordered">
       <thead>
@@ -29,8 +33,8 @@
       </tr>
       </thead>
       <tbody>
-      <tr *ngIf="items.length > 0" class="fw-bold" style="line-height: 2;">
-        <td colspan="2" style="padding: 0 3.5rem;">Total:</td>
+      <tr *ngIf="prService.purchaseReq.purchaseReqItems.length > 0" class="fw-bold" style="line-height: 2;">
+        <td colspan="2" style="text-align: right; padding-right: 0.8rem;">Total</td>
         <td colspan="6" class="text-end" style="padding: 0 0.8rem;">{{prService.getTotalQty()}}</td>
         <td colspan="2" class="text-end" style="padding: 0 0.8rem;">{{prService.getTotalPricePerQty().toFixed(2)}}</td>
         <td class="text-end" style="padding: 0 0.8rem;">{{prService.getTotal().toFixed(2)}}</td>
@@ -38,12 +42,12 @@
         <td></td>
       </tr>
 
-      <tr *ngFor="let item of items; let i = index;">
+      <tr *ngFor="let item of prService.purchaseReq.purchaseReqItems; let i = index;">
         <td style="padding: 0 0.8rem;">{{i+1}}</td>
         <td class="text-start">
           <ng-select [items]="materials"
                      bindLabel="catalogDescription"
-                     bindValue="materialId"
+                     bindValue="id"
                      name="materialId{{i+1}}"
                      placeholder="-- select --"
                      [(ngModel)]="item.materialId"
@@ -207,7 +211,7 @@
           </ng-select>
         </td>
         <td class="text-center" *ngIf="action !== operations.View">
-          <span class="btn-del" (click)="onRemoveItem(item)">
+          <span class="btn-del" (click)="onRemoveItem(i)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
               <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
             </svg>
@@ -215,7 +219,7 @@
         </td>
       </tr>
 
-      <tr *ngIf="items.length === 0" style="line-height: 2.5;">
+      <tr *ngIf="prService.purchaseReq.purchaseReqItems.length === 0" style="line-height: 2.5;">
         <td class="text-center"
             [colSpan]="13">
           No data available in table

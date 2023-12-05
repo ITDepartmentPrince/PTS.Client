@@ -3,12 +3,12 @@ import {AddSponsorReceivingService} from "../../../services/add-sponsor-receivin
 import {Material} from "../../../models/material";
 import {MeasurementUnit} from "../../../models/measurement-unit";
 import {ReceivingItem} from "../../../models/receivingItem";
-import {ReceivingService} from "../../../services/receiving.service";
 import {MaterialsService} from "../../../services/materials.service";
 import {FixNgSelectPlacement} from "../../../shared/fix-ng-select-placement";
 import {ControlContainer, NgForm} from "@angular/forms";
 import {SitesService} from "../../../services/sites.service";
-import {Subscription} from "rxjs";
+import {Subscription, zip} from "rxjs";
+import {MeasurementUnitsService} from "../../../services/measurement-units.service";
 
 @Component({
   selector: 'add-sponsor-receiving-items-materials',
@@ -23,9 +23,9 @@ export class AddSponsorReceivingItemsMaterialsComponent implements OnDestroy {
   sub: Subscription;
 
   constructor(public asrService: AddSponsorReceivingService,
-              private receivingService: ReceivingService,
               private materialsService: MaterialsService,
-              private siteService: SitesService) {
+              private siteService: SitesService,
+              private muService: MeasurementUnitsService) {
   }
 
   ngOnDestroy(): void {
@@ -33,31 +33,22 @@ export class AddSponsorReceivingItemsMaterialsComponent implements OnDestroy {
   }
 
   ngOnInit(): void {
-    //automapper issue cause materials to call separate.
-    this.materialsService.getAllByClassificationId(
-        this.asrService.receiving.classificationId)
-      .subscribe({
-        next: res => {
-          this.materials = res;
-
-          this.receivingService.getRefsList()
-            .subscribe({
-              next: refs => {
-                this.measurementUnits = refs.measurementUnits;
-                this.isLoading = false;
-              }
-            });
-        },
-        error: _ => {
-          this.isLoading = false;
-        }
+    zip(this.materialsService.getSponMatsByClas_Ven(
+      this.asrService.receiving.classificationId,
+      this.asrService.receiving.source.sponsorId),
+      this.muService.getAll())
+      .subscribe(res => {
+        this.materials = res[0];
+        this.measurementUnits = res[1];
+        this.isLoading = false;
       });
 
     this.sub = this.asrService.itemsChange.subscribe(_ => {
-      this.materialsService.getAllByClassificationId(
-          this.asrService.receiving.classificationId)
-        .subscribe(materials => {
-          this.materials = materials;
+      this.materialsService.getSponMatsByClas_Ven(
+        this.asrService.receiving.classificationId,
+        this.asrService.receiving.source.sponsorId)
+        .subscribe(res => {
+          this.materials = res;
           this.isLoading = false;
         });
     });
@@ -69,18 +60,17 @@ export class AddSponsorReceivingItemsMaterialsComponent implements OnDestroy {
     this.asrService.receiving.receivingItems.push(recItem);
   }
 
-  onRemoveItem(item: ReceivingItem) {
-    this.asrService.receiving.receivingItems
-      .splice(this.asrService.receiving.receivingItems.indexOf(item), 1);
+  onRemoveItem(index: number) {
+    this.asrService.receiving.receivingItems.splice(index, 1);
   }
 
   onMaterialChange(item: ReceivingItem) {
-    const material = this.getMaterial(item.materialId as number);
-    item.orderedUomId = material?.defaultUomUnitId as number;
-    item.orderedConversionRate = material?.conversionRate as number;
+    const material = this.getMaterial(item.materialId);
+    item.orderedUomId = material?.convertToUomId;
+    item.orderedConversionRate = material?.conversionRate;
   }
 
   private getMaterial(materialId: number) {
-    return this.materials?.find(m => m.materialId === materialId);
+    return this.materials?.find(m => m.id === materialId);
   }
 }

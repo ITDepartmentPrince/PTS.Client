@@ -1,4 +1,4 @@
-﻿import {Inject, Injectable, InjectionToken} from "@angular/core";
+﻿import {Injectable} from "@angular/core";
 import {IService} from "../shared/interface/IService";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {QueryParams} from "../models/query-params";
@@ -17,11 +17,7 @@ import {ModalDirective} from "../shared/modal/modal.directive";
 import {RecvdItemsLotsBatchesService} from "./recvd-items-lots-batches.service";
 import {TaxRate} from "../models/tax-rate";
 import {BatchesLotsService} from "./batches-lots.service";
-
-export const site = new InjectionToken<number>('Site', {
-  providedIn: 'root',
-  factory: () => 1
-});
+import {SitesService} from "./sites.service";
 
 @Injectable({providedIn: 'root'})
 export class ReceivingForSiteService implements IService<Receiving> {
@@ -35,8 +31,8 @@ export class ReceivingForSiteService implements IService<Receiving> {
               private modalService: ModalService,
               private recvdItemsLb: RecvdItemsLotsBatchesService,
               private batchesLotsService: BatchesLotsService,
-              @Inject(site) public siteId: number) {
-    if (this.siteId === 0)
+              private sitesService: SitesService) {
+    if (this.sitesService.localSite === 0)
       throw new Error('Location not set.');
   }
 
@@ -54,7 +50,7 @@ export class ReceivingForSiteService implements IService<Receiving> {
   getRequired(queryParams: QueryParams): Observable<DatatableResponse<Receiving>> {
     return this.httpClient
       .post<DatatableResponse<Receiving>>(
-        AuthConstant.apiRoot + `/Sites/${this.siteId}/Receiving/GetRequired`,
+        AuthConstant.apiRoot + `/Sites/${this.sitesService.localSite}/Receiving/GetRequired`,
         queryParams,
         { headers: new HttpHeaders().set('Content-Type', 'application/json') });
   }
@@ -65,11 +61,12 @@ export class ReceivingForSiteService implements IService<Receiving> {
 
   get(roNumber: string): Observable<Receiving> {
     return this.httpClient.get<Receiving>(AuthConstant.apiRoot +
-      `/Sites/${this.siteId}/Receiving/${roNumber}`);
+      `/Sites/${this.sitesService.localSite}/Receiving/${roNumber}`);
   }
 
   delete(roNumber: string | undefined): Observable<any> {
-    return this.httpClient.delete(AuthConstant.apiRoot + `/Sites/${this.siteId}/Receiving/${roNumber}`);
+    return this.httpClient.delete(AuthConstant.apiRoot +
+        `/Sites/${this.sitesService.localSite}/Receiving/${roNumber}`);
   }
 
   isNotReceived(receiving?: Receiving): boolean {
@@ -150,6 +147,7 @@ export class ReceivingForSiteService implements IService<Receiving> {
             this.recvdItemsLb
               .create(this.receiving.roNumber,
                 this.receiving.siteId,
+                this.receiving.notes,
                 this.receivingItems
                   .flatMap(ri => ri.recvdItemLotsBatches
                     .filter(rilb => rilb.rlbQty > 0)))
@@ -221,7 +219,7 @@ export class ReceivingForSiteService implements IService<Receiving> {
 
         new Promise(resolve => {
           this.batchesLotsService
-            .getAllByMaterial(item.riSiteId, item.materialId)
+            .GetBatchesLotsByMaterialWithInventory(item.riSiteId, item.materialId)
             .subscribe(res => {
               rilb.batchLots = res;
               item.recvdItemLotsBatches.push(rilb);

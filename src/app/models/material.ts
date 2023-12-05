@@ -1,48 +1,43 @@
-﻿import {CreateUser} from "./create-user";
-import {LastUser} from "./last-user";
-import {Vendor} from "./vendor";
+﻿import {Vendor} from "./vendor";
 import {MatlClassification} from "./matl-classification";
 import {MatlCategory} from "./matl-category";
 import {SizeVariant} from "./size-variant";
 import {MeasurementUnit} from "./measurement-unit";
+import {User} from "./user";
 
 export class Material {
-  materialId: number;
-  materialDescription: string;
+  id: number;
+  description: string;
   catalogNumber: string;
-  name: string;
   classificationId: number
-  matlClassification: MatlClassification;
+  classification: MatlClassification;
   categoryId: number;
-  matlCategory: MatlCategory;
+  category: MatlCategory | null;
   sizeId: number;
-  sizeVariant: SizeVariant;
+  size: SizeVariant | null;
+  refersTo: RefersTo;
   vendorId: number;
   vendor: Vendor;
   uomId: number;
-  measurementUnit: MeasurementUnit;
-  isPurchaseDifferent: boolean;
-  defaultUomUnitId: number | null;
-  defaultUomUnit: MeasurementUnit;
-  conversionRate: number | null;
+  Uom: MeasurementUnit;
+  convertToUomId?: number;
+  convertToUom: MeasurementUnit;
+  conversionRate?: number;
   inActive: boolean;
   createDate: Date;
-  createUser: CreateUser;
+  createUserId: number
+  createUser: User;
   lastUpdate: Date;
-  lastUser: LastUser;
+  lastUserId: number
+  lastUser: User;
+
+  //for client only
+  isUomConverted: boolean;
   catalogDescription: string;
-  classifications: MatlClassification[];
-  measurementUnits: MeasurementUnit[];
-  matlCategories: MatlCategory[];
-  sizeVariants: SizeVariant[];
-  vendors: Vendor[];
-  defaultUomUnits: MeasurementUnit[];
+  disabled = true;
 }
 
-export class MaterialRefsList {
-  classifications: MatlClassification[];
-  measurementUnits: MeasurementUnit[];
-  matlCategories: MatlCategory[];
-  sizeVariants: SizeVariant[];
-  vendors: Vendor[];
+export enum RefersTo {
+  Prince = 1,
+  Sponsor = 2
 }

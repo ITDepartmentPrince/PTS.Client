@@ -81,6 +81,11 @@ import {PayTermsComponent} from "./manage-vendors/pay-terms/pay-terms.component"
 import {PayTermsEditComponent} from "./manage-vendors/pay-terms/edit/pay-terms-edit.component";
 import {PayTermsViewComponent} from "./manage-vendors/pay-terms/view/pay-terms-view.component";
 import {PayTermsCreateComponent} from "./manage-vendors/pay-terms/create/pay-terms-create.component";
+import {StockTransferNavComponent} from "./stock-transfer/stock-transfer-nav.component";
+import {StockTransferComponent} from "./stock-transfer/stock-transfer.component";
+import {StockTransferCreateComponent} from "./stock-transfer/create/stock-transfer-create.component";
+import {StockTransferViewComponent} from "./stock-transfer/view/stock-transfer-view.component";
+import {StockTransferEditComponent} from "./stock-transfer/edit/stock-transfer-edit.component";
 
 const appRoutes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full', canActivate: [AutoLoginPartialRoutesGuard] },
@@ -92,6 +97,7 @@ const appRoutes: Routes = [
     component: MaterialsManagementComponent,
     canActivate: [AutoLoginPartialRoutesGuard],
     children: [
+      { path: '', pathMatch: 'full', redirectTo: 'materials'},
       { path: 'materials', component: MaterialsComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'materials/create', component: MaterialsCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'materials/:materialId', component: MaterialsViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
@@ -219,19 +225,48 @@ const appRoutes: Routes = [
     component: InventoryNavComponent,
     canActivate: [AutoLoginPartialRoutesGuard],
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'material'},
-      { path: 'material',
+      { path: '', pathMatch: 'full', redirectTo: 'prince-materials'},
+      { path: 'prince-materials',
         component: InventoryComponent,
         canActivate: [AutoLoginPartialRoutesGuard],
-        data: { refreshComponent: true, pathEnd: 'material' }
+        data: { pathEnd: 'prince-materials' }
+      },
+      { path: 'sponsor-materials',
+        component: InventoryComponent,
+        canActivate: [AutoLoginPartialRoutesGuard],
+        data: { pathEnd: 'sponsor-materials' }
       },
       { path: 'finish-goods',
         component: InventoryComponent,
         canActivate: [AutoLoginPartialRoutesGuard],
-        data: { refreshComponent: true, pathEnd: 'finish-goods' }
+        data: { pathEnd: 'finish-goods' }
       },
     ]
   },
+
+  {
+    path: 'stock-transfer',
+    component: StockTransferNavComponent,
+    canActivate: [AutoLoginPartialRoutesGuard],
+    children: [
+      { path: '', pathMatch: 'full', redirectTo: 'transfer'},
+      { path: 'transfer',
+        component: StockTransferComponent,
+        canActivate: [AutoLoginPartialRoutesGuard],
+        data: { refreshComponent: true, pathEnd: 'transfer' }
+      },
+      { path: 'request',
+        component: StockTransferComponent,
+        canActivate: [AutoLoginPartialRoutesGuard],
+        data: { refreshComponent: true, pathEnd: 'request' }
+      },
+    ]
+  },
+
+  { path: 'stock-transfer/create', component: StockTransferCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+  { path: 'stock-transfer/:number', component: StockTransferViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+  { path: 'stock-transfer/:number/edit', component: StockTransferEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+
 
   {
     path: 'base-records',

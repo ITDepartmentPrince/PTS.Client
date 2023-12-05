@@ -1,0 +1,159 @@
+<div *ngIf="isLoading" class="text-center">
+  <app-loading-spinner></app-loading-spinner>
+</div>
+
+<div class="trans-ss-item-qtys trans-items-container" *ngIf="!isLoading">
+  <div class="trans-items table-responsive nested-table">
+    <table>
+      <tr>
+        <th>Batch / Lot #</th>
+        <th>Shelf</th>
+        <th style="width: 15rem;">To transfer qty</th>
+        <th style="padding: 0 !important; line-height: 1.2; width: 8rem;"
+            *ngIf="action !== operations.View">
+          <div class="d-flex flex-column align-items-center">
+            <div>Remove</div>
+            <div>shelf</div>
+          </div>
+        </th>
+        <th style="padding: 0 !important; line-height: 1.2; width: 8rem;"
+            *ngIf="action !== operations.View">
+          <div class="d-flex flex-column align-items-center">
+            <div>Remove</div>
+            <div>Batch / Lot</div>
+          </div>
+        </th>
+      </tr>
+      <tr *ngIf="stockTransferItem.stockTransferItemQtys.length > 0">
+        <td [colSpan]=2
+            style="padding: 0.3rem 0.8rem; font-weight: bold; text-align: end;">
+          <div>total:</div>
+        </td>
+        <td style="padding: 0.3rem 0.8rem; font-weight: bold; text-align: end;">
+          <div>{{transferQtyTotal()}}</div>
+        </td>
+        <td [colSpan]=2 *ngIf="action !== operations.View"></td>
+      </tr>
+      <tr *ngFor="let item of stockTransferItem.stockTransferItemQtys; let i = index;">
+        <td style="vertical-align: top;">
+          <div class="{{item.checkShelfStorage.length > 1 ? 'border-bottom' : ''}}">
+            <ng-select [items]="batchesLots"
+                       bindLabel="batchLotNumber"
+                       bindValue="batchLotId"
+                       name="batchLotId{{i+1}}"
+                       placeholder="-- select --"
+                       [(ngModel)]="item.batchLotId"
+                       (change)="onBlChange(item)"
+                       (close)="onBlDdClose()"
+                       #fpBatchLotId
+                       (open)="FixNgSelectPlacement.onOpen(fpBatchLotId)"
+                       appendTo="body"
+                       required
+                       #batchLotId="ngModel"
+                       [ngClass]="{input_danger: !batchLotId.valid && batchLotId.touched}"
+                       [readonly]="controlState">
+              <ng-template ng-label-tmp let-item="item">
+                <div class="d-flex align-items-center">
+                  <div class="me-3">{{item['batchLotNumber']}}</div>
+                  <div class="me-3" style="border-right: 2px solid; height: 23px;"></div>
+                  <div>qty: {{blQtyTotal(item)}}</div>
+                </div>
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item">
+                <div class="d-flex align-items-center">
+                  <div class="me-3">{{item['batchLotNumber']}}</div>
+                  <div class="me-3" style="border-right: 2px solid; height: 23px;"></div>
+                  <div>qty: {{blQtyTotal(item)}}</div>
+                </div>
+              </ng-template>
+            </ng-select>
+          </div>
+        </td>
+        <td colspan="3">
+          <table>
+            <tr *ngFor="let checkSs of item.checkShelfStorage; let j = index;">
+              <td>
+                <ng-select [items]="item.shelfStorages"
+                           bindLabel="shelfCode"
+                           bindValue="id"
+                           name="shelfStorageId{{i}}{{j}}"
+                           [(ngModel)]="checkSs.shelfStorageId"
+                           appendTo="body"
+                           (change)="onShelfChange(checkSs)"
+                           (close)="onShelfDdClose(item)"
+                           #fpShelfStorageId
+                           (open)="FixNgSelectPlacement.onOpen(fpShelfStorageId)"
+                           required
+                           #shelfStorageId="ngModel"
+                           [ngClass]="{input_danger: !shelfStorageId.valid && shelfStorageId.touched}"
+                           [readonly]="controlState">
+                  <ng-template ng-label-tmp let-item="item">
+                    <div class="d-flex align-items-center">
+                      <div class="me-3" style="letter-spacing: 2px;">{{item['shelfCode']}}</div>
+                      <div class="me-3" style="border-right: 2px solid; height: 23px;"></div>
+                      <div>qty: {{item['qty'].toLocaleString()}}</div>
+                    </div>
+                  </ng-template>
+                  <ng-template ng-option-tmp let-item="item">
+                    <div class="d-flex align-items-center">
+                      <div class="me-3" style="letter-spacing: 2px;">{{item['shelfCode']}}</div>
+                      <div class="me-3" style="border-right: 2px solid; height: 23px;"></div>
+                      <div>qty: {{item['qty'].toLocaleString()}}</div>
+                    </div>
+                  </ng-template>
+                </ng-select>
+              </td>
+              <td style="width: 15rem;">
+                <input type="number"
+                       class="form-control text-end"
+                       [min]="1"
+                       [max]="checkSs.shelfQty"
+                       name="qty{{i}}{{j}}"
+                       [(ngModel)]="checkSs.qty"
+                       (click)="$any($event.target).select()"
+                       required
+                       #qty="ngModel"
+                       [ngClass]="{input_danger: !qty.valid && qty.touched}"
+                       [readonly]="controlState">
+              </td>
+              <td style="width: 8rem; text-align: center"
+                  *ngIf="action !== operations.View">
+                <span class="btn-del"
+                      *ngIf="j > 0"
+                      (click)="onRemoveCheckSs(item, j)">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+                  </svg>
+                </span>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td class="text-center"
+            *ngIf="action !== operations.View"
+            style="vertical-align: top;">
+          <div class="{{item.checkShelfStorage.length > 1 ? 'border-bottom' : ''}}">
+            <span class="btn-del form-control" (click)="onRemoveItem(i)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+              </svg>
+            </span>
+          </div>
+        </td>
+      </tr>
+      <tr *ngIf="stockTransferItem.stockTransferItemQtys.length === 0"
+          style="line-height: 2.5;">
+        <td class="text-center"
+            [colSpan]="13">
+          No data available in table
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div *ngIf="action !== operations.View" class="btn-add-item" (click)="onAddItem()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+      <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+    </svg>
+    <span>Add row</span>
+  </div>
+</div>

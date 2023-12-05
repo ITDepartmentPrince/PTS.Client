@@ -4,8 +4,10 @@ import {Material} from "../../models/material";
 import {MeasurementUnit} from "../../models/measurement-unit";
 import {TaxRate} from "../../models/tax-rate";
 import {MaterialsService} from "../../services/materials.service";
-import {ReceivingService} from "../../services/receiving.service";
 import {ReceivingItem} from "../../models/receivingItem";
+import {zip} from "rxjs";
+import {MeasurementUnitsService} from "../../services/measurement-units.service";
+import {TaxRateService} from "../../services/tax-rates.service";
 
 @Component({
   selector: 'app-receiving-items',
@@ -20,27 +22,21 @@ export class ReceivingItemsComponent implements OnInit {
   isLoading = true;
 
   constructor(public rfsService: ReceivingForSiteService,
-              private receivingService: ReceivingService,
-              private materialsService: MaterialsService) {
+              private materialsService: MaterialsService,
+              private muService: MeasurementUnitsService,
+              private trService: TaxRateService) {
   }
 
   ngOnInit(): void {
-    //automapper issue cause materials to call separate.
-    this.materialsService.getAll()
-      .subscribe({
-        next: res => {
-          this.materials = res;
+    zip(this.materialsService.getAll(),
+      this.muService.getAll(),
+      this.trService.getAll())
+      .subscribe(res => {
+        this.materials = res[0];
+        this.measurementUnits = res[1];
+        this.taxRates = res[2];
 
-          this.receivingService.getRefsList()
-            .subscribe({
-              next: refs => {
-                this.measurementUnits = refs.measurementUnits;
-                this.taxRates = refs.taxRates;
-
-                this.isLoading = false;
-              }
-            });
-        }
+        this.isLoading = false;
       });
   }
 }

@@ -7,8 +7,10 @@ import {BatchLot} from "../../models/batchLot";
 import {ReceivingItem} from "../../models/receivingItem";
 import {RecvdItemLotBatch} from "../../models/recvdItemLotBatch";
 import {ControlContainer, NgForm} from "@angular/forms";
-import {ReceivingService} from "../../services/receiving.service";
 import {BatchesLotsService} from "../../services/batches-lots.service";
+import {zip} from "rxjs";
+import {MeasurementUnitsService} from "../../services/measurement-units.service";
+import {SitesService} from "../../services/sites.service";
 
 @Component({
   selector: 'app-receive-items-lots-batches',
@@ -23,28 +25,22 @@ export class ReceiveItemsLotsBatchesComponent implements OnInit {
   measurementUnits: Array<MeasurementUnit>;
 
   constructor(public rfsService: ReceivingForSiteService,
-              private receivingService: ReceivingService,
               private materialsService: MaterialsService,
-              public batchesLotsService: BatchesLotsService) {
+              public batchesLotsService: BatchesLotsService,
+              private muService: MeasurementUnitsService,
+              private sitesService: SitesService) {
     this.recvdDate = new Date();
   }
 
   async ngOnInit() {
-    //automapper issue cause materials to call separate.
-    this.materialsService.getAll()
-      .subscribe({
-        next: res => {
-          this.materials = res;
+    zip(this.materialsService.getAll(),
+        this.muService.getAll())
+        .subscribe(res => {
+          this.materials = res[0];
+          this.measurementUnits = res[1];
 
-          this.receivingService.getRefsList()
-            .subscribe({
-              next: refs => {
-                this.measurementUnits = refs.measurementUnits;
-                this.isLoading = false;
-              }
-            });
-        }
-      });
+          this.isLoading = false;
+        });
   }
 
   onToReceive(event: any, item: ReceivingItem, itemLb: RecvdItemLotBatch, rIlbIndex: number) {
@@ -79,13 +75,13 @@ export class ReceiveItemsLotsBatchesComponent implements OnInit {
   addTag = (rilb: RecvdItemLotBatch, ri: ReceivingItem, value: string) => {
     rilb.isLoading = true;
     const bl = new BatchLot();
-    bl.siteId = ri.riSiteId;
+    bl.siteId = this.sitesService.localSite;
     bl.batchLotNumber = value;
     bl.materialId = ri.materialId;
     bl.blUomId = ri.orderedUomId;
     bl.expireDate = rilb.expireDate;
 
-    this.batchesLotsService.create(bl)
+    this.batchesLotsService.create(bl, this.sitesService.localSite)
       .subscribe(res => {
         for (const item of this.rfsService.receivingItems) {
           if (item.materialId === res.materialId) {
@@ -109,7 +105,7 @@ export class ReceiveItemsLotsBatchesComponent implements OnInit {
       .find(bl => bl.batchLotId === batchLot.batchLotId &&
         bl.siteId === batchLot.siteId)
       ?.inventoryIntels
-      .reduce((acc, curr) => acc + curr.qty, 0) ?? 0;
+      .reduce((acc, curr) => acc + curr.qty, 0).toLocaleString() ?? 0;
   }
 
   onReceiveDateChange(event: any) {
@@ -117,5 +113,12 @@ export class ReceiveItemsLotsBatchesComponent implements OnInit {
       .flatMap(ri => ri.recvdItemLotsBatches)) {
       rilb.recvdBlockDate = event.target.value;
     }
+  }
+
+  getLongUnit(unitId?: number) {
+    return this.measurementUnits
+      .find(mu => mu.unitId === unitId)
+      ?.longUnit
+      ?.toLowerCase();
   }
 }

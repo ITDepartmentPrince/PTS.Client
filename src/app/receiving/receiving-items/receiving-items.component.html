@@ -19,7 +19,7 @@
         </thead>
         <tbody>
         <tr *ngIf="receivingItems.length > 0" class="fw-bold" style="line-height: 2;">
-          <td colspan="2" style="padding: 0 3.5rem;">Total:</td>
+          <td colspan="2" style="text-align: right; padding-right: 0.8rem;">Total</td>
           <td class="text-end" style="padding: 0 0.8rem;">{{rfsService.getTotalQty(receivingItems)}}</td>
           <td colspan="2" class="text-end" style="padding: 0 0.8rem;">
             {{rfsService.getTotalPricePerQty(receivingItems).toFixed(2)}}
@@ -42,7 +42,7 @@
                 <ng-select [items]="materials"
                            [ngClass]="{'border-bottom': ShowBatchesLots}"
                            bindLabel="catalogDescription"
-                           bindValue="materialId"
+                           bindValue="id"
                            name="materialId{{i+1}}"
                            [ngModel]="item.materialId"
                            [readonly]=true>
@@ -81,7 +81,9 @@
                       <td>
                         <input class="form-control"
                                [readonly]=true
-                               [value]="itemLb.expireDate | date: 'MM-dd-yyyy'">
+                               [value]="itemLb.expireDate
+                               ? (itemLb.expireDate  | date: 'MM-dd-yyyy')
+                               : '---'">
                       </td>
                     </tr>
                   </tbody>

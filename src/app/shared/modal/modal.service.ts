@@ -4,7 +4,7 @@ import {BodyDeleteComponent} from "../body-delete/body-delete.component";
 import {NgForm} from "@angular/forms";
 
 interface ISuccessCallback {
-  (form: NgForm): void;
+  (form: NgForm, data?: any): void;
 }
 
 type FunctionOptions = {
@@ -14,44 +14,38 @@ type FunctionOptions = {
   btnSuccess?: boolean,
   btnClose?: boolean,
   modalSize?: string,
+  appendTo?: string,
   successCallback?: ISuccessCallback,
   closeCallback?: any
 }
 
-// const assertion to create readonly values
-const defaultOptions = {
-  title: 'Confirmation',
-  btnCloseLabel: 'Close',
-  btnSuccessLabel: 'Yes',
-  btnSuccess: true,
-  btnClose: false,
-  modalSize: '',
-  successCallback: () => {},
-  closeCallback: () => {}
-} as const;
-
 @Injectable({providedIn: 'root'})
 export class ModalService {
   show(modalContainer: ViewContainerRef,
-       options: FunctionOptions = defaultOptions,
-       bodyComponent: Type<any> = BodyDeleteComponent) {
+       options: FunctionOptions,
+       bodyComponent: Type<any> = BodyDeleteComponent,
+       bodyComponentData: any = null) {
 
     let bodyRef: ComponentRef<any>;
     const modalRef = modalContainer.createComponent(ModalComponent);
 
-    modalRef.instance.title = options?.title;
-    modalRef.instance.btnCloseLabel = options?.btnCloseLabel;
-    modalRef.instance.btnSuccessLabel = options?.btnSuccessLabel;
-    modalRef.instance.btnSuccess = options?.btnSuccess;
-    modalRef.instance.btnClose = options?.btnClose;
+    modalRef.instance.title = options?.title ?? 'Confirmation';
+    modalRef.instance.btnCloseLabel = options?.btnCloseLabel ?? 'Close';
+    modalRef.instance.btnSuccessLabel = options?.btnSuccessLabel ?? 'Yes';
+    modalRef.instance.btnSuccess = options?.btnSuccess ?? true;
+    modalRef.instance.btnClose = options?.btnClose ?? true;
     modalRef.instance.modalSize = options?.modalSize;
+    modalRef.instance.appendTo = options.appendTo;
 
     modalRef.instance.formCreated.subscribe(body => {
       bodyRef = body.viewContainerRef.createComponent(bodyComponent);
+      if (bodyComponentData)
+        bodyRef.instance.bodyData = bodyComponentData;
+
       bodyRef.changeDetectorRef.detectChanges();
 
       modalRef.instance.succeed.subscribe(form => {
-        options.successCallback?.(form);
+        options.successCallback?.(form, bodyComponentData);
 
         bodyRef.destroy();
         modalRef.destroy();

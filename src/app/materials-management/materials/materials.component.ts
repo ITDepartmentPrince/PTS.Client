@@ -6,21 +6,23 @@ import {ModalDirective} from "../../shared/modal/modal.directive";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ModalService} from "../../shared/modal/modal.service";
 import {Operations} from "../../shared/operations";
-import {Material} from "../../models/material";
+import {Material, RefersTo} from "../../models/material";
 import {MaterialsService} from "../../services/materials.service";
 import {BodyDeleteFailedComponent} from "../../shared/body-delete-failed/body-delete-failed.component";
+import {enumToArray} from "../../shared/enumToArray";
 
 @Component({
   selector: 'app-materials',
   templateUrl: './materials.component.html'
 })
 export class MaterialsComponent implements AfterViewInit {
-  displayedColumns = ['MaterialDescription', 'CatalogNumber', 'CategoryName', 'CompanyName', 'CreateDate',
-    'CreatedBy', 'LastUpdate', 'UpdatedBy'];
+  displayedColumns = ['Description', 'CatalogNumber', 'CategoryName', 'CompanyName', 'ConversionRate',
+    'ClassificationName', 'RefersTo'];
   dataSource: DataTable<Material>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(ModalDirective) modal: ModalDirective;
+  refersToName = '';
 
   constructor(private materialsService: MaterialsService,
               private router: Router,
@@ -59,14 +61,14 @@ export class MaterialsComponent implements AfterViewInit {
         break;
       case Operations.View:
         if (this.dataSource.row)
-          this.router?.navigate([this.dataSource.row?.materialId], {
+          this.router?.navigate([this.dataSource.row?.id], {
             relativeTo: this.route,
             queryParamsHandling: 'preserve'
           });
         break;
       case Operations.Edit:
         if (this.dataSource.row)
-          this.router?.navigate([this.dataSource.row?.materialId, 'edit'], {
+          this.router?.navigate([this.dataSource.row?.id, 'edit'], {
             relativeTo: this.route,
             queryParamsHandling: 'preserve'
           });
@@ -74,18 +76,19 @@ export class MaterialsComponent implements AfterViewInit {
       case Operations.Delete:
         if (this.dataSource.row) {
           this.modalService.show(this.modal.viewContainerRef, {
-            successCallback: () => {
+            successCallback: _ => {
               this.dataSource.isLoading.next(true);
 
-              this.materialsService.delete(this.dataSource.row?.materialId)
+              this.materialsService.delete(this.dataSource.row?.id)
                 .subscribe({
                   next: _ => {
                     this.dataSource.loadData();
                     this.dataSource.row = null;
                   },
                   error: _ => {
-                    this.modalService.show(this.modal.viewContainerRef,
-                      {btnSuccess: true},
+                    this.modalService.show(this.modal.viewContainerRef, {
+                        btnSuccess: false
+                      },
                       BodyDeleteFailedComponent);
 
                     this.dataSource.isLoading.next(false);
@@ -96,5 +99,11 @@ export class MaterialsComponent implements AfterViewInit {
         }
         break;
     }
+  }
+
+  getRefersTo(refersTo: number) {
+    return enumToArray(RefersTo)
+      ?.find(r => r.id === refersTo)
+      ?.name;
   }
 }

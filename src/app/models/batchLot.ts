@@ -5,6 +5,7 @@ import {CreateUser} from "./create-user";
 import {LastUser} from "./last-user";
 import {InventoryIntel} from "./inventoryIntel";
 import {ShelfStorage} from "./shelfStorage";
+import {CommittedInventory} from "./committedInventory";
 
 export class BatchLot {
   batchLotId: number;
@@ -13,15 +14,17 @@ export class BatchLot {
   batchLotNumber: string;
   materialId: number;
   material: Material;
-  blUomId: number;
+  blUomId?: number;
   blUom: MeasurementUnit;
-  expireDate: Date;
+  expireDate: Date | null;
   inventoryIntels: Array<InventoryIntel>
   shelfStorage: Array<ShelfStorage>
+  committed: Array<CommittedInventory>
   createDate: Date;
   createUserId: number;
   createUser: CreateUser;
   lastUpdate: Date;
   lastUserId: number;
   lastUser: LastUser;
+  pricePerQty: number;
 }

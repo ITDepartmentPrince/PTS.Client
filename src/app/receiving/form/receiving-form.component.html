@@ -96,30 +96,6 @@
 
       <div class="col-md-2">
         <div class="t-mb">
-          <label class="form-label">Vendor</label>
-          <ng-select [items]="vendors"
-                     bindLabel="companyName"
-                     bindValue="vendorId"
-                     name="vendorId"
-                     placeholder="{{rfsService.receiving.vendorId ?? 'N/A'}}"
-                     [ngModel]="rfsService.receiving.vendorId"
-                     [readonly]="true">
-          </ng-select>
-        </div>
-        <div class="t-mb">
-          <label class="form-label">Vendor contact</label>
-          <ng-select [items]="sourcesType"
-                     bindLabel="name"
-                     bindValue="id"
-                     placeholder="{{'N/A'}}"
-                     [readonly]="true"><!--name="sourceType"
-                     [ngModel]="rfsService.receiving.source.sourceType"-->
-          </ng-select>
-        </div>
-      </div>
-
-      <div class="col-md-2">
-        <div class="t-mb">
           <label class="form-label">Source</label>
           <ng-select [items]="sourcesType"
                      bindLabel="name"
@@ -136,7 +112,7 @@
                  [value]="rfsService.receiving.source.sourceType === SourceType['Prince Po']
                  ? 'PO ' + rfsService.receiving.source.poNumber
                  : rfsService.receiving.source.sourceType === SourceType.Sponsor
-                 ? rfsService.receiving.source.sponsor.sponsorName
+                 ? rfsService.receiving.source.sponsor.companyName
                  :null"
                  [readonly]=true>
         </div>
@@ -158,6 +134,19 @@
                  name="createDate"
                  [ngModel]="rfsService.receiving.createDate | date: 'yyyy-MM-dd'"
                  [readonly]=true>
+        </div>
+      </div>
+
+      <div class="col-md-2">
+        <div class="t-mb" *ngIf="rfsService.receiving.source.sourceType !== SourceType.Sponsor">
+          <label class="form-label">Vendor</label>
+          <ng-select [items]="vendors"
+                     bindLabel="companyName"
+                     bindValue="vendorId"
+                     name="vendorId"
+                     [ngModel]="rfsService.receiving.vendorId"
+                     [readonly]="true">
+          </ng-select>
         </div>
       </div>
     </div>
@@ -217,7 +206,21 @@
       </div>
     </div>
 
-    <div class="my-4">
+    <div class="mt-5 pt-3">
+      <div class="d-flex align-items-center"
+           style="padding: 0.7rem 0;">Additional info (optional)</div>
+      <div class="border-bottom border-4"></div>
+      <div class="py-3 d-flex flex-column">
+        <textarea class="form-control text-start"
+                  placeholder="-- comment  --"
+                  name="notes"
+                  [(ngModel)]="rfsService.receiving.notes"
+                  style="font-size: 1.4rem; height: 70px;"
+                  [readonly]=true></textarea>
+      </div>
+    </div>
+
+    <div class="my-3">
       <div *ngIf="action === operations.View" class="d-inline-block">
         <button class="btn btn-primary me-2"
                 type="submit"

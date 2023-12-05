@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {Operations} from "../../../shared/operations";
-import {IFormModel} from "../../../shared/interface/IFormModel";
 import {Router} from "@angular/router";
 import {Utils} from "../../../shared/utils";
 import {Material} from "../../../models/material";
@@ -14,7 +13,6 @@ export class MaterialsCreateComponent implements OnInit {
   operations = Operations;
   error = false;
   errorMessage: string;
-  material = new Material();
   isLoading = false;
 
   constructor(private router: Router,
@@ -22,28 +20,12 @@ export class MaterialsCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isLoading = true;
-
-    this.materialsService.getRefsList()
-      .subscribe({
-        next: refs => {
-          this.material.measurementUnits = refs.measurementUnits;
-          this.material.classifications = refs.classifications;
-          this.material.matlCategories = refs.matlCategories;
-          this.material.sizeVariants = refs.sizeVariants;
-          this.material.vendors = refs.vendors;
-          this.material.defaultUomUnits = refs.measurementUnits;
-          this.isLoading = false;
-        },
-        error: error => {
-          this._error(error);
-        }
-      });
+    this.materialsService.material = new Material();
   }
 
-  onSubmitted(formModel: IFormModel<Material>) {
+  onSubmitted() {
     this.isLoading = true;
-    this.materialsService.create(formModel.model)
+    this.materialsService.create()
       .subscribe({
         next: _ => {
           this.router?.navigate(['/materials-management/materials'], {
