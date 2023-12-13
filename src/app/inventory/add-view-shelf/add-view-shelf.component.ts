@@ -66,7 +66,7 @@ export class AddViewShelfComponent implements OnInit {
     ss.shelfCode = this.ssService.shelfCode;
     ss.materialId = <number>bl?.materialId;
     ss.unitId = <number>bl?.blUomId;
-    ss.expireDate = <Date>bl?.expireDate;
+    ss.expireDate = bl?.expireDate;
     ss.blQty = this.getIiQty(bl?.inventoryIntels as Array<InventoryIntel>) -
       this.getSsQty(bl?.shelfStorage as Array<ShelfStorage>);
   }

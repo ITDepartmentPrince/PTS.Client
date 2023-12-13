@@ -4,6 +4,7 @@ import {Receiving} from "./receiving";
 import {CreateUser} from "./create-user";
 import {LastUser} from "./last-user";
 import {BatchLot} from "./batchLot";
+import {ItemLabel} from "./itemLabel";
 
 export class InventoryIntel {
   inventoryIntelId: number
@@ -25,4 +26,6 @@ export class InventoryIntel {
   lastUpdate: Date;
   lastUserId: number;
   lastUser: LastUser;
+  itemLabels: Array<ItemLabel>;
 }
+

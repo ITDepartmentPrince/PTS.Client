@@ -18,6 +18,8 @@ import {RecvdItemsLotsBatchesService} from "./recvd-items-lots-batches.service";
 import {TaxRate} from "../models/tax-rate";
 import {BatchesLotsService} from "./batches-lots.service";
 import {SitesService} from "./sites.service";
+import {ItemLabelComponent} from "../receiving/item-label/item-label.component";
+import {ItemLabelService} from "./item-label.service";
 
 @Injectable({providedIn: 'root'})
 export class ReceivingForSiteService implements IService<Receiving> {
@@ -31,7 +33,8 @@ export class ReceivingForSiteService implements IService<Receiving> {
               private modalService: ModalService,
               private recvdItemsLb: RecvdItemsLotsBatchesService,
               private batchesLotsService: BatchesLotsService,
-              private sitesService: SitesService) {
+              private sitesService: SitesService,
+              private itemLabelService: ItemLabelService) {
     if (this.sitesService.localSite === 0)
       throw new Error('Location not set.');
   }
@@ -132,26 +135,44 @@ export class ReceivingForSiteService implements IService<Receiving> {
         title += `PO ${this.receiving.source.poNumber}`;
         break;
       case SourceType.Sponsor:
-        title += `sponsor ${this.receiving.source.sponsorId}`;
+        title += `sponsor ${this.receiving.source.sponsor.companyName}`;
     }
 
     switch (roStatus) {
       case ReceivingStatus.ReceivedAll:
         this.modalService.show(modal.viewContainerRef, {
           modalSize: 'modal-xl',
-          btnSuccess: true,
           btnSuccessLabel: 'Receive',
           btnCloseLabel: 'Cancel',
           title: title,
           successCallback: _ => {
             this.recvdItemsLb
-              .create(this.receiving.roNumber,
-                this.receiving.siteId,
-                this.receiving.notes,
+              .create(this.receiving.roNumber, this.receiving.siteId, this.receiving.notes,
                 this.receivingItems
                   .flatMap(ri => ri.recvdItemLotsBatches
                     .filter(rilb => rilb.rlbQty > 0)))
-              .subscribe(_ => this.receiveStatusChanged.next());
+              .subscribe(res => {
+                console.log(res);
+                this.itemLabelService.recvdItemLotsBatches = res;
+
+                this.modalService.show(modal.viewContainerRef, {
+                  modalSize: 'modal-xl',
+                  btnSuccessLabel: 'Print',
+                  title: `Create labels for received items RO ${this.receiving.roNumber}`,
+                  successCallback: _ => {
+                    this.itemLabelService.create()
+                      .subscribe(_ => {
+                        this.receiveStatusChanged.next();
+
+                        //print labels
+
+                      });
+                  },
+                  closeCallback: () => {
+                    this.receiveStatusChanged.next();
+                  }
+                }, ItemLabelComponent);
+              });
           }
         }, ReceiveItemsLotsBatchesComponent);
         break;
@@ -190,10 +211,10 @@ export class ReceivingForSiteService implements IService<Receiving> {
     }, 0);
   }
 
-  private groupBy(xs: Array<any>, key: string) {
-    return xs.reduce((rv, x) => {
-      (rv[x[key]] = rv[x[key]] || []).push(x);
-      return rv;
+  private groupBy(arr: Array<any>, key: string) {
+    return arr.reduce((acc, cur) => {
+      (acc[cur[key]] = acc[cur[key]] || []).push(cur);
+      return acc;
     }, {});
   }
 

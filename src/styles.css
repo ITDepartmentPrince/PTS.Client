@@ -328,8 +328,14 @@ a {
 }
 
 .trans .btn-del svg,
-.trans-receiving-items-lb .btn-del svg {
+.trans-receiving-items-lb .btn-del svg,
+.btn-del svg {
   fill: var(--bs-danger);
+  cursor: pointer;
+}
+
+.btn-add svg {
+  fill: var(--color-primary);
   cursor: pointer;
 }
 

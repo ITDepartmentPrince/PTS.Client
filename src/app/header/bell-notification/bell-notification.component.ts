@@ -53,7 +53,13 @@ export class BellNotificationComponent implements OnInit {
               this.bnService.notificationRead.next());
         this.router?.navigate(['purchase-requisitions', userNotification.notification.prNumber]);
         break;
-
+      case PushNotificationType.PoCreated:
+        if (!userNotification.isRead)
+          this.bnService.read(userNotification.notificationId)
+            .subscribe(_ =>
+              this.bnService.notificationRead.next());
+        this.router?.navigate(['purchase-orders']);
+        break;
     }
   }
 }

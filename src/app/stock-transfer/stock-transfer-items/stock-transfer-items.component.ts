@@ -107,7 +107,7 @@ export class StockTransferItemsComponent implements OnInit, OnDestroy {
       });
 
     stItem.stockTransferItemQtys = [];
-    stItem.destQty = '0';
+    stItem.destQty = '---';
   }
 
   getMaterialBaseLU(materialId: number) {

@@ -22,7 +22,6 @@ export class MaterialsComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(ModalDirective) modal: ModalDirective;
-  refersToName = '';
 
   constructor(private materialsService: MaterialsService,
               private router: Router,

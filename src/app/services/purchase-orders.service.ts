@@ -6,11 +6,10 @@ import {Observable} from "rxjs";
 import {DatatableResponse} from "../models/datatable-response";
 import {AuthConstant} from "../auth/auth.constant";
 import {PurchaseOrder} from "../models/purchase-order";
-import {SitesService} from "./sites.service";
 
 @Injectable({providedIn: 'root'})
 export class PurchaseOrdersService implements IService<PurchaseOrder> {
-  constructor(private httpClient: HttpClient, private sitesService: SitesService) {}
+  constructor(private httpClient: HttpClient) {}
 
   getRequired(queryParams: QueryParams): Observable<DatatableResponse<PurchaseOrder>> {
     return this.httpClient
@@ -31,22 +30,22 @@ export class PurchaseOrdersService implements IService<PurchaseOrder> {
     return this.httpClient.delete(AuthConstant.apiRoot + `/PurchaseOrders/${poNumber}`);
   }
 
-  approvePo(poNumber: string, notes: string): Observable<any> {
+  approvePo(po: PurchaseOrder, notes: string): Observable<any> {
     return this.httpClient.post(AuthConstant.apiRoot +
-        `/PurchaseOrders/ApprovePo/${poNumber}/CreateReceiving/${this.sitesService.localSite}`,
+        `/PurchaseOrders/ApprovePo/${po.poNumber}/CreateReceiving/${po.purchaseReq.shipToSiteId}`,
       {notes: notes},
       {headers: new HttpHeaders().set('Content-Type', 'application/json')});
   }
 
-  execApprovePo(poNumber: string, notes: string): Observable<any> {
+  execApprovePo(po: PurchaseOrder, notes: string): Observable<any> {
     return this.httpClient.post(AuthConstant.apiRoot +
-      `/PurchaseOrders/ExecApprovePo/${poNumber}/CreateReceiving/${this.sitesService.localSite}`,
+      `/PurchaseOrders/ExecApprovePo/${po.poNumber}/CreateReceiving/${po.purchaseReq.shipToSiteId}`,
       {notes: notes},
       {headers: new HttpHeaders().set('Content-Type', 'application/json')});
   }
 
-  disApprovePo(poNumber: string, notes: string): Observable<any> {
-    return this.httpClient.post(AuthConstant.apiRoot + `/PurchaseOrders/DisApprovePo/${poNumber}`,
+  disApprovePo(po: PurchaseOrder, notes: string): Observable<any> {
+    return this.httpClient.post(AuthConstant.apiRoot + `/PurchaseOrders/DisApprovePo/${po.poNumber}`,
       {notes: notes},
       {headers: new HttpHeaders().set('Content-Type', 'application/json')});
   }

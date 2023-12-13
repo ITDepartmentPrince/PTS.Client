@@ -107,7 +107,7 @@
         </span>
         </th>
         <td mat-cell *matCellDef="let row">
-          <span>{{row['material']['category'] ? row['material']['category']['categoryName'] : 'N/A'}}</span>
+          <span>{{row['material']['category'] ? row['material']['category']['categoryName'] : '---'}}</span>
         </td>
       </ng-container>
       <ng-container matColumnDef="CompanyName">

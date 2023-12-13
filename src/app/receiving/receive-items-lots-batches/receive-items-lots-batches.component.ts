@@ -15,7 +15,6 @@ import {SitesService} from "../../services/sites.service";
 @Component({
   selector: 'app-receive-items-lots-batches',
   templateUrl: './receive-items-lots-batches.component.html',
-  styleUrls: ['./receive-items-lots-batches.component.css'],
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
 export class ReceiveItemsLotsBatchesComponent implements OnInit {

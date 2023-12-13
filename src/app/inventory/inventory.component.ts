@@ -165,10 +165,20 @@ export class InventoryComponent implements OnInit, AfterViewInit {
         btnCloseLabel: 'Cancel',
         title: `shelf number ${input.value}, <<< SPONSOR MATERIALS >>>`,
         successCallback: _ => {
+          this.dataSource.isLoading.next(true);
+
+          this.ssService.create()
+            ?.subscribe(_ => {
+              this.dataSource.loadData();
+            });
 
           input.value = '';
+          this.ssService.toAddShelfStorage = [];
         },
-        closeCallback: () => { input.value = ''; }
+        closeCallback: () => {
+          input.value = '';
+          this.ssService.toAddShelfStorage = [];
+        }
       }, AddViewShelfComponent);
     }
     else if (this.route.snapshot.data['pathEnd'] === 'finish-goods') {

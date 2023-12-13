@@ -14,6 +14,6 @@ export class StockTransferItem {
   stockTransferItemQtys = new Array<StockTransferItemQty>();
 
   //to display
-  totalOriginQty = '0';
-  destQty = '0';
+  totalOriginQty = '---';
+  destQty = '---';
 }

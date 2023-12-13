@@ -117,7 +117,7 @@ export class PurchaseOrdersComponent implements AfterViewInit {
 
         switch (poStatus) {
           case PoStatus.Approved:
-            this.poService.approvePo(po.poNumber, form.value.notes)
+            this.poService.approvePo(po, form.value.notes)
               .subscribe({
                 next: _ => {
                   this.dataSource.loadData();
@@ -127,7 +127,7 @@ export class PurchaseOrdersComponent implements AfterViewInit {
               });
             break;
           case PoStatus.Disapproved:
-            this.poService.disApprovePo(po.poNumber, form.value.notes)
+            this.poService.disApprovePo(po, form.value.notes)
               .subscribe({
                 next: _ => {
                   this.dataSource.loadData();
@@ -137,7 +137,7 @@ export class PurchaseOrdersComponent implements AfterViewInit {
               });
             break;
           case PoStatus.ExecApproved:
-            this.poService.execApprovePo(po.poNumber, form.value.notes)
+            this.poService.execApprovePo(po, form.value.notes)
               .subscribe({
                 next: _ => {
                   this.dataSource.loadData();

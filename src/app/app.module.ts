@@ -150,6 +150,8 @@ import {StockTransferViewComponent} from "./stock-transfer/view/stock-transfer-v
 import {StockTransferEditComponent} from "./stock-transfer/edit/stock-transfer-edit.component";
 import { BellNotificationComponent } from './header/bell-notification/bell-notification.component';
 import {UserNotesComponent} from "./header/bell-notification/user-notes/user-notes.component";
+import { ItemLabelComponent } from './receiving/item-label/item-label.component';
+import { PrintLabelsComponent } from './print-labels/print-labels.component';
 
 @NgModule({
   declarations: [
@@ -280,6 +282,8 @@ import {UserNotesComponent} from "./header/bell-notification/user-notes/user-not
     StockTransferEditComponent,
     BellNotificationComponent,
     UserNotesComponent,
+    ItemLabelComponent,
+    PrintLabelsComponent,
 
 
   ],
