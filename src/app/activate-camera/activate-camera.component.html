@@ -1,0 +1,16 @@
+<div *ngIf="!camNotFound"
+     class="position-relative">
+  <div style="position: absolute; right: 45%; bottom: 36%;">
+    <div *ngIf="isLoading" class="text-center">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+  </div>
+  <div>
+    <zxing-scanner [formats]=allowedFormats
+                   (camerasNotFound)="onCamNotFound()"
+                   (scanSuccess)="onCodeRead($event)"
+                   #scanner>
+    </zxing-scanner>
+  </div>
+</div>
+<div *ngIf="camNotFound">Scanning / media device not found!</div>

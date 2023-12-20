@@ -1,15 +1,14 @@
-﻿import {ShelfStorage} from "./shelfStorage";
-
-import {StockTransferItemQty} from "./stock-transfer-item-qty";
+﻿import {StockTransferItemQty} from "./stock-transfer-item-qty";
+import {ItemLabel} from "./itemLabel";
 
 export class CheckShelfStorage {
   id: number;
   qty = 0;
   stockTransferItemQtyId: number;
   stockTransferItemQty: StockTransferItemQty;
-  shelfStorageId: number;
-  shelfStorage: ShelfStorage | null;
+  itemLabelId: number;
+  itemLabel: ItemLabel | null;
 
   // to display
-  shelfQty: number;
+  labelQty: number;
 }

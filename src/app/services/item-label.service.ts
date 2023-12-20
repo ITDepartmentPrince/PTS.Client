@@ -1,15 +1,20 @@
 ﻿import {Injectable} from "@angular/core";
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {RecvdItemLotBatch} from "../models/recvdItemLotBatch";
 import {ItemLabel} from "../models/itemLabel";
-import {Observable} from "rxjs";
+import {Observable, Subject} from "rxjs";
 import {AuthConstant} from "../auth/auth.constant";
+import {SitesService} from "./sites.service";
 
 @Injectable({providedIn: 'root'})
 export class ItemLabelService {
   _recvdItemLotsBatches: Array<RecvdItemLotBatch>;
+  shelfCode: string;
+  shelfCodeAdded = new Subject<void>();
+  itemLabels = new Array<ItemLabel>();
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient,
+              private siteService: SitesService) {
   }
 
   set recvdItemLotsBatches(value: Array<RecvdItemLotBatch>) {
@@ -30,10 +35,33 @@ export class ItemLabelService {
     return this._recvdItemLotsBatches;
   }
 
-  create(): Observable<any> {
-    return this.httpClient.post<ItemLabel>(AuthConstant.apiRoot + '/ItemsLabel',
+  create(): Observable<Array<number>> {
+    return this.httpClient.post<Array<number>>(AuthConstant.apiRoot + '/ItemsLabel',
       this._recvdItemLotsBatches.flatMap(r => r.itemsLabels), {
       headers: new HttpHeaders().set('Content-Type', 'application/json')
     });
+  }
+
+  getLabelsByIds(ids: Array<number>) {
+    const params = new HttpParams().set('ids', ids.join(','));
+    return this.httpClient.get<Array<ItemLabel>>(AuthConstant.apiRoot + '/ItemsLabel', { params });
+  }
+
+  /*getMaterialsShelved(): Observable<Array<ItemLabel>> {
+    if (!this.shelfCode)
+      throw new Error('Invalid shelf code');
+
+    return this.httpClient.get<Array<ItemLabel>>(AuthConstant.apiRoot +
+      `/ItemsLabel/GetMaterialsShelved/${this.shelfCode}/${this.siteService.localSite}`);
+  }*/
+
+  addShelfCode(id: number, shelfCode: string): Observable<any> {
+    return this.httpClient.put(AuthConstant.apiRoot +
+      `/ItemsLabel/${id}/AddShelfCode/${shelfCode}`, {});
+  }
+
+  getLabelWithBatchLot(id: number): Observable<ItemLabel> {
+    return this.httpClient.get<ItemLabel>(AuthConstant.apiRoot +
+      `/ItemsLabel/GetLabelWithBatchLot/${id}`);
   }
 }

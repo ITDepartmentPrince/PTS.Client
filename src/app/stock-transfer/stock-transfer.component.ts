@@ -16,7 +16,7 @@ import {StockTransferService} from "../services/stock-transfer-service";
   templateUrl: './stock-transfer.component.html'
 })
 export class StockTransferComponent implements OnInit, AfterViewInit, OnDestroy {
-  displayedColumns = ['Number', 'CreateDate', 'ClassificationName', 'OriginSite', 'DestinationSite', 'Status'];
+  displayedColumns = ['Number', 'CreateDate', 'OriginSite', 'DestinationSite', 'Status'];
   dataSource: DataTable<StockTransfer>;
   sub: Subscription;
   @ViewChild(MatPaginator) paginator: MatPaginator;

@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {OidcSecurityService} from "angular-auth-oidc-client";
 import {BellNotificationService} from "../../services/bell-notification.service";
+import {SignalRService} from "../../services/signalR.Service";
 
 @Component({
   selector: 'app-navbar',
@@ -12,7 +13,8 @@ export class NavbarComponent implements OnInit {
   unReadCount = 0;
 
   constructor(private authService: OidcSecurityService,
-              public bnService: BellNotificationService) {}
+              public bnService: BellNotificationService,
+              private signalRService: SignalRService) {}
 
   logout() {
     this.authService
@@ -23,6 +25,18 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {
     this.bnService.getUnReadCount()
       .subscribe(res => this.unReadCount = res);
+
+    this.signalRService.startConnection();
+    this.signalRService.getServerNotification();
+    this.signalRService.onNotified
+      .subscribe(_ => {
+        console.log('called');
+        this.bnService.getUnReadCount()
+          .subscribe(res => {
+            new Audio('/assets/sound/notification.mp3').play().then();
+            this.unReadCount = res;
+          });
+      });
 
     this.bnService.notificationRead
       .subscribe(_ =>

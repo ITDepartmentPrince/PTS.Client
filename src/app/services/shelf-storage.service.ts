@@ -15,14 +15,6 @@ export class ShelfStorageService {
               private siteService: SitesService) {
   }
 
-  getMaterialsShelved(): Observable<Array<ShelfStorage>> {
-    if (!this.shelfCode)
-      throw new Error('Shelf number doesn\'t exist.');
-
-    return this.httpClient.get<Array<ShelfStorage>>(AuthConstant.apiRoot +
-      `/ShelfStorage/GetMaterialsShelved/${this.shelfCode}/${this.siteService.localSite}`);
-  }
-
   create(): Observable<any> | null {
     if (this.toAddShelfStorage.length === 0)
       return null;

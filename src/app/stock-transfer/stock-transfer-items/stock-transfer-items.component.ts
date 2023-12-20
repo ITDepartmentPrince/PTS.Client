@@ -1,7 +1,7 @@
-import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {ControlContainer, NgForm} from "@angular/forms";
 import {Operations} from "../../shared/operations";
-import {Subscription} from "rxjs";
+import {zip} from "rxjs";
 import {MaterialsService} from "../../services/materials.service";
 import {Material} from "../../models/material";
 import {StockTransferItem} from "../../models/stock-transfer-item";
@@ -11,47 +11,50 @@ import {BatchesLotsService} from "../../services/batches-lots.service";
 import {ModalDirective} from "../../shared/modal/modal.directive";
 import {ModalService} from "../../shared/modal/modal.service";
 import {AddStockTransferQtyComponent} from "./add-stock-transfer-qty/add-stock-transfer-qty.component";
+import {AddStQtyScanComponent} from "./add-st-qty-scan/add-st-qty-scan.component";
+import {Vendor} from "../../models/vendor";
+import {VendorsService} from "../../services/vendors.service";
+import {ItemLabelService} from "../../services/item-label.service";
+import {CheckShelfStorage} from "../../models/check-shelf-storage";
+import {StockTransferItemQty} from "../../models/stock-transfer-item-qty";
 
 @Component({
   selector: 'app-stock-transfer-items',
   templateUrl: './stock-transfer-items.component.html',
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
-export class StockTransferItemsComponent implements OnInit, OnDestroy {
+export class StockTransferItemsComponent implements OnInit {
   @Input() controlState: boolean;
   @Input() action: Operations;
   @ViewChild(ModalDirective) modal: ModalDirective;
   operations = Operations;
-  sub: Subscription;
   materials: Array<Material>;
-  isLoading: boolean;
+  // isLoading = true;
+  vendors: Array<Vendor>;
 
   constructor(public stService: StockTransferService,
               private materialsService: MaterialsService,
+              private vendorsService: VendorsService,
               private blService: BatchesLotsService,
               private sitesService: SitesService,
-              private modalService: ModalService) {
+              private modalService: ModalService,
+              private itemLabelService: ItemLabelService) {
   }
 
   ngOnInit(): void {
-    this.sub = this.stService.changeItems
+    zip(this.materialsService.getAll()
+      ,this.vendorsService.getAll())
+      .subscribe(res => {
+        this.materials = res[0];
+        this.vendors = res[1];
+
+        if (this.action !== Operations.Create)
+          for (const stItem of this.stService.stockTransfer.stockTransferItems)
+            this.onVendorChange(stItem);
+      });
+
+    this.stService.changeItems
       .subscribe(_ => {
-        if (!this.stService.stockTransfer.classificationId
-          || !this.stService.stockTransfer.vendorId) {
-          this.materials = [];
-          return;
-        }
-
-        this.isLoading = true;
-        this.materialsService
-          .getAllByClassificationIdAndVendorId(
-            this.stService.stockTransfer.classificationId,
-            this.stService.stockTransfer.vendorId)
-          .subscribe(materials => {
-            this.materials = materials;
-            this.isLoading = false;
-          });
-
         if (this.action !== Operations.Create) {
           for (const stItem of this.stService.stockTransfer.stockTransferItems) {
             this.blService.GetBatchesLotsByMaterialWithInventory_StockTransfer(
@@ -74,10 +77,6 @@ export class StockTransferItemsComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy(): void {
-    this.sub.unsubscribe();
-  }
-
   onAddItem() {
     const stItem = new StockTransferItem();
     stItem.stSiteId = this.sitesService.localSite;
@@ -90,7 +89,7 @@ export class StockTransferItemsComponent implements OnInit, OnDestroy {
     if (this.stService.stockTransfer.stockTransferItems.length === 0)
       this.stService.stockTransfer.itemsValid = false;
 
-    this.onMaterialsDdClose();
+    // this.onMaterialsDdClose();
   }
 
   onMaterialChange(stItem: StockTransferItem) {
@@ -112,12 +111,12 @@ export class StockTransferItemsComponent implements OnInit, OnDestroy {
 
   getMaterialBaseLU(materialId: number) {
     return this.getMaterial(materialId)
-      ?.convertToUom
+      ?.uom
       ?.longUnit
       ?.toLowerCase() ?? '';
   }
 
-  onMaterialsDdClose() {
+  /*onMaterialsDdClose() {
     if (!this.materials)
       return;
 
@@ -128,14 +127,15 @@ export class StockTransferItemsComponent implements OnInit, OnDestroy {
       }
       return {...m, disabled: false};
     });
-  }
+  }*/
 
   private getMaterial(materialId: number) {
     return this.materials?.find(m => m.id === materialId);
   }
 
   OnAddQty(stItem: StockTransferItem) {
-    if (parseInt(stItem.totalOriginQty.split(',').join('')) < 1)
+    if (this.action === Operations.Create &&
+      parseInt(stItem.totalOriginQty.split(',').join('')) < 1)
       return;
 
     this.modalService.show(this.modal.viewContainerRef, {
@@ -159,5 +159,79 @@ export class StockTransferItemsComponent implements OnInit, OnDestroy {
         action: this.action,
         controlState: this.controlState
     });
+  }
+
+  onAddByScan() {
+    this.modalService.show(this.modal.viewContainerRef, {
+      modalSize: 'modal-xl',
+      title: 'Add items to transfer',
+      btnSuccessLabel: 'Add',
+      successCallback: _ => {
+        if (this.itemLabelService.itemLabels.length === 0)
+          return;
+
+        const stItems = new Array<StockTransferItem>();
+        const stItemQtys = new Array<StockTransferItemQty>();
+
+        for (const itemLabel of this.itemLabelService.itemLabels) {
+          let itemQty = stItemQtys.find(e => e.batchLotId === itemLabel.batchLotId &&
+            e.batchLotSiteId === itemLabel.batchLotSiteId);
+          if (!itemQty) {
+            const itemQty = new StockTransferItemQty();
+            itemQty.batchLotId = itemLabel.batchLotId;
+            itemQty.batchLotSiteId = itemLabel.batchLotSiteId;
+            stItemQtys.push(itemQty);
+          }
+
+          let item = stItems.find(e => e.materialId === itemLabel.batchLot.materialId);
+          if (!item) {
+            item = new StockTransferItem();
+            item.stSiteId = itemLabel.batchLotSiteId;
+            item.materialId = itemLabel.batchLot.materialId;
+            item.vendorId = itemLabel.batchLot.material.vendorId;
+            this.onVendorChange(item);
+            this.blService.GetBatchesLotsByMaterialWithInventory_StockTransfer(
+              this.sitesService.localSite,
+              item.materialId)
+              .subscribe(res => {
+                (item as StockTransferItem).totalOriginQty = (res.flatMap(r => r.inventoryIntels)
+                  .reduce((acc, curr) => acc + curr.qty, 0) - res.flatMap(r => r.committed)
+                  .reduce((acc, curr) => acc + curr.qty, 0)).toLocaleString();
+
+                (item as StockTransferItem).destQty = (item as StockTransferItem).stockTransferItemQtys
+                  .reduce((a, c) => a + c.checkShelfStorage.reduce((a, c) => a + c.qty, 0), 0)
+                  .toLocaleString();
+
+                if (parseInt((item as StockTransferItem).destQty.split(',').join('')) > 0)
+                  this.stService.stockTransfer.itemsValid = true;
+              });
+            stItems.push(item);
+          }
+        }
+
+        for (const itemLabel of this.itemLabelService.itemLabels) {
+          const checkShelfStorage = new CheckShelfStorage();
+          checkShelfStorage.qty = itemLabel.toTransferQty;
+          checkShelfStorage.itemLabelId = itemLabel.id;
+
+          const itemQty = stItemQtys.find(e => e.batchLotId === itemLabel.batchLotId &&
+            e.batchLotSiteId === itemLabel.batchLotSiteId);
+          itemQty?.checkShelfStorage.push(checkShelfStorage);
+
+          const item = stItems.find(e => e.materialId === itemLabel.batchLot.materialId);
+          if (!(item?.stockTransferItemQtys
+            .find(e => e.batchLotId === itemQty?.batchLotId &&
+              e.batchLotSiteId === itemQty?.batchLotSiteId)))
+            item?.stockTransferItemQtys.push(itemQty as StockTransferItemQty);
+        }
+
+        this.stService.stockTransfer.stockTransferItems.push(...stItems);
+        this.itemLabelService.itemLabels = [];
+      }
+    }, AddStQtyScanComponent);
+  }
+
+  onVendorChange(item: StockTransferItem) {
+    item.vendorMaterials = this.materials.filter(e => e.vendorId === item.vendorId);
   }
 }

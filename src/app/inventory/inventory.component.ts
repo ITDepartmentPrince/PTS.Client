@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {DataTable} from "../shared/dataTable";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatSort, SortDirection} from "@angular/material/sort";
@@ -7,21 +7,20 @@ import {BatchLot} from "../models/batchLot";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ModalService} from "../shared/modal/modal.service";
 import {BatchesLotsService} from "../services/batches-lots.service";
-import {AddViewShelfComponent} from "./add-view-shelf/add-view-shelf.component";
-import {ShelvesService} from "../services/shelves.service";
-import {ShelfNotAvailableComponent} from "./shelf-not-available/shelf-not-available.component";
 import {ShelfStorageService} from "../services/shelf-storage.service";
 import {Operations} from "../shared/operations";
 import {BodyDeleteFailedComponent} from "../shared/body-delete-failed/body-delete-failed.component";
 import {Site} from "../models/site";
 import {SitesService} from "../services/sites.service";
+import {ItemLabelService} from "../services/item-label.service";
+import {flatMap, map, reduce, Subscription} from "rxjs";
 
 @Component({
   selector: 'app-inventory',
   templateUrl: './inventory.component.html',
   providers: [ShelfStorageService]
 })
-export class InventoryComponent implements OnInit, AfterViewInit {
+export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns = ['Description', 'CatalogNumber', 'CategoryName', 'CompanyName', 'BatchLotNumber', 'Bin', 'AvgCost',
     'ValueInStock', 'InStock', 'Committed' ];
   dataSource: DataTable<BatchLot>;
@@ -32,11 +31,11 @@ export class InventoryComponent implements OnInit, AfterViewInit {
   jsonData = {value: ''};
   sites: Array<Site>;
   venSpon = 'Vendor';
+  sub: Subscription;
 
   constructor(public blService: BatchesLotsService,
               public router: Router,
-              private shelvesService: ShelvesService,
-              private ssService: ShelfStorageService,
+              private itemLabelService: ItemLabelService,
               private route: ActivatedRoute,
               private modalService: ModalService,
               public sitesService: SitesService) {
@@ -58,11 +57,21 @@ export class InventoryComponent implements OnInit, AfterViewInit {
         JSON.stringify(this.jsonData));
   }
 
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+  }
+
   ngOnInit(): void {
     this.sitesService.getAll()
       .subscribe(res => this.sites = res);
 
     this.blService.siteId = this.sitesService.localSite;
+
+    this.sub = this.itemLabelService.shelfCodeAdded.subscribe(_ => {
+      this.dataSource.isLoading.next(true);
+      this.dataSource.loadData();
+      this.dataSource.row = null;
+    });
   }
 
   @Input()
@@ -111,91 +120,6 @@ export class InventoryComponent implements OnInit, AfterViewInit {
     }
   }
 
-  async onShelfNumChange(event: Event) {
-    this.isLoading = true;
-    const input = (event.target as HTMLInputElement);
-
-    const res = await new Promise<boolean>(resolve => {
-      this.shelvesService.isShelfAvailable(input.value)
-        .subscribe(value => {
-          resolve(value);
-          this.isLoading = false;
-        });
-    });
-
-    if (!res) {
-      this.modalService.show(this.modal.viewContainerRef, {
-        title: 'Not available',
-        btnSuccess: false,
-        closeCallback: () => { input.value = ''; }
-      }, ShelfNotAvailableComponent);
-      return;
-    }
-
-    this.ssService.shelfCode = input.value;
-
-    if (this.route.snapshot.data['pathEnd'] === 'prince-materials') {
-      this.modalService.show(this.modal.viewContainerRef, {
-        modalSize: 'modal-xl',
-        btnSuccess: true,
-        btnSuccessLabel: 'Save',
-        btnCloseLabel: 'Cancel',
-        title: `shelf number ${input.value}, <<< PRINCE MATERIALS >>>`,
-        successCallback: _ => {
-          this.dataSource.isLoading.next(true);
-
-          this.ssService.create()
-            ?.subscribe(_ => {
-              this.dataSource.loadData();
-            });
-
-          input.value = '';
-          this.ssService.toAddShelfStorage = [];
-        },
-        closeCallback: () => {
-          input.value = '';
-          this.ssService.toAddShelfStorage = [];
-        }
-      }, AddViewShelfComponent);
-    }
-    else if (this.route.snapshot.data['pathEnd'] === 'sponsor-materials') {
-      this.modalService.show(this.modal.viewContainerRef, {
-        modalSize: 'modal-xl',
-        btnSuccessLabel: 'Save',
-        btnCloseLabel: 'Cancel',
-        title: `shelf number ${input.value}, <<< SPONSOR MATERIALS >>>`,
-        successCallback: _ => {
-          this.dataSource.isLoading.next(true);
-
-          this.ssService.create()
-            ?.subscribe(_ => {
-              this.dataSource.loadData();
-            });
-
-          input.value = '';
-          this.ssService.toAddShelfStorage = [];
-        },
-        closeCallback: () => {
-          input.value = '';
-          this.ssService.toAddShelfStorage = [];
-        }
-      }, AddViewShelfComponent);
-    }
-    else if (this.route.snapshot.data['pathEnd'] === 'finish-goods') {
-      this.modalService.show(this.modal.viewContainerRef, {
-        modalSize: 'modal-xl',
-        btnSuccessLabel: 'Save',
-        btnCloseLabel: 'Cancel',
-        title: `shelf number ${input.value}, <<< FINISH GOODS >>>`,
-        successCallback: _ => {
-
-          input.value = '';
-        },
-        closeCallback: () => { input.value = ''; }
-      }, AddViewShelfComponent);
-    }
-  }
-
   disBtnDelOnEmptyBL() {
     return <number>this.dataSource.row
       ?.inventoryIntels
@@ -211,5 +135,25 @@ export class InventoryComponent implements OnInit, AfterViewInit {
   onQtyCommitted(batchLot: BatchLot) {
     if (this.blService.getCommittedQty(batchLot) < 1)
       return;
+  }
+
+  getTotalInStock() {
+    return this.dataSource
+      .connect()
+      .pipe(
+        map(value => value.flatMap(v => v.inventoryIntels)
+          .reduce((a, c) => a + c.qty, 0).toLocaleString()),
+      );
+  }
+
+  getTotalValueInStock() {
+    return this.dataSource
+      .connect()
+      .pipe(
+        map(value =>
+          value.flatMap(v => v.inventoryIntels)
+            .reduce((a, c) => a + c.pricePerQty * c.qty, 0)
+            .toLocaleString())
+      );
   }
 }

@@ -1,0 +1,78 @@
+<div class="d-flex justify-content-center">
+  <div style="width: 40rem;">
+    <app-activate-camera [isModalRequired]=false
+                         (itemScanned)="onItemScanned($event)">
+    </app-activate-camera>
+  </div>
+</div>
+<hr class="mt-4 mb-5">
+<div class="trans-items">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Item</th>
+        <th>Batch / Lot #</th>
+        <th>Label code</th>
+        <th>Qty available</th>
+        <th>To transfer qty</th>
+        <th style="width: 3rem;"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let itemLabel of itemLabelService.itemLabels; let i = index;">
+        <td class="text-center">{{i+1}}</td>
+        <td>
+          <input type="text"
+                 class="form-control"
+                 [value]="itemLabel.batchLot.material.catalogDescription"
+                 [readOnly]="true">
+        </td>
+        <td>
+          <input type="text"
+                 class="form-control"
+                 [value]="itemLabel.batchLot.batchLotNumber"
+                 [readOnly]="true">
+        </td>
+        <td>
+          <input type="text"
+                 class="form-control"
+                 [value]="itemLabel.id"
+                 [readOnly]="true">
+        </td>
+        <td>
+          <div class="form-control d-flex justify-content-end align-items-center">
+            <div class="me-2">{{itemLabel.qty.toLocaleString()}}</div>
+            <div class="fs-5">{{itemLabel.batchLot.material.uom.longUnit?.toLowerCase()}}</div>
+          </div>
+        </td>
+        <td>
+          <input type="number"
+                 [min]="1"
+                 [max]="itemLabel.qty"
+                 class="form-control text-end"
+                 name="toTransferQty{{i}}"
+                 [(ngModel)]="itemLabel.toTransferQty"
+                 (click)="$any($event.target).select()"
+                 required
+                 #toTransferQty="ngModel"
+                 [ngClass]="{input_danger: !toTransferQty.valid}">
+        </td>
+        <td class="text-center">
+          <span class="btn-del" (click)="onRemoveItem(i)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+              <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z"/>
+            </svg>
+          </span>
+        </td>
+      </tr>
+      <tr *ngIf="itemLabelService.itemLabels.length === 0"
+          style="line-height: 2.5;">
+        <td class="text-center"
+            [colSpan]="7">
+          No data available in table
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

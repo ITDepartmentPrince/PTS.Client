@@ -6,10 +6,10 @@ import {BatchLot} from "../../../models/batchLot";
 import {StockTransferItemQty} from "../../../models/stock-transfer-item-qty";
 import {SitesService} from "../../../services/sites.service";
 import {BatchesLotsService} from "../../../services/batches-lots.service";
-import {ShelfStorage} from "../../../models/shelfStorage";
 import {CheckShelfStorage} from "../../../models/check-shelf-storage";
 import {ControlContainer, NgForm} from "@angular/forms";
 import {FixNgSelectPlacement} from "../../../shared/fix-ng-select-placement";
+import {ItemLabel} from "../../../models/itemLabel";
 
 @Component({
   selector: 'app-add-stock-transfer-qty',
@@ -38,20 +38,15 @@ export class AddStockTransferQtyComponent implements IBodyData, OnInit {
     this.blService.GetBatchesLotsByMaterialWithInventory_StockTransfer(this.sitesService.localSite,
       this.stockTransferItem.materialId)
       .subscribe(res => {
-        if (this.action === Operations.Create) {
-          this.batchesLots = res.filter(bl => {
-            const qty = bl.inventoryIntels.reduce((a, c) => a + c.qty, 0) -
-              bl.committed.reduce((a, c) => a + c.qty, 0);
-            return qty !== 0;
-          });
-        }
-        else {
-          this.batchesLots = res;
+        this.batchesLots = res.filter(bl => {
+          const qty = bl.inventoryIntels.reduce((a, c) => a + c.qty, 0) -
+            bl.committed.reduce((a, c) => a + c.qty, 0);
+          return qty !== 0;
+        });
 
-          for (const stItemQty of this.stockTransferItem.stockTransferItemQtys) {
-            stItemQty.shelfStorages = (this.batchesLots.find(bl => bl.batchLotId === stItemQty.batchLotId
-              && bl.siteId === stItemQty.batchLotSiteId)?.shelfStorage as Array<ShelfStorage>);
-          }
+        for (const stItemQty of this.stockTransferItem.stockTransferItemQtys) {
+          stItemQty.itemLabels = (this.batchesLots.find(bl => bl.batchLotId === stItemQty.batchLotId
+            && bl.siteId === stItemQty.batchLotSiteId)?.itemLabels as Array<ItemLabel>);
         }
 
         this.isLoading = false;
@@ -79,17 +74,17 @@ export class AddStockTransferQtyComponent implements IBodyData, OnInit {
           .flatMap(stIq => stIq.checkShelfStorage)));
 
     stItemQty.checkShelfStorage = [];
-    stItemQty.shelfStorages = (batchLot?.shelfStorage as Array<ShelfStorage>)
-      .map(ss => {
-        const newSs = {...ss, disabled: true};
-        const comShelf = comShelves?.filter(cs => cs.shelfStorageId === ss.id);
+    stItemQty.itemLabels = (batchLot?.itemLabels as Array<ItemLabel>)
+      .map(il => {
+        const newSs = {...il, disabled: true};
+        const comShelf = comShelves?.filter(cs => cs.itemLabelId === il.id);
         if (comShelf && this.action !== Operations.Edit)
           newSs.qty -= comShelf.reduce((a, c) => a + c.qty, 0);
 
         if (newSs.qty > 0 || this.action === Operations.Edit) {
           const checkSs = new CheckShelfStorage();
-          checkSs.shelfStorageId = newSs.id;
-          checkSs.shelfQty = newSs.qty;
+          checkSs.itemLabelId = newSs.id;
+          checkSs.labelQty = newSs.qty;
           stItemQty.checkShelfStorage.push(checkSs);
         }
 
@@ -117,15 +112,15 @@ export class AddStockTransferQtyComponent implements IBodyData, OnInit {
   }
 
   onShelfChange(checkSs: CheckShelfStorage) {
-    checkSs.shelfQty = this.batchesLots
-      .flatMap(bl => bl.shelfStorage)
-      .find(ss => ss.id === checkSs.shelfStorageId)
+    checkSs.labelQty = this.batchesLots
+      .flatMap(bl => bl.itemLabels)
+      .find(il => il.id === checkSs.itemLabelId)
       ?.qty as number;
   }
 
   onShelfDdClose(stItemQty: StockTransferItemQty) {
-    stItemQty.shelfStorages = stItemQty.shelfStorages.map(ss => {
-      if (stItemQty.checkShelfStorage.some(css => css.shelfStorageId === ss.id))
+    stItemQty.itemLabels = stItemQty.itemLabels.map(ss => {
+      if (stItemQty.checkShelfStorage.some(css => css.itemLabelId === ss.id))
         return {...ss, disabled: true};
       else
         return {...ss, disabled: false};

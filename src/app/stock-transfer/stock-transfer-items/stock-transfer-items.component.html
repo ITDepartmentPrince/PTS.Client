@@ -1,13 +1,22 @@
-<div *ngIf="isLoading" class="text-center">
-  <app-loading-spinner></app-loading-spinner>
+<div class="text-end mb-3">
+  <button type="button"
+          class="btn btn-primary"
+          (click)="onAddByScan()">
+    Scan QR code
+  </button>
 </div>
 
-<div class="trans-ss-items trans-items-container" *ngIf="!isLoading">
+<!--<div *ngIf="isLoading" class="text-center">
+  <app-loading-spinner></app-loading-spinner>
+</div>-->
+
+<div class="trans-ss-items trans-items-container">
   <div class="trans-items table-responsive">
     <table class="table table-bordered">
       <thead>
       <tr>
         <th style="width: 3rem;">#</th>
+        <th>Vendor</th>
         <th style="width: 50rem;">Item</th>
         <th>In stock at origin</th>
         <th>To transfer qty</th>
@@ -26,15 +35,29 @@
 
       <tr *ngFor="let item of stService.stockTransfer.stockTransferItems; let i = index;">
         <td style="padding: 0 0.8rem;">{{i+1}}</td>
+        <td>
+          <ng-select [items]="vendors"
+                     bindLabel="companyName"
+                     bindValue="vendorId"
+                     name="vendorId{{i+1}}"
+                     placeholder="-- select --"
+                     [(ngModel)]="item.vendorId"
+                     (change)="onVendorChange(item)"
+                     appendTo="body"
+                     required
+                     #materialId="ngModel"
+                     [ngClass]="{input_danger: !materialId.valid && materialId.touched}"
+                     [readonly]="controlState">
+          </ng-select>
+        </td>
         <td class="text-start">
-          <ng-select [items]="materials"
+          <ng-select [items]="item.vendorMaterials"
                      bindLabel="catalogDescription"
                      bindValue="id"
                      name="materialId{{i+1}}"
                      placeholder="-- select --"
                      [(ngModel)]="item.materialId"
                      (change)="onMaterialChange(item)"
-                     (close)="onMaterialsDdClose()"
                      appendTo="body"
                      required
                      #materialId="ngModel"

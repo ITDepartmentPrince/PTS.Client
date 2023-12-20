@@ -19,7 +19,7 @@ export class Material {
   vendorId: number;
   vendor: Vendor;
   uomId: number;
-  Uom: MeasurementUnit;
+  uom: MeasurementUnit;
   convertToUomId?: number;
   convertToUom: MeasurementUnit;
   conversionRate?: number;

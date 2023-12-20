@@ -73,11 +73,11 @@
           <table>
             <tr *ngFor="let checkSs of item.checkShelfStorage; let j = index;">
               <td>
-                <ng-select [items]="item.shelfStorages"
+                <ng-select [items]="item.itemLabels"
                            bindLabel="shelfCode"
                            bindValue="id"
                            name="shelfStorageId{{i}}{{j}}"
-                           [(ngModel)]="checkSs.shelfStorageId"
+                           [(ngModel)]="checkSs.itemLabelId"
                            appendTo="body"
                            (change)="onShelfChange(checkSs)"
                            (close)="onShelfDdClose(item)"
@@ -107,7 +107,7 @@
                 <input type="number"
                        class="form-control text-end"
                        [min]="1"
-                       [max]="checkSs.shelfQty"
+                       [max]="checkSs.labelQty"
                        name="qty{{i}}{{j}}"
                        [(ngModel)]="checkSs.qty"
                        (click)="$any($event.target).select()"

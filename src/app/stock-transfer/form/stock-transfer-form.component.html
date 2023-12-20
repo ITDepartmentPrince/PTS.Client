@@ -95,14 +95,14 @@
         </div>
       </div>
 
-      <div class="col-md-3">
+      <!--<div class="col-md-3">
         <div class="t-mb">
           <label class="form-label">Items type</label>
           <ng-select [items]="classifications"
                      bindLabel="classificationName"
                      bindValue="classificationId"
                      name="classificationId"
-                     placeholder="-- select --"
+                     placeholder="&#45;&#45; select &#45;&#45;"
                      [(ngModel)]="stService.stockTransfer.classificationId"
                      (change)="onClassificationChange()"
                      required
@@ -118,7 +118,7 @@
                      bindValue="vendorId"
                      id="vendorId"
                      name="vendorId"
-                     placeholder="-- select --"
+                     placeholder="&#45;&#45; select &#45;&#45;"
                      [(ngModel)]="stService.stockTransfer.vendorId"
                      (change)="onVendorChange()"
                      required
@@ -127,7 +127,7 @@
                      [readonly]="controlState">
           </ng-select>
         </div>
-      </div>
+      </div>-->
 
       <div class="col-md-3">
         <div class="t-mb">
@@ -156,11 +156,13 @@
           </ng-select>
         </div>
       </div>
+
+      <div class="col-md-3"></div>
     </div>
 
     <div class="pt-4">
       <div class="position-relative">
-        <hr class="mt-5 mb-5">
+        <hr class="mt-5 mb-3">
         <div class="text-bg-secondary line-separate">Transfer items</div>
       </div>
       <app-stock-transfer-items [controlState]="controlState" [action]="action"></app-stock-transfer-items>

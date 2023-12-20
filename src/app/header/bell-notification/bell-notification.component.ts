@@ -18,14 +18,13 @@ export class BellNotificationComponent implements OnInit {
 
   constructor(public bnService: BellNotificationService,
               private modalService: ModalService,
-              private router: Router,) {
+              private router: Router) {
   }
 
   ngOnInit(): void {
     this.bnService.getAllUnRead()
       .subscribe(res => {
         this.userNotifications = res;
-
         this.isLoading = false;
       });
   }

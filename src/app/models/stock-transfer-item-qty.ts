@@ -2,7 +2,7 @@
 import {Site} from "./site";
 import {CheckShelfStorage} from "./check-shelf-storage";
 import {StockTransferItem} from "./stock-transfer-item";
-import {ShelfStorage} from "./shelfStorage";
+import {ItemLabel} from "./itemLabel";
 
 export class StockTransferItemQty {
   id: number;
@@ -15,5 +15,5 @@ export class StockTransferItemQty {
   checkShelfStorage = new Array<CheckShelfStorage>();
 
   //
-  shelfStorages = new Array<ShelfStorage>();
+  itemLabels = new Array<ItemLabel>();
 }

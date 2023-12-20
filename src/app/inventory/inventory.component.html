@@ -4,7 +4,7 @@
       <div class="row g-3 align-items-center me-5">
         <div class="col-auto">
           <div class="d-flex align-items-center justify-content-between outer-border merge-border-input"
-               style="padding-left: 0.8rem; width: 12rem;">
+               style="padding-left: 0.8rem;">
             <svg xmlns="http://www.w3.org/2000/svg"
                  width="16" height="16"
                  fill="currentColor"
@@ -21,20 +21,6 @@
                        (change)="onSiteChange($event)">
             </ng-select>
           </div>
-        </div>
-      </div>
-      <div class="row g-3 align-items-center"
-           *ngIf="sitesService.localSite === blService.siteId">
-        <div class="col-auto">
-          <label for="shelf-number">Store items</label>
-        </div>
-        <div class="col-auto">
-          <input type="text"
-                 id="shelf-number"
-                 class="form-control"
-                 style="width: 25rem;"
-                 placeholder="scan for shelf # here"
-                 (change)="onShelfNumChange($event)">
         </div>
       </div>
     </div>
@@ -260,7 +246,20 @@
           </div>
         </td>
       </ng-container>
+      <ng-container matColumnDef="Total">
+        <th [colSpan]="7" class="text-end" mat-header-cell *matHeaderCellDef>Total</th>
+      </ng-container>
+      <ng-container matColumnDef="VIS">
+        <th mat-header-cell class="text-end" *matHeaderCellDef>{{getTotalValueInStock() | async}} USD</th>
+      </ng-container>
+      <ng-container matColumnDef="IS">
+        <th mat-header-cell class="text-end" *matHeaderCellDef>{{getTotalInStock() | async}}</th>
+      </ng-container>
+      <ng-container matColumnDef="r-brd">
+        <th mat-header-cell class="text-end" *matHeaderCellDef></th>
+      </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-header-row *matHeaderRowDef="['Total', 'VIS', 'IS', 'r-brd']"></tr>
       <tr mat-row
           *matRowDef="let row; columns: displayedColumns"
           (click)="dataSource.onRowSelect(row)"
@@ -282,6 +281,6 @@
 </div>
 <mat-paginator [pageSizeOptions]="[15, 30, 50, 100]"
                [pageIndex]="dataSource.pageIndex"
-               showFirstLastButtons>
+               [showFirstLastButtons]=true>
 </mat-paginator>
 <ng-container appModal></ng-container>

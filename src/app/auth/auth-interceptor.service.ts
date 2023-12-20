@@ -26,7 +26,6 @@ export class AuthInterceptorService implements HttpInterceptor {
             }))
               .pipe(
                 tap({error: (error: HttpErrorResponse) => {
-                    console.log(error);
                   if (error && (error.status === 401 || error.status === 403))
                     this.router?.navigate(['/unauthorized']);
                   }
@@ -35,8 +34,7 @@ export class AuthInterceptorService implements HttpInterceptor {
           })
         );
     }
-    else {
-      return next.handle(req);
-    }
+
+    return next.handle(req);
   }
 }

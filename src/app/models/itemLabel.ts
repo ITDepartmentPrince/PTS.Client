@@ -11,6 +11,7 @@ export class ItemLabel {
   shelfCode: string;
   shelf: Shelf;
   qty = 0;
+  toTransferQty = 0;
   conversionRate?: number;
   count = 0;
 }

@@ -58,4 +58,8 @@ export class MaterialsService implements IService<Material> {
   delete(materialId: number | undefined): Observable<any> {
     return this.httpClient.delete(AuthConstant.apiRoot + `/Materials/${materialId}`);
   }
+
+  getMaterialsByVendor(vendorId: number): Observable<Array<Material>> {
+    return this.httpClient.get<Material[]>(AuthConstant.apiRoot + `/Materials/Vendors/${vendorId}`);
+  }
 }

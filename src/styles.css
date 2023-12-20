@@ -85,6 +85,13 @@ form .mb-4 {
   box-shadow: var(--bs-box-shadow);
 }
 
+/*print*/
+@media print {
+  .main-container > * {
+    display: none;
+  }
+}
+
 /*nested-table*/
 .nested-table table {
   width: 100%;

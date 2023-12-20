@@ -116,7 +116,6 @@ import { AddSponsorReceivingComponent } from './receiving/add-sponsor-receiving/
 import { AddSponsorReceivingItemsMaterialsComponent } from './receiving/add-sponsor-receiving/add-sponsor-receiving-items/add-sponsor-receiving-items-materials.component';
 import { InventoryComponent } from './inventory/inventory.component';
 import {InventoryNavComponent} from "./inventory/inventory-nav.component";
-import { AddViewShelfComponent } from './inventory/add-view-shelf/add-view-shelf.component';
 import { ShelfNotAvailableComponent } from './inventory/shelf-not-available/shelf-not-available.component';
 import {DepartmentsComponent} from "./base-records/department/departments.component";
 import {DepartmentsFormComponent} from "./base-records/department/form/departments-form.component";
@@ -151,7 +150,12 @@ import {StockTransferEditComponent} from "./stock-transfer/edit/stock-transfer-e
 import { BellNotificationComponent } from './header/bell-notification/bell-notification.component';
 import {UserNotesComponent} from "./header/bell-notification/user-notes/user-notes.component";
 import { ItemLabelComponent } from './receiving/item-label/item-label.component';
-import { PrintLabelsComponent } from './print-labels/print-labels.component';
+import {QRCodeModule} from "angularx-qrcode";
+import { PrintLayoutComponent } from './print-labels/print-layout/print-layout.component';
+import { ItemsLabelComponent } from './print-labels/items-label/items-label.component';
+import {ZXingScannerModule} from "@zxing/ngx-scanner";
+import { ActivateCameraComponent } from './activate-camera/activate-camera.component';
+import { AddStQtyScanComponent } from './stock-transfer/stock-transfer-items/add-st-qty-scan/add-st-qty-scan.component';
 
 @NgModule({
   declarations: [
@@ -250,7 +254,6 @@ import { PrintLabelsComponent } from './print-labels/print-labels.component';
     AddSponsorReceivingItemsMaterialsComponent,
     InventoryComponent,
     InventoryNavComponent,
-    AddViewShelfComponent,
     ShelfNotAvailableComponent,
     DepartmentsComponent,
     DepartmentsFormComponent,
@@ -283,22 +286,25 @@ import { PrintLabelsComponent } from './print-labels/print-labels.component';
     BellNotificationComponent,
     UserNotesComponent,
     ItemLabelComponent,
-    PrintLabelsComponent,
-
-
+    PrintLayoutComponent,
+    ItemsLabelComponent,
+    ActivateCameraComponent,
+    AddStQtyScanComponent,
   ],
     imports: [
-        AppRoutingModule,
-        RouterOutlet,
-        BrowserModule,
-        BrowserAnimationsModule,
-        FormsModule,
-        MatTableModule,
-        MatPaginatorModule,
-        MatSortModule,
-        MatSelectModule,
-        NgSelectModule,
-        NgOptimizedImage,
+      AppRoutingModule,
+      RouterOutlet,
+      BrowserModule,
+      BrowserAnimationsModule,
+      FormsModule,
+      MatTableModule,
+      MatPaginatorModule,
+      MatSortModule,
+      MatSelectModule,
+      NgSelectModule,
+      NgOptimizedImage,
+      QRCodeModule,
+      ZXingScannerModule
     ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true },

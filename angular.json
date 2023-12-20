@@ -20,7 +20,8 @@
               "core-js",
               "raf",
               "rgbcolor",
-              "jspdf-autotable"
+              "jspdf-autotable",
+              "qrcode"
             ],
             "polyfills": [
               "zone.js"

@@ -86,9 +86,11 @@ import {StockTransferComponent} from "./stock-transfer/stock-transfer.component"
 import {StockTransferCreateComponent} from "./stock-transfer/create/stock-transfer-create.component";
 import {StockTransferViewComponent} from "./stock-transfer/view/stock-transfer-view.component";
 import {StockTransferEditComponent} from "./stock-transfer/edit/stock-transfer-edit.component";
+import {PrintLayoutComponent} from "./print-labels/print-layout/print-layout.component";
+import {ItemsLabelComponent} from "./print-labels/items-label/items-label.component";
 
 const appRoutes: Routes = [
-  { path: '', component: HomeComponent, pathMatch: 'full', canActivate: [AutoLoginPartialRoutesGuard] },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
 
   { path: 'home', component: HomeComponent, canActivate: [AutoLoginPartialRoutesGuard] },
 
@@ -199,25 +201,21 @@ const appRoutes: Routes = [
       { path: 'open',
         component: ReceivingComponent,
         canActivate: [AutoLoginPartialRoutesGuard],
-        data: { refreshComponent: true, pathEnd: 'open' }
+        data: { pathEnd: 'open' }
       },
       { path: 'done',
         component: ReceivingComponent,
         canActivate: [AutoLoginPartialRoutesGuard],
-        data: { refreshComponent: true, pathEnd: 'done' }
+        data: { pathEnd: 'done' }
       },
     ]
   },
-
   { path: 'receiving/:roNumber', component: ReceivingViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
-
   {
     path: 'receiving/:roNumber/edit',
     component: ReceivingEditComponent,
-    canActivate: [AutoLoginPartialRoutesGuard],
-    data: { refreshComponent: true }
+    canActivate: [AutoLoginPartialRoutesGuard]
   },
-
   { path: 'receiving/sponsor/create', component: AddSponsorReceivingComponent, canActivate: [AutoLoginPartialRoutesGuard] },
 
   {
@@ -253,12 +251,12 @@ const appRoutes: Routes = [
       { path: 'transfer',
         component: StockTransferComponent,
         canActivate: [AutoLoginPartialRoutesGuard],
-        data: { refreshComponent: true, pathEnd: 'transfer' }
+        data: { pathEnd: 'transfer' }
       },
       { path: 'request',
         component: StockTransferComponent,
         canActivate: [AutoLoginPartialRoutesGuard],
-        data: { refreshComponent: true, pathEnd: 'request' }
+        data: { pathEnd: 'request' }
       },
     ]
   },
@@ -293,6 +291,15 @@ const appRoutes: Routes = [
       { path: 'shippings/create', component: ShippingsCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'shippings/:id', component: ShippingsViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'shippings/:id/edit', component: ShippingsEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+    ]
+  },
+
+  {
+    path: 'print',
+    outlet: 'print',
+    component: PrintLayoutComponent,
+    children: [
+      { path: 'items-label', component: ItemsLabelComponent }
     ]
   },
 

@@ -20,6 +20,7 @@ import {BatchesLotsService} from "./batches-lots.service";
 import {SitesService} from "./sites.service";
 import {ItemLabelComponent} from "../receiving/item-label/item-label.component";
 import {ItemLabelService} from "./item-label.service";
+import {PrintLabelsService} from "../print-labels/print-labels.service";
 
 @Injectable({providedIn: 'root'})
 export class ReceivingForSiteService implements IService<Receiving> {
@@ -34,9 +35,13 @@ export class ReceivingForSiteService implements IService<Receiving> {
               private recvdItemsLb: RecvdItemsLotsBatchesService,
               private batchesLotsService: BatchesLotsService,
               private sitesService: SitesService,
-              private itemLabelService: ItemLabelService) {
+              private itemLabelService: ItemLabelService,
+              private printLabelsService: PrintLabelsService) {
     if (this.sitesService.localSite === 0)
       throw new Error('Location not set.');
+
+    /*this.printLabelsService.data = [49];
+    this.printLabelsService.printDocument('items-label');*/
   }
 
   set receiving(receiving: Receiving) {
@@ -56,10 +61,6 @@ export class ReceivingForSiteService implements IService<Receiving> {
         AuthConstant.apiRoot + `/Sites/${this.sitesService.localSite}/Receiving/GetRequired`,
         queryParams,
         { headers: new HttpHeaders().set('Content-Type', 'application/json') });
-  }
-
-  getAll(): Observable<Receiving[]> {
-    return this.httpClient.get<Receiving[]>(AuthConstant.apiRoot + `/Receiving`);
   }
 
   get(roNumber: string): Observable<Receiving> {
@@ -152,7 +153,7 @@ export class ReceivingForSiteService implements IService<Receiving> {
                   .flatMap(ri => ri.recvdItemLotsBatches
                     .filter(rilb => rilb.rlbQty > 0)))
               .subscribe(res => {
-                console.log(res);
+                this.receiveStatusChanged.next();
                 this.itemLabelService.recvdItemLotsBatches = res;
 
                 this.modalService.show(modal.viewContainerRef, {
@@ -161,15 +162,10 @@ export class ReceivingForSiteService implements IService<Receiving> {
                   title: `Create labels for received items RO ${this.receiving.roNumber}`,
                   successCallback: _ => {
                     this.itemLabelService.create()
-                      .subscribe(_ => {
-                        this.receiveStatusChanged.next();
-
-                        //print labels
-
+                      .subscribe(res => {
+                        this.printLabelsService.data = res;
+                        this.printLabelsService.printDocument('items-label');
                       });
-                  },
-                  closeCallback: () => {
-                    this.receiveStatusChanged.next();
                   }
                 }, ItemLabelComponent);
               });

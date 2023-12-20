@@ -1,4 +1,4 @@
-﻿import {Injectable} from "@angular/core";
+﻿import {EventEmitter, Injectable} from "@angular/core";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {AuthConstant} from "../auth/auth.constant";
@@ -31,10 +31,10 @@ export class BatchesLotsService implements IService<BatchLot> {
       `/Sites/${siteId}/BatchesLots/Materials/${materialId}/Inventory`);
   }
 
-  GetBatchesLotsForUnStoredMaterials(siteId: number, refersTo: number): Observable<Array<BatchLot>> {
+  /*GetBatchesLotsForUnStoredMaterials(siteId: number, refersTo: number): Observable<Array<BatchLot>> {
     return this.httpClient.get<Array<BatchLot>>(AuthConstant.apiRoot +
       `/Sites/${siteId}/BatchesLots/GetUnStoredMaterials/${refersTo}`);
-  }
+  }*/
 
   GetBatchesLotsByMaterialWithInventory_StockTransfer(siteId: number, materialId: number) {
     return this.httpClient.get<Array<BatchLot>>(AuthConstant.apiRoot +
@@ -53,24 +53,25 @@ export class BatchesLotsService implements IService<BatchLot> {
   }
 
   getShelves(batchLot: BatchLot): string {
-    return batchLot.shelfStorage
+    return batchLot.itemLabels
+      .filter(ss => ss.shelfCode !== null)
       .map(ss => ss.shelfCode)
       .join(', ');
   }
 
   isStoredAll(batchLot: BatchLot): boolean {
     const blQty = this.getBlQty(batchLot);
-    return blQty > 0 && blQty === this.getSsQty(batchLot);
+    return blQty > 0 && blQty === this.getShelvedQty(batchLot);
   }
 
   isPartiallyStored(batchLot: BatchLot): boolean {
     const blQty = this.getBlQty(batchLot);
-    const ssQty = this.getSsQty(batchLot);
+    const ssQty = this.getShelvedQty(batchLot);
     return blQty > 0 && ssQty > 0 && blQty > ssQty;
   }
 
   isNotStored(batchLot: BatchLot): boolean {
-    return this.getBlQty(batchLot) > 0 && this.getSsQty(batchLot) === 0;
+    return this.getBlQty(batchLot) > 0 && this.getShelvedQty(batchLot) === 0;
   }
 
   isIiAvailable(batchLot: BatchLot): boolean {
@@ -107,8 +108,10 @@ export class BatchesLotsService implements IService<BatchLot> {
     return batchLot?.inventoryIntels?.reduce((acc, curr) => acc + curr.qty, 0);
   }
 
-  private getSsQty(batchLot: BatchLot) {
-    return batchLot?.shelfStorage?.reduce((acc, curr) => acc + curr.qty, 0);
+  private getShelvedQty(batchLot: BatchLot) {
+    return batchLot?.itemLabels
+      ?.filter(e => e.shelfCode !== null)
+      ?.reduce((acc, curr) => acc + curr.qty, 0);
   }
 
   getCommittedQty(batchLot: BatchLot) {

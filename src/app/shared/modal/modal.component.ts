@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, Output, ViewChild} from '@angular/core';
 import {NgForm} from "@angular/forms";
 import {BodyDirective} from "../directives/body.directive";
+import {ModalService} from "./modal.service";
 
 @Component({
   selector: 'app-modal',
@@ -15,11 +16,13 @@ export class ModalComponent implements AfterViewInit, OnDestroy {
   @Input() modalSize?: string;
   @Input() appendTo?: string;
   @Output() closed = new EventEmitter<void>();
-  @Output() succeed  = new EventEmitter<NgForm>();
   @Output() formCreated = new EventEmitter<BodyDirective>();
   @ViewChild(BodyDirective) body: BodyDirective;
   @ViewChild('f') form: NgForm;
   @ViewChild('modal') modal: ElementRef;
+
+  constructor(public modalService: ModalService) {
+  }
 
   ngAfterViewInit(): void {
     if (this.appendTo)
@@ -33,7 +36,7 @@ export class ModalComponent implements AfterViewInit, OnDestroy {
   }
 
   onSuccess() {
-    this.succeed.emit(this.form);
+    this.modalService.succeed.emit(this.form);
   }
 
   ngOnDestroy(): void {

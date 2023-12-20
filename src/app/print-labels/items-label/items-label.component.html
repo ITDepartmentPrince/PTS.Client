@@ -1,0 +1,44 @@
+<div style="padding: 40px; font-size: 35px;"
+     class="label-page"
+     *ngFor="let itemLabel of itemLabels; let i = index">
+  <div style="display: flex;">
+    <div style="width: 450px;">
+      <qrcode elementType="img"
+              [qrdata]=setQrData(itemLabel)
+              [width]="256"
+              [errorCorrectionLevel]="'M'"
+              style="display: inline-block; border: 3px solid; border-radius: 3px;"></qrcode>
+    </div>
+    <div style="width: 100%;">
+      <div style="display: flex;">
+        <div style="width: 200px; margin-bottom: 8px;">Qty :</div>
+        <div>{{itemLabel.qty.toLocaleString()}} units</div>
+      </div>
+      <div style="display: flex; margin-bottom: 8px;">
+        <div style="width: 200px;">Expiration :</div>
+        <div>
+          {{itemLabel.batchLot.expireDate ? (itemLabel.batchLot.expireDate | date:'mediumDate') : '---'}}
+        </div>
+      </div>
+    </div>
+    <div></div>
+  </div>
+  <div style="margin-top: 40px; font-size: 30px;">
+    <div style="display: flex; margin-bottom: 8px;">
+      <div style="width: 215px;">Name :</div>
+      <div>{{itemLabel.batchLot.material.catalogDescription}}</div>
+    </div>
+    <div style="display: flex; margin-bottom: 8px;">
+      <div style="width: 215px;">Catalog # :</div>
+      <div>{{itemLabel.batchLot.material.catalogNumber}}</div>
+    </div>
+    <div style="display: flex; margin-bottom: 8px;">
+      <div style="width: 215px;">Batch / Lot # :</div>
+      <div>{{itemLabel.batchLot.batchLotNumber}}</div>
+    </div>
+    <div style="display: flex; margin-bottom: 8px;">
+      <div style="width: 215px;">PSS Id :</div>
+      <div>---</div>
+    </div>
+  </div>
+</div>
