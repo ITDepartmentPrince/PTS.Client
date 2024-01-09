@@ -44,7 +44,7 @@
 
       <tr *ngFor="let item of prService.purchaseReq.purchaseReqItems; let i = index;">
         <td style="padding: 0 0.8rem;">{{i+1}}</td>
-        <td class="text-start">
+        <td>
           <ng-select [items]="materials"
                      bindLabel="catalogDescription"
                      bindValue="id"
@@ -200,10 +200,12 @@
           <ng-select [items]="prService.taxRates"
                      bindLabel="nameTaxRate"
                      bindValue="taxId"
+                     #fpTaxId
                      name="taxId{{i+1}}"
                      placeholder="-- select --"
                      [(ngModel)]="item.taxId"
                      appendTo="body"
+                     (open)="FixNgSelectPlacement.onOpen(fpTaxId)"
                      required
                      #taxId="ngModel"
                      [ngClass]="{input_danger: !taxId.valid && taxId.touched}"

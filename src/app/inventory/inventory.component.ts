@@ -13,7 +13,7 @@ import {BodyDeleteFailedComponent} from "../shared/body-delete-failed/body-delet
 import {Site} from "../models/site";
 import {SitesService} from "../services/sites.service";
 import {ItemLabelService} from "../services/item-label.service";
-import {flatMap, map, reduce, Subscription} from "rxjs";
+import {map, Subscription} from "rxjs";
 
 @Component({
   selector: 'app-inventory',
@@ -32,6 +32,8 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy {
   sites: Array<Site>;
   venSpon = 'Vendor';
   sub: Subscription;
+  isSponsor = false;
+  totalHeader = ['Total', 'VIS', 'IS', 'r-brd'];
 
   constructor(public blService: BatchesLotsService,
               public router: Router,
@@ -40,6 +42,8 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy {
               private modalService: ModalService,
               public sitesService: SitesService) {
     if (this.route.snapshot.url[0].path === 'sponsor-materials') {
+      this.isSponsor = true;
+      this.totalHeader.splice(1, 1);
       this.venSpon = 'Sponsor name';
       this.jsonData.value = 'SponsorMaterials';
       this.displayedColumns.splice(this.displayedColumns.indexOf('AvgCost'), 1);
@@ -65,9 +69,8 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sitesService.getAll()
       .subscribe(res => this.sites = res);
 
-    this.blService.siteId = this.sitesService.localSite;
-
-    this.sub = this.itemLabelService.shelfCodeAdded.subscribe(_ => {
+    this.sub = this.itemLabelService.shelfCodeAdded
+      .subscribe(_ => {
       this.dataSource.isLoading.next(true);
       this.dataSource.loadData();
       this.dataSource.row = null;
@@ -120,11 +123,11 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  disBtnDelOnEmptyBL() {
+  /*disBtnDelOnEmptyBL() {
     return <number>this.dataSource.row
       ?.inventoryIntels
       .reduce((acc, curr) => acc + curr.qty, 0) > 0;
-  }
+  }*/
 
   onSiteChange(site: Site) {
     this.blService.siteId = site.siteId;

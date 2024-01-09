@@ -82,7 +82,7 @@ export class DataTable<T> implements DataSource<T> {
   }
 
   set pageOrder(value: SortDirection) {
-    this.startOrder = !value ? 'asc' : value;
+    this.startOrder = !value ? 'desc' : value;
   }
 
   get row() {
@@ -147,7 +147,7 @@ export class DataTable<T> implements DataSource<T> {
       this.startOrder,
       this._sort.active ?? this.columns[0],
       this.search.column.length === 0 ? this.columns[0] : this.search.column,
-      this.search.value);
+      this.search.value.length === 0 ? undefined : this.search.value);
 
     if (this.jsonData)
       qp.jsonData = this.jsonData;

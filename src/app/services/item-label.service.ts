@@ -57,7 +57,7 @@ export class ItemLabelService {
 
   addShelfCode(id: number, shelfCode: string): Observable<any> {
     return this.httpClient.put(AuthConstant.apiRoot +
-      `/ItemsLabel/${id}/AddShelfCode/${shelfCode}`, {});
+      `/ItemsLabel/${id}/AddShelfCode/${shelfCode}/${this.siteService.localSite}`, {});
   }
 
   getLabelWithBatchLot(id: number): Observable<ItemLabel> {

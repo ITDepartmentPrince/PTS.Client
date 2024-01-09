@@ -11,6 +11,11 @@ import {Operations} from "../../shared/operations";
 import {BodyDeleteFailedComponent} from "../../shared/body-delete-failed/body-delete-failed.component";
 import {BodyNotesComponent} from "../../shared/body-notes/body-notes.component";
 import {AuthPolicy} from "../../auth/auth-policy";
+import {ComponentToStringService} from "../../services/component-to-string.service";
+import {PurchaseDocComponent} from "../purchase-doc/purchase-doc/purchase-doc.component";
+import {jsPDF} from "jspdf";
+import {map, mergeMap, of} from "rxjs";
+import {UserService} from "../../services/user-service";
 
 export enum PrStatus {
   Submitted = 1,
@@ -39,7 +44,9 @@ export class PurchaseReqsComponent implements AfterViewInit {
   constructor(private purchaseReqsService: PurchaseReqsService,
               private router: Router,
               protected route: ActivatedRoute,
-              private modalService: ModalService) {
+              private modalService: ModalService,
+              private comToStrService: ComponentToStringService,
+              private userService: UserService) {
     if (this.route.snapshot.url[0].path === 'done') {
       this.jsonData.value = 'Done';
       this.deliveryColHeader = 'Delivered date';
@@ -173,6 +180,59 @@ export class PurchaseReqsComponent implements AfterViewInit {
             });
         }
       }, BodyNotesComponent);
+    }
+  }
+
+  onViewPr(event: MouseEvent) {
+    if (!this.dataSource.row) {
+      event.stopPropagation();
+    }
+    else {
+      this.dataSource.isLoading.next(true);
+      this.purchaseReqsService.getPrWithRefs(this.dataSource.row?.prNumber)
+        .pipe(mergeMap(res => {
+          if (!res.approveUserId)
+            return of(res);
+
+          return this.userService.get(res.approveUserId)
+            .pipe(map(user => {
+              res.approveUser = user;
+              return res;
+            }));
+        }))
+        .subscribe(res => {
+          this.comToStrService
+            .toString(this.modal.viewContainerRef, PurchaseDocComponent, {
+              purchaseReq: res,
+              title: 'purchase requisition',
+              orderAbbr: 'pr',
+              orderNumber: res.prNumber,
+              createDate: res.createDate,
+              approvedBy: res.approveUser?.fullName,
+              approvedDate: res.approveDate,
+              approvedByPhone: res.approveUser?.phoneNumber,
+              approvedByEmail: res.approveUser?.email
+            })
+            .then(html => {
+              const doc = new jsPDF({
+                orientation: 'p',
+                unit: 'px',
+                format: 'a4',
+                compress: true
+              });
+
+              doc.html(html, {
+                html2canvas: {
+                  scale: 0.57
+                },
+                callback: (doc: jsPDF) => {
+                  doc.save(`PR ${this.dataSource.row?.prNumber}`);
+                  this.comToStrService.destroy();
+                  this.dataSource.isLoading.next(false);
+                }
+              });
+          });
+        });
     }
   }
 }

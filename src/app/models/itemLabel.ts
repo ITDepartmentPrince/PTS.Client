@@ -10,6 +10,8 @@ export class ItemLabel {
   site: Site;
   shelfCode: string;
   shelf: Shelf;
+  shelfSiteId: number;
+  shelfSite: Site;
   qty = 0;
   toTransferQty = 0;
   conversionRate?: number;

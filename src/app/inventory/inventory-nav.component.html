@@ -21,7 +21,7 @@
       <div class="position-relative ms-3">
         <div class="position-absolute" style="top: -5px;">
           <div class="row g-3 align-items-center"
-               *ngIf="sitesService.localSite === blService.siteId">
+               *ngIf="blService.siteId === sitesService.localSite">
             <div class="col-auto">
               <input type="text"
                      id="shelf-number"

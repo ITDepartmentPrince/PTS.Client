@@ -23,5 +23,7 @@ export enum PushNotificationType {
   PoDisApproved = 6,
   ExecApproved = 7,
   ExecDisApproved = 8,
-  PoCreated = 9
+  PoCreated = 9,
+  PoUpdated = 10,
+  PoValueExceeded = 11
 }

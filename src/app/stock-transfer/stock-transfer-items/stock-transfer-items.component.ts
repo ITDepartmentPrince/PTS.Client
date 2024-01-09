@@ -134,8 +134,9 @@ export class StockTransferItemsComponent implements OnInit {
   }
 
   OnAddQty(stItem: StockTransferItem) {
+    const orgQty = parseInt(stItem.totalOriginQty.split(',').join(''));
     if (this.action === Operations.Create &&
-      parseInt(stItem.totalOriginQty.split(',').join('')) < 1)
+      (orgQty < 1 || isNaN(orgQty)))
       return;
 
     this.modalService.show(this.modal.viewContainerRef, {

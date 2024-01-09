@@ -1,0 +1,27 @@
+<div style="cursor: pointer;">
+  <div class="d-flex w-100 justify-content-between">
+    <div class="mb-3 fw-bold">
+      <ng-content></ng-content>
+    </div>
+    <div>
+      <small class="badge {{userNotification.isRead ? 'text-bg-success' : 'text-bg-danger'}}">
+        {{userNotification.isRead ? 'read' : 'unread'}}
+      </small>
+    </div>
+  </div>
+  <p class="mb-3" style="max-height: 40px; overflow: hidden;"
+     *ngIf="userNotification.notification.notes">
+    <span class="fw-bold fs-5">user note:</span> {{userNotification.notification.notes}}
+  </p>
+  <div class="d-flex w-100 justify-content-between">
+    <div>
+      <small *ngIf="userNotification.notification.notes"
+             class="badge text-bg-secondary"
+             (click)="onViewNotes($event, userNotification.notification.notes)">
+        view user notes
+      </small>
+    </div>
+    <small>{{userNotification.notification.createDate | date:'short'}}</small>
+  </div>
+</div>
+<ng-container appModal></ng-container>

@@ -11,7 +11,7 @@ import {ModalDirective} from "../../../shared/modal/modal.directive";
 import {BodyNotesComponent} from "../../../shared/body-notes/body-notes.component";
 import {PrStatus} from "../purchase-reqs.component";
 import {ItemType} from "../../../shared/item-type";
-import {zip} from "rxjs";
+import {delay, zip} from "rxjs";
 import {MatlClassificationsService} from "../../../services/matl-classifications.service";
 import {VendorsService} from "../../../services/vendors.service";
 import {OtherChargesService} from "../../../services/other-charges.service";
@@ -26,6 +26,7 @@ import {PayTerm} from "../../../models/pay-term";
 import {Shipping} from "../../../models/shipping";
 import {Site} from "../../../models/site";
 import {VendorContact} from "../../../models/vendor-contact";
+import {UserService} from "../../../services/user-service";
 
 @Component({
   selector: 'app-purchase-reqs-form',
@@ -60,7 +61,8 @@ export class PurchaseReqsFormComponent implements OnInit {
               private depService: DepartmentsService,
               private ptService: PayTermsService,
               private shipService: ShippingsService,
-              private siteService: SitesService) {
+              private siteService: SitesService,
+              private userService: UserService) {
   }
 
   ngOnInit(): void {
@@ -75,20 +77,27 @@ export class PurchaseReqsFormComponent implements OnInit {
       this.shipService.getAll(),
       this.siteService.getAll(),
       this.contactsService.getAll())
+      .pipe(delay(200))
       .subscribe(res => {
-        this.classifications = res[0];
+        this.classifications = res[0].filter(e => e.classificationName.toLowerCase() !== 'finished goods');
         this.vendors = res[1];
         this.otherCharges = res[2];
         this.departments = res[3];
         this.payTerms = res[4];
         this.shippings = res[5];
-        this.sites = res[6];
+        this.sites = res[6].filter(e => e.siteName.toLowerCase() !== 'all locations');
         this.vendorContacts = res[7];
 
         if (this.action === Operations.Create && !this.prService.isDuplicate)
           this.prService.purchaseReq.classificationId = this.classifications
             ?.find(c => c.classificationName.toLowerCase() === 'raw materials')
             ?.classificationId as number;
+
+        if (this.prService.purchaseReq.approveUserId)
+          this.userService.get(this.prService.purchaseReq.approveUserId)
+            .subscribe(res => {
+              this.prService.purchaseReq.approveUser = res;
+            });
 
         this.isLoading = false;
       });

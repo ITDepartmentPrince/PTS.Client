@@ -1,4 +1,4 @@
-import {Component, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {SitesService} from "../services/sites.service";
 import {BatchesLotsService} from "../services/batches-lots.service";
 import {ShelfNotAvailableComponent} from "./shelf-not-available/shelf-not-available.component";
@@ -12,7 +12,7 @@ import {ActivateCameraComponent} from "../activate-camera/activate-camera.compon
   selector: 'app-inventory-nav',
   templateUrl: './inventory-nav.component.html'
 })
-export class InventoryNavComponent {
+export class InventoryNavComponent implements OnInit {
   isLoading: boolean;
   @ViewChild(ModalDirective) modal: ModalDirective;
 
@@ -21,6 +21,10 @@ export class InventoryNavComponent {
               private shelvesService: ShelvesService,
               private modalService: ModalService,
               private itemLabelService: ItemLabelService) {
+  }
+
+  ngOnInit(): void {
+    this.blService.siteId = this.sitesService.localSite;
   }
 
   onShelfNumChange(input: HTMLInputElement) {
@@ -41,9 +45,9 @@ export class InventoryNavComponent {
               title: `Add items to shelf # ${input.value} (scan QR code)`,
               btnSuccess: false,
               successCallback: (code: any) => {
-                this.itemLabelService.addShelfCode(JSON.parse(code).id, this.itemLabelService.shelfCode)
-                  .subscribe();
-                this.itemLabelService.shelfCodeAdded.next();
+                this.itemLabelService
+                  .addShelfCode(JSON.parse(code).id, this.itemLabelService.shelfCode)
+                  .subscribe(_ => this.itemLabelService.shelfCodeAdded.next());
               }
             }, ActivateCameraComponent);
           }

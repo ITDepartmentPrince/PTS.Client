@@ -53,10 +53,10 @@ export class BatchesLotsService implements IService<BatchLot> {
   }
 
   getShelves(batchLot: BatchLot): string {
-    return batchLot.itemLabels
+    return [...new Set(batchLot.itemLabels
       .filter(ss => ss.shelfCode !== null)
-      .map(ss => ss.shelfCode)
-      .join(', ');
+      .map(ss => ss.shelfCode))
+    ].join(', ');
   }
 
   isStoredAll(batchLot: BatchLot): boolean {

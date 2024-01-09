@@ -11,6 +11,7 @@ import {Shipping} from "./shipping";
 import {PayTerm} from "./pay-term";
 import {Site} from "./site";
 import {PurchaseOrder} from "./purchase-order";
+import {User} from "./user";
 
 export class PurchaseReq {
   prNumber: string;
@@ -34,7 +35,7 @@ export class PurchaseReq {
   notes: string;
   approveDate?: Date;
   approveUserId?: number;
-  approveUser: ApproveUser | null;
+  approveUser: User | null;
   isSubmitted: boolean;
   submitUserId?: number;
   inActive: boolean;

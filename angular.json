@@ -21,7 +21,9 @@
               "raf",
               "rgbcolor",
               "jspdf-autotable",
-              "qrcode"
+              "qrcode",
+              "html2canvas",
+              "dompurify"
             ],
             "polyfills": [
               "zone.js"

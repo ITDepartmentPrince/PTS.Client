@@ -121,6 +121,7 @@ form .mb-4 {
 .dropdown .dropdown-menu {
   font-size: 1.4rem;
   padding: 0;
+  overflow: hidden;
 }
 
 .dropdown .dropdown-menu .dropdown-item {

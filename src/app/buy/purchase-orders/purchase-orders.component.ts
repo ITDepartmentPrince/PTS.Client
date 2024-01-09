@@ -11,6 +11,15 @@ import {AuthPolicy} from "../../auth/auth-policy";
 import {PurchaseOrder} from "../../models/purchase-order";
 import {PurchaseOrdersService} from "../../services/purchase-orders.service";
 import {BodyNotesComponent} from "../../shared/body-notes/body-notes.component";
+import {PurchaseDocComponent} from "../purchase-doc/purchase-doc/purchase-doc.component";
+import {jsPDF} from "jspdf";
+import {ComponentToStringService} from "../../services/component-to-string.service";
+import {VendorDocComponent} from "../purchase-doc/vendor-doc/vendor-doc.component";
+import {map, mergeMap, of} from "rxjs";
+import {UserService} from "../../services/user-service";
+import {
+  VendorEmailSuccessComponent
+} from "../purchase-doc/vendor-doc/vendor-email-success/vendor-email-success.component";
 
 export enum PoStatus {
   Approved = 1,
@@ -39,7 +48,9 @@ export class PurchaseOrdersComponent implements AfterViewInit {
   constructor(private poService: PurchaseOrdersService,
               private router: Router,
               private route: ActivatedRoute,
-              private modalService: ModalService) {
+              private modalService: ModalService,
+              private comToStrService: ComponentToStringService,
+              private userService: UserService) {
     if (this.route.snapshot.url[0].path === 'done') {
       this.jsonData.value = 'Done';
       this.deliveryColHeader = 'Delivered date';
@@ -114,40 +125,184 @@ export class PurchaseOrdersComponent implements AfterViewInit {
       btnSuccess: true,
       successCallback: (form) => {
         this.dataSource.isLoading.next(true);
+        const notes = JSON.parse(JSON.stringify(form.value.notes));
 
         switch (poStatus) {
           case PoStatus.Approved:
-            this.poService.approvePo(po, form.value.notes)
+            this.poService.approvePo(po, notes)
               .subscribe({
-                next: _ => {
-                  this.dataSource.loadData();
-                  this.dataSource.row = null;
+                next: res => {
+                  if (!res.reqExecApproval) {
+                    this.emailPo(po.poNumber, notes);
+                  }
+                  else {
+                    this.dataSource.loadData();
+                    this.dataSource.row = null;
+                  }
                 },
-                error: _ => {this.dataSource.isLoading.next(false);},
+                error: _ => {
+                  this.dataSource.isLoading.next(false);
+                }
               });
             break;
           case PoStatus.Disapproved:
-            this.poService.disApprovePo(po, form.value.notes)
+            this.poService.disApprovePo(po, notes)
               .subscribe({
                 next: _ => {
                   this.dataSource.loadData();
                   this.dataSource.row = null;
                 },
-                error: _ => {this.dataSource.isLoading.next(false);},
+                error: _ => this.dataSource.isLoading.next(false),
               });
             break;
           case PoStatus.ExecApproved:
-            this.poService.execApprovePo(po, form.value.notes)
+            this.poService.execApprovePo(po)
               .subscribe({
                 next: _ => {
-                  this.dataSource.loadData();
-                  this.dataSource.row = null;
+                  this.emailPo(po.poNumber, notes);
                 },
-                error: _ => {this.dataSource.isLoading.next(false);},
+                error: _ => {
+                  this.dataSource.isLoading.next(false);
+                }
               });
             break;
         }
       }
     }, BodyNotesComponent);
+  }
+
+  onViewPo(event: MouseEvent) {
+    if (!this.dataSource.row) {
+      event.stopPropagation();
+    }
+    else {
+      this.dataSource.isLoading.next(true);
+      this.poService.getPoWithRefs(this.dataSource.row.poNumber)
+        .pipe(mergeMap(res => {
+          if (!res.approveUserId)
+            return of(res);
+
+          return this.userService.get(res.approveUserId)
+            .pipe(map(user => {
+              res.approveUser = user;
+              return res;
+            }));
+        }))
+        .subscribe(res => {
+          this.comToStrService
+            .toString(this.modal.viewContainerRef, PurchaseDocComponent, {
+              purchaseReq: res.purchaseReq,
+              title: 'purchase order',
+              orderAbbr: 'po',
+              orderNumber: res.poNumber,
+              createDate: res.createDate,
+              approvedBy: res.approveUser?.fullName,
+              approvedDate: res.approveDate,
+              approvedByPhone: res.approveUser?.phoneNumber,
+              approvedByEmail: res.approveUser?.email
+            })
+            .then(html => {
+              const doc = new jsPDF({
+                orientation: 'p',
+                unit: 'px',
+                format: 'a4',
+                compress: true
+              });
+
+              doc.html(html, {
+                html2canvas: {
+                  scale: 0.57
+                },
+                callback: (doc: jsPDF) => {
+                  doc.save(`PO ${this.dataSource.row?.poNumber}`);
+                  this.comToStrService.destroy();
+                  this.dataSource.isLoading.next(false);
+                }
+              });
+            })
+        });
+    }
+  }
+
+  private emailPo(poNumber: string, notes: string) {
+    this.poService.getPoWithRefs(poNumber)
+      .pipe(mergeMap(res => {
+        if (!res.approveUserId)
+          return of(res);
+
+        return this.userService.get(res.approveUserId)
+          .pipe(map(user => {
+            res.approveUser = user;
+            return res;
+          }));
+      }))
+      .pipe(mergeMap(res => {
+        return this.userService.get(<number>res.purchaseReq.approveUserId)
+          .pipe(map(user => {
+            res.purchaseReq.approveUser = user;
+            return res;
+          }));
+      }))
+      .subscribe(res => {
+        this.comToStrService
+          .toString(this.modal.viewContainerRef, PurchaseDocComponent, {
+            purchaseReq: res.purchaseReq,
+            title: 'purchase order',
+            orderAbbr: 'po',
+            orderNumber: res.poNumber,
+            createDate: res.createDate,
+            approvedBy: res.approveUser?.fullName,
+            approvedDate: res.approveDate,
+            approvedByPhone: res.approveUser?.phoneNumber,
+            approvedByEmail: res.approveUser?.email
+          })
+          .then(purchaseHtml => {
+            this.comToStrService.toString(this.modal.viewContainerRef, VendorDocComponent, {
+              vendorFirstName: res.purchaseReq.vendorContact.firstName + ' ' +
+                res.purchaseReq.vendorContact.lastName,
+              poNumber: res.poNumber,
+              purchaseType: res.classification.classificationName.includes('Materials')
+                ? 'materials'
+                : res.classification.classificationName,
+              prApproverName: res.purchaseReq.approveUser?.fullName,
+              prApproverEmail: res.purchaseReq.approveUser?.email,
+              prApproverPhone: res.purchaseReq.approveUser?.phoneNumber
+            })
+              .then(vendorHtml => {
+                const doc = new jsPDF({
+                  orientation: 'p',
+                  unit: 'px',
+                  format: 'a4',
+                  compress: true
+                });
+
+                doc.html(purchaseHtml, {
+                  html2canvas: {
+                    scale: 0.57
+                  },
+                  callback: (doc: jsPDF) => {
+                    this.poService.emailPo(poNumber, notes, btoa(doc.output()), vendorHtml)
+                      .subscribe(_ => {
+                        this.comToStrService.destroy();
+                        this.dataSource.loadData();
+                        this.dataSource.row = null;
+
+                        this.modalService.show(
+                          this.modal.viewContainerRef,
+                          {
+                            title: 'Success',
+                            btnSuccess: false
+                          },
+                          VendorEmailSuccessComponent,
+                          {
+                            poNumber: poNumber,
+                            vendor: res.purchaseReq.vendor.companyName
+                          });
+                      });
+                  }
+                });
+              });
+          });
+      });
   }
 }

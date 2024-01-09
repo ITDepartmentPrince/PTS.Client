@@ -9,6 +9,7 @@ import {Operations} from "../../../shared/operations";
 import {TaxRateService} from "../../../services/tax-rates.service";
 import {PurchaseReqsService} from "../../../services/purchase-reqs.service";
 import {Subscription, zip} from "rxjs";
+import {FixNgSelectPlacement} from "../../../shared/fix-ng-select-placement";
 
 @Component({
   selector: 'app-items-materials',
@@ -23,6 +24,7 @@ export class ItemsMaterialsComponent implements OnInit, OnDestroy {
   operations = Operations;
   materials: Material[];
   measurementUnits: MeasurementUnit[];
+  protected readonly FixNgSelectPlacement = FixNgSelectPlacement;
 
   constructor(public prService: PurchaseReqsService,
               private matService: MaterialsService,

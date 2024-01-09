@@ -18,35 +18,46 @@ export class PurchaseOrdersService implements IService<PurchaseOrder> {
       });
   }
 
-  getAll(): Observable<PurchaseOrder[]> {
+  /*getAll(): Observable<PurchaseOrder[]> {
     return this.httpClient.get<PurchaseOrder[]>(AuthConstant.apiRoot + `/PurchaseOrders`);
-  }
+  }*/
 
-  get(poNumber: string): Observable<PurchaseOrder> {
+  /*get(poNumber: string): Observable<PurchaseOrder> {
     return this.httpClient.get<PurchaseOrder>(AuthConstant.apiRoot + `/PurchaseOrders/${poNumber}`);
-  }
+  }*/
 
   delete(poNumber: string | undefined): Observable<any> {
     return this.httpClient.delete(AuthConstant.apiRoot + `/PurchaseOrders/${poNumber}`);
   }
 
-  approvePo(po: PurchaseOrder, notes: string): Observable<any> {
-    return this.httpClient.post(AuthConstant.apiRoot +
-        `/PurchaseOrders/ApprovePo/${po.poNumber}/CreateReceiving/${po.purchaseReq.shipToSiteId}`,
+  approvePo(po: PurchaseOrder, notes: string): Observable<PurchaseOrder> {
+    return this.httpClient.post<PurchaseOrder>(AuthConstant.apiRoot +
+      `/PurchaseOrders/ApprovePo/${po.poNumber}/CreateReceiving/${po.purchaseReq.shipToSiteId}`,
       {notes: notes},
       {headers: new HttpHeaders().set('Content-Type', 'application/json')});
   }
 
-  execApprovePo(po: PurchaseOrder, notes: string): Observable<any> {
+  execApprovePo(po: PurchaseOrder): Observable<any> {
     return this.httpClient.post(AuthConstant.apiRoot +
       `/PurchaseOrders/ExecApprovePo/${po.poNumber}/CreateReceiving/${po.purchaseReq.shipToSiteId}`,
-      {notes: notes},
+      {},
       {headers: new HttpHeaders().set('Content-Type', 'application/json')});
   }
 
   disApprovePo(po: PurchaseOrder, notes: string): Observable<any> {
     return this.httpClient.post(AuthConstant.apiRoot + `/PurchaseOrders/DisApprovePo/${po.poNumber}`,
       {notes: notes},
+      {headers: new HttpHeaders().set('Content-Type', 'application/json')});
+  }
+
+  getPoWithRefs(poNumber: string): Observable<PurchaseOrder> {
+    return this.httpClient.get<PurchaseOrder>(AuthConstant.apiRoot + `/PurchaseOrders/GetPoWithRefs/${poNumber}`);
+  }
+
+  emailPo(poNumber: string, notes: string, pdfDoc: string, html: string): Observable<any> {
+    return this.httpClient.put(AuthConstant.apiRoot +
+      `/PurchaseOrders/${poNumber}/EmailPo`,
+      {notes: notes, pdfDoc: pdfDoc, html: html},
       {headers: new HttpHeaders().set('Content-Type', 'application/json')});
   }
 }

@@ -61,8 +61,8 @@ export class StockTransferService implements IService<StockTransfer> {
       `/Sites/${this.siteService.localSite}/StockTransfer/${number}`);
   }
 
-  shipped(number: string) {
-    return this.httpClient.put(AuthConstant.apiRoot +
+  shipped(number: string): Observable<Array<number>> {
+    return this.httpClient.put<Array<number>>(AuthConstant.apiRoot +
       `/Sites/${this.siteService.localSite}/StockTransfer/Shipped/${number}`, null);
   }
 }

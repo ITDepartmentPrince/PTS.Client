@@ -88,6 +88,7 @@ import {StockTransferViewComponent} from "./stock-transfer/view/stock-transfer-v
 import {StockTransferEditComponent} from "./stock-transfer/edit/stock-transfer-edit.component";
 import {PrintLayoutComponent} from "./print-labels/print-layout/print-layout.component";
 import {ItemsLabelComponent} from "./print-labels/items-label/items-label.component";
+import {PurchaseDocComponent} from "./buy/purchase-doc/purchase-doc/purchase-doc.component";
 
 const appRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -303,6 +304,7 @@ const appRoutes: Routes = [
     ]
   },
 
+  { path: 'purchase-doc', component: PurchaseDocComponent },
   { path: 'login-callback', component: LoginCallbackComponent },
   { path: 'logout-callback', component: LogoutCallbackComponent },
   { path: 'not-found', component: PageNotFoundComponent, data: { message: 'Page not found!' } },

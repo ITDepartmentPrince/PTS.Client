@@ -30,7 +30,7 @@
 
           <div *ngIf="prService.purchaseReq?.isSubmitted" class="dropdown">
             <div *appAuth="AuthPolicy.canUserApprovePr()">
-              <div *ngIf="!prService.purchaseReq.purchaseOrder">
+              <div *ngIf="!prService.purchaseReq.purchaseOrder || prService.purchaseReq.purchaseOrder?.disApproveUserId">
                 <button class="btn {{prService.purchaseReq && prService.purchaseReq.approveUserId
                           ? 'btn-success'
                           : 'btn-secondary'}} dropdown-toggle btn-status"
@@ -47,7 +47,7 @@
                   </li>
                 </ul>
               </div>
-              <div *ngIf="prService.purchaseReq.purchaseOrder">
+              <div *ngIf="prService.purchaseReq.purchaseOrder && !prService.purchaseReq.purchaseOrder?.disApproveUserId">
                 <button class="btn {{prService.purchaseReq && prService.purchaseReq.approveUserId ? 'btn-success' : 'btn-secondary'}}"
                         style="padding: 0.6rem 1.2rem;"
                         type="button">
@@ -80,9 +80,10 @@
               </svg>
             </div>
             <ul class="dropdown-menu shadow">
-              <li><a class="dropdown-item" href="#">Delete</a></li>
+              <li><a class="dropdown-item" href="#" style="pointer-events: none; opacity: 0.5;">Delete</a></li>
               <li><a class="dropdown-item" (click)="onDuplicate()">Duplicate</a></li>
-              <li><a class="dropdown-item" href="#">Print</a></li>
+              <li><a class="dropdown-item" href="#" style="pointer-events: none; opacity: 0.5;">Print</a></li>
+              <li><a class="dropdown-item" href="#" style="pointer-events: none; opacity: 0.5;">Export PDF</a></li>
             </ul>
           </div>
         </div>
@@ -94,7 +95,7 @@
     <app-loading-spinner></app-loading-spinner>
   </div>
 
-  <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isLoading">
+  <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isLoading" (keydown.enter)="$event.preventDefault()">
     <ng-content></ng-content>
     <!--<div class="row">
       <div class="col-md-4">
@@ -187,7 +188,7 @@
           <input type="text"
                  class="form-control"
                  [readonly]=true
-                 [value]="prService.purchaseReq.approveUser?.name ?? 'pending'">
+                 [value]="prService.purchaseReq.approveUser?.fullName ?? 'pending'">
         </div>
       </div>
     </div>

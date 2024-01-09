@@ -13,6 +13,7 @@
 .cb-item .dropdown-menu {
   font-size: 1.3rem;
   transform: translate(0, 38px) !important;
+  overflow: hidden;
 }
 
 .cb-inner {

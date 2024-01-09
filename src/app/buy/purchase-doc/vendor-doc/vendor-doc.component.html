@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Purchase order</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+<p>Dear {{model.vendorFirstName}},</p>
+<p>Please see attached PO No. PO {{model.poNumber}} for the order of {{model.purchaseType}}.</p>
+<p>If you have any questions, please contact <strong>{{model.prApproverName}}</strong> at <strong>{{model.prApproverEmail}}</strong> <br />
+  or call <strong>{{model.prApproverPhone | format: '(###) ###-####'}}</strong>
+</p>
+<p>Thank you.</p>
+<p>
+  <strong>PRINCE Sterilization Services, LLC.</strong><br />
+  5 US 46 East, Suite 602<br/>
+  Pine Brook, NJ 07058<br/>
+  p: (973) 582-1900<br />
+  <a href="https://princesterilization.com/" style="text-decoration: underline;">www.princesterilization.com</a>
+</p>
+<p>(This is a system-generated email.)</p>
+</body>
+</html>

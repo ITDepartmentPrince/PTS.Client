@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {PrintLabelsService} from "../print-labels.service";
 import {ItemLabel} from "../../models/itemLabel";
 import {ItemLabelService} from "../../services/item-label.service";

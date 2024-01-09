@@ -1,0 +1,214 @@
+<section style="padding: 20px; width: 782px;">
+  <header style="display: flex; justify-content: space-between;">
+    <article>
+      <img style="width: 200px; object-fit: cover; margin-bottom: 5px;" [src]="logo" alt="logo" #imgLogo/>
+      <div>
+        <div style="font-weight: bold;">Prince Sterilization Services, LLC</div>
+        <div>45 Route 46 East, Suite 602</div>
+        <div>Pine Brook, NJ 07058</div>
+        <div>Phone: (973) 582-1900</div>
+        <div>Email: accounting@princesterilization.com</div>
+      </div>
+    </article>
+    <article>
+      <div>
+        <h3 style="padding: 10px;
+                   text-transform: uppercase;
+                   text-align: center;
+                   background-color: rgb(0 111 192) !important;
+                   color: #fff;
+                   font-weight: bold;
+                   font-size: 16px;
+                   border-radius: 3px;
+                   margin-bottom: 10px;">
+          {{model.title}}
+        </h3>
+        <div style="font-weight: bold;">
+          <div style="display: flex; flex-wrap: nowrap;">
+            <div style="width: 70px;">Order #</div>
+            <div style="display: flex; align-items: center;">
+              <div style="text-transform: uppercase; margin-right: 3px;">{{model.orderAbbr}}</div>
+              <div>{{model.orderNumber}}</div>
+            </div>
+          </div>
+          <div style="display: flex; flex-wrap: nowrap;">
+            <div style="width: 70px;">Date</div>
+            <div>{{model.createDate | date: 'mediumDate'}}</div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </header>
+
+  <section style="margin: 25px 0;">
+    <article style="display: flex; justify-content: space-between;">
+      <article style="border: 1px solid gray; border-radius: 3px; flex-grow: 1; margin-right: 50px;">
+        <div style="background-color: rgb(0 111 192);
+                    color: #fff;
+                    padding: 2px 10px 3px;
+                    font-weight: bold;">
+          Vendor
+        </div>
+        <div style="padding: 4px 10px;">
+          <div>
+            <div>{{model.purchaseReq.vendor.companyName}}</div>
+            <div>{{model.purchaseReq.vendor.street1}}</div>
+            <div *ngIf="model.purchaseReq.vendor.street2">{{model.purchaseReq.vendor.street2}}</div>
+            <div>{{model.purchaseReq.vendor.cityName}}, {{model.purchaseReq.vendor.stateCode}} {{model.purchaseReq.vendor.zipCode}}</div>
+            <div>{{model.purchaseReq.vendor.phoneNumber | format: '(###) ###-####'}}</div>
+          </div>
+          <div style="margin-top: 20px;">
+            <div style="display: flex; align-items: center; flex-wrap: nowrap;">
+              <span style="width: 65px;">Contact :</span>
+              <span>{{model.purchaseReq.vendorContact.firstName}} {{model.purchaseReq.vendorContact.lastName}}</span>
+            </div>
+            <div style="display: flex; align-items: center; flex-wrap: nowrap;">
+              <span style="width: 65px;">Phone :</span>
+              <span>{{model.purchaseReq.vendorContact.phoneNumber | format: '(###) ###-####'}}</span>
+            </div>
+            <div style="display: flex; align-items: center; flex-wrap: nowrap;">
+              <span style="width: 65px;">Email :</span>
+              <span>{{model.purchaseReq.vendorContact.emailAddress}}</span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article style="border: 1px solid gray; border-radius: 3px; flex-grow: 1;">
+        <div style="background-color: rgb(0 111 192);
+                    color: #fff;
+                    padding: 2px 10px 3px;
+                    font-weight: bold;">
+          Ship to
+        </div>
+        <div style="padding: 4px 10px;">
+          <div>
+            <div>Prince Sterilization Services, LLC</div>
+            <div>{{model.purchaseReq.shipToSite.street1}}</div>
+            <div *ngIf="model.purchaseReq.shipToSite.street2">{{model.purchaseReq.shipToSite.street2}}</div>
+            <div>{{model.purchaseReq.shipToSite.cityName}}, {{model.purchaseReq.shipToSite.stateCode}} {{model.purchaseReq.shipToSite.zipCode}}</div>
+          </div>
+          <div style="margin-top: 20px;">
+            <div style="display: flex; align-items: center; flex-wrap: nowrap;">
+              <span style="width: 65px;">Contact :</span>
+              <span>{{model.approvedBy ?? '---'}}</span>
+            </div>
+            <div style="display: flex; align-items: center; flex-wrap: nowrap;">
+              <span style="width: 65px;">Phone :</span>
+              <span>{{model.approvedByPhone ? (model.approvedByPhone | format: '(###) ###-####') : '---'}}</span>
+            </div>
+            <div style="display: flex; align-items: center; flex-wrap: nowrap;">
+              <span style="width: 65px;">Email :</span>
+              <span>{{model.approvedByEmail ?? '---'}}</span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </article>
+
+    <article style="margin-top: 30px;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr style="background-color: rgb(0 111 192); color: #fff;">
+          <th style="border: 1px solid grey; padding: 2px 10px 3px;">Delivery date</th>
+          <th style="border: 1px solid grey; padding: 2px 10px 3px;">Ship via</th>
+          <th style="border: 1px solid grey; padding: 2px 10px 3px;">Ship Account #</th>
+          <th style="border: 1px solid grey; padding: 2px 10px 3px;">Payment terms</th>
+        </tr>
+        <tr>
+          <td style="border: 1px solid grey; padding: 2px 10px 3px;">{{model.purchaseReq.deliveryDate | date: 'mediumDate'}}</td>
+          <td style="border: 1px solid grey; padding: 2px 10px 3px;">{{model.purchaseReq.shipping.name}}</td>
+          <td style="border: 1px solid grey; padding: 2px 10px 3px;">{{model.purchaseReq.shipping.accNo}}</td>
+          <td style="border: 1px solid grey; padding: 2px 10px 3px;">{{model.purchaseReq.payTerm.name}}</td>
+        </tr>
+      </table>
+    </article>
+  </section>
+
+  <section style="margin: 25px 0;">
+    <table style="width: 100%; border-collapse: collapse;">
+      <tr style="background-color: rgb(0 111 192); color: #fff;">
+        <th style="border: 1px solid grey; padding: 2px 10px; white-space: nowrap;">Catalog #</th>
+        <th style="border: 1px solid grey; padding: 2px 10px; white-space: nowrap;">Description</th>
+        <th style="border: 1px solid grey; padding: 2px 10px; white-space: nowrap;">Quote #</th>
+        <th style="border: 1px solid grey; padding: 2px 10px; white-space: nowrap;">Unit</th>
+        <th style="border: 1px solid grey; padding: 2px 10px; white-space: nowrap; text-align: end;">Quantity</th>
+        <th style="border: 1px solid grey; padding: 2px 10px; white-space: nowrap; text-align: end;">Unit Price</th>
+        <th style="border: 1px solid grey; padding: 2px 10px; white-space: nowrap; text-align: end;">Total Price</th>
+        <th style="border: 1px solid grey; padding: 2px 10px; white-space: nowrap; text-align: end;">Tax</th>
+      </tr>
+      <tr *ngFor="let item of model.purchaseReq.purchaseReqItems; let i = index;">
+        <td style="border: 1px solid grey; padding: 2px 10px;">
+          <div *ngIf="item.material">{{item.material.catalogNumber}}</div>
+        </td>
+        <td style="border: 1px solid grey; padding: 2px 10px;">
+          <div *ngIf="item.material">{{item.material.description}}</div>
+        </td>
+        <td style="border: 1px solid grey; padding: 2px 10px;">{{item.quoteNo}}</td>
+        <td style="border: 1px solid grey; padding: 2px 10px;">{{item.purchaseUom.longUnit}}</td>
+        <td style="border: 1px solid grey; padding: 2px 10px; text-align: end;">{{item.quantity | number: '1.2-2'}}</td>
+        <td style="border: 1px solid grey; padding: 2px 10px; text-align: end;">{{item.pricePerQty | number: '1.2-2'}}</td>
+        <td style="border: 1px solid grey; padding: 2px 10px; text-align: end;">{{getItemTotal(item) | number: '1.2-2'}}</td>
+        <td style="border: 1px solid grey; padding: 2px 10px; text-align: end;">{{item.taxRate.nameTaxRate}}</td>
+      </tr>
+      <tr style="font-weight: bold;">
+        <td style="border: 1px solid grey; padding: 2px 10px; text-align: end;" [colSpan]="4">Total</td>
+        <td style="border: 1px solid grey; padding: 2px 10px; text-align: end;">{{getTotalQty() | number: '1.2-2'}}</td>
+        <td style="border: 1px solid grey; padding: 2px 10px; text-align: end;">{{getTotalPricePerQty() | number: '1.2-2'}}</td>
+        <td style="border: 1px solid grey; padding: 2px 10px; text-align: end;">{{getTotal() | number: '1.2-2'}}</td>
+        <td style="border: 1px solid grey; padding: 2px 10px; text-align: end;">{{getTotalTaxRate() | number: '1.2-2'}}</td>
+      </tr>
+    </table>
+  </section>
+
+  <section style="margin: 25px 0; display: flex; border: 1px solid grey;">
+    <article style="width: 60%; border-right: 1px solid grey;">
+      <div style="font-weight: bold; border-bottom: 1px solid gray; padding: 2px 10px; background-color: rgb(0 111 192); color: #fff;">Notes / special instructions</div>
+      <div style="padding: 2px 10px;">{{model.purchaseReq.notes}}</div>
+    </article>
+
+    <article style="width: 40%;">
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr style="background-color: rgb(0 111 192); color: #fff;">
+          <th [colSpan]="2" style="border-bottom: 1px solid grey; padding: 2px 10px;">Summary</th>
+        </tr>
+        <tr *ngFor="let charge of model.purchaseReq.purchaseReqCharges">
+          <td style="border-bottom: 1px solid grey; padding: 2px 10px;">{{charge.otherCharge.otherChargeName}}</td>
+          <td style="border-bottom: 1px solid grey; padding: 2px 10px; text-align: end;">{{charge.amount | number: '1.2-2'}} USD</td>
+        </tr>
+        <tr>
+          <td style="border-bottom: 1px solid grey; padding: 2px 10px;">Subtotal (Tax excluded)</td>
+          <td style="border-bottom: 1px solid grey; padding: 2px 10px; text-align: end;">
+            {{(getTotal() + getAddChargesTotal()) | number: '1.2-2'}} USD
+          </td>
+        </tr>
+        <tr>
+          <td style="border-bottom: 1px solid grey; padding: 2px 10px;">Plus Tax</td>
+          <td style="border-bottom: 1px solid grey; padding: 2px 10px; text-align: end;">{{getTotalTaxRate() | number: '1.2-2'}} USD</td>
+        </tr>
+        <tr>
+          <td style="padding: 2px 10px; font-weight: bold;">Total</td>
+          <td style="padding: 2px 10px; text-align: end; font-weight: bold;">
+            {{(getTotal() + getAddChargesTotal() + getTotalTaxRate()) | number: '1.2-2' }} USD
+          </td>
+        </tr>
+      </table>
+    </article>
+  </section>
+
+  <footer style="margin-top: 35px; text-align: end;">
+    <div style="display: inline-block;">
+      <div style="display: flex; margin-bottom: 10px;">
+        <span style="width: 90px;">Approved By :</span>
+        <span style="margin-left: 15px; min-width: 100px; text-align: left;">
+        {{model.approvedBy ?? '---'}}<br>
+      </span>
+      </div>
+      <div style="display: flex;">
+        <span style="width: 90px;">Date :</span>
+        <span style="margin-left: 15px; min-width: 100px; text-align: left;">
+        {{model.approvedDate ? (model.approvedDate | date: 'mediumDate') : '---'}}<br>
+      </span>
+      </div>
+    </div>
+  </footer>
+</section>

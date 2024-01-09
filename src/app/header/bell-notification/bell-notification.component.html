@@ -14,87 +14,47 @@
     </div>
     <div *ngFor="let userNotification of userNotifications; let i = index;"
        class="list-group-item list-group-item-action p-4">
-      <div *ngIf="userNotification.notification.notificationType === PushNotificationType.PrCreated"
-           style="cursor: pointer;"
-           (click)="OnRead(userNotification)">
-        <div class="d-flex w-100 justify-content-between">
-          <div class="mb-3 fw-bold">Purchase requisition {{userNotification.notification.prNumber}} was created.</div>
-          <div>
-            <small class="badge {{userNotification.isRead ? 'text-bg-success' : 'text-bg-danger'}}">
-              {{userNotification.isRead ? 'read' : 'unread'}}
-            </small>
-          </div>
-        </div>
-        <p class="mb-3" style="max-height: 40px; overflow: hidden;"
-           *ngIf="userNotification.notification.notes">
-          <span class="fw-bold fs-5">user note:</span> {{userNotification.notification.notes}}
-        </p>
-        <div class="d-flex w-100 justify-content-between">
-          <div>
-            <small *ngIf="userNotification.notification.notes"
-                   class="badge text-bg-secondary"
-                   (click)="onViewNotes($event, userNotification.notification.notes)">
-              view user notes
-            </small>
-          </div>
-          <small>{{userNotification.notification.createDate | date:'short'}}</small>
-        </div>
-      </div>
+      <notification-message *ngIf="userNotification.notification.notificationType === PushNotificationType.PrCreated"
+                            [userNotification]="userNotification"
+                            (click)="OnRead(userNotification)">
+        <div>Purchase requisition {{userNotification.notification.prNumber}} was created.</div>
+      </notification-message>
 
-      <div *ngIf="userNotification.notification.notificationType === PushNotificationType.PrUpdated"
-           style="cursor: pointer;"
-           (click)="OnRead(userNotification)">
-        <div class="d-flex w-100 justify-content-between">
-          <div class="mb-3 fw-bold">Purchase requisition {{userNotification.notification.prNumber}} was updated.</div>
-          <div>
-            <small class="badge {{userNotification.isRead ? 'text-bg-success' : 'text-bg-danger'}}">
-              {{userNotification.isRead ? 'read' : 'unread'}}
-            </small>
-          </div>
-        </div>
-        <p class="mb-3" style="max-height: 40px; overflow: hidden;"
-           *ngIf="userNotification.notification.notes">
-          {{userNotification.notification.notes}}
-        </p>
-        <div class="d-flex w-100 justify-content-between">
-          <div>
-            <small *ngIf="userNotification.notification.notes"
-                   class="badge text-bg-secondary"
-                   (click)="onViewNotes($event, userNotification.notification.notes)">
-              view user notes
-            </small>
-          </div>
-          <small>{{userNotification.notification.createDate | date:'short'}}</small>
-        </div>
-      </div>
+      <notification-message *ngIf="userNotification.notification.notificationType === PushNotificationType.PrUpdated"
+                            [userNotification]="userNotification"
+                            (click)="OnRead(userNotification)">
+        <div>Purchase requisition {{userNotification.notification.prNumber}} was updated.</div>
+      </notification-message>
 
-      <div *ngIf="userNotification.notification.notificationType === PushNotificationType.PoCreated"
-           style="cursor: pointer;"
-           (click)="OnRead(userNotification)">
-        <div class="d-flex w-100 justify-content-between">
-          <div class="mb-3 fw-bold">Purchase order {{userNotification.notification.poNumber}} was created.</div>
-          <div>
-            <small class="badge {{userNotification.isRead ? 'text-bg-success' : 'text-bg-danger'}}">
-              {{userNotification.isRead ? 'read' : 'unread'}}
-            </small>
-          </div>
-        </div>
-        <p class="mb-3" style="max-height: 40px; overflow: hidden;"
-           *ngIf="userNotification.notification.notes">
-          {{userNotification.notification.notes}}
-        </p>
-        <div class="d-flex w-100 justify-content-between">
-          <div>
-            <small *ngIf="userNotification.notification.notes"
-                   class="badge text-bg-secondary"
-                   (click)="onViewNotes($event, userNotification.notification.notes)">
-              view user notes
-            </small>
-          </div>
-          <small>{{userNotification.notification.createDate | date:'short'}}</small>
-        </div>
-      </div>
+      <notification-message *ngIf="userNotification.notification.notificationType === PushNotificationType.PrDisApproved"
+                            [userNotification]="userNotification"
+                            (click)="OnRead(userNotification)">
+        <div>Purchase requisition {{userNotification.notification.prNumber}} was not approved.</div>
+      </notification-message>
+
+      <notification-message *ngIf="userNotification.notification.notificationType === PushNotificationType.PoCreated"
+                            [userNotification]="userNotification"
+                            (click)="OnRead(userNotification)">
+        <div>Purchase order {{userNotification.notification.poNumber}} was created.</div>
+      </notification-message>
+
+      <notification-message *ngIf="userNotification.notification.notificationType === PushNotificationType.PoUpdated"
+                            [userNotification]="userNotification"
+                            (click)="OnRead(userNotification)">
+        <div>Purchase order {{userNotification.notification.poNumber}} was updated.</div>
+      </notification-message>
+
+      <notification-message *ngIf="userNotification.notification.notificationType === PushNotificationType.PoDisApproved"
+                            [userNotification]="userNotification"
+                            (click)="OnRead(userNotification)">
+        <div>Purchase order {{userNotification.notification.poNumber}} was not approved.</div>
+      </notification-message>
+
+      <notification-message *ngIf="userNotification.notification.notificationType === PushNotificationType.PoValueExceeded"
+                            [userNotification]="userNotification"
+                            (click)="OnRead(userNotification)">
+        <div>Purchase order {{userNotification.notification.poNumber}} value was above the limit.</div>
+      </notification-message>
     </div>
   </div>
 </div>
-<ng-container appModal></ng-container>

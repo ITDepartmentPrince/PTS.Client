@@ -24,16 +24,16 @@ export class PurchaseReqsService implements IService<PurchaseReq> {
         { headers: new HttpHeaders().set('Content-Type', 'application/json')});
   }
 
-  getAll(): Observable<PurchaseReq[]> {
+  /*getAll(): Observable<PurchaseReq[]> {
     return this.httpClient.get<PurchaseReq[]>(AuthConstant.apiRoot + `/PurchaseReqs`);
-  }
-
-  /*getRefsList(): Observable<RefsList> {
-    return this.httpClient.get<RefsList>(AuthConstant.apiRoot + `/PurchaseReqs/GetPurchaseReqsRefsList`);
   }*/
 
   get(prNumber: string): Observable<PurchaseReq> {
     return this.httpClient.get<PurchaseReq>(AuthConstant.apiRoot + `/PurchaseReqs/${prNumber}`);
+  }
+
+  getPrWithRefs(prNumber: string): Observable<PurchaseReq> {
+    return this.httpClient.get<PurchaseReq>(AuthConstant.apiRoot + `/PurchaseReqs/GetPrWithRefs/${prNumber}`);
   }
 
   create(): Observable<any> {

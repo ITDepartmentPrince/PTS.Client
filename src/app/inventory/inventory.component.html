@@ -31,7 +31,7 @@
                      [create]=false
                      [view]=false
                      [edit]=false
-                     [disBtnDel]="disBtnDelOnEmptyBL()"
+                     [disBtnDel]="true"
                      (operations)="onOperate($event)">
       <ul class="dropdown-menu shadow">
         <li class="dropdown-item">Report One</li>
@@ -247,7 +247,7 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="Total">
-        <th [colSpan]="7" class="text-end" mat-header-cell *matHeaderCellDef>Total</th>
+        <th [colSpan]="isSponsor ? 6 : 7" class="text-end" mat-header-cell *matHeaderCellDef>Total</th>
       </ng-container>
       <ng-container matColumnDef="VIS">
         <th mat-header-cell class="text-end" *matHeaderCellDef>{{getTotalValueInStock() | async}} USD</th>
@@ -259,7 +259,7 @@
         <th mat-header-cell class="text-end" *matHeaderCellDef></th>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-header-row *matHeaderRowDef="['Total', 'VIS', 'IS', 'r-brd']"></tr>
+      <tr mat-header-row *matHeaderRowDef="totalHeader"></tr>
       <tr mat-row
           *matRowDef="let row; columns: displayedColumns"
           (click)="dataSource.onRowSelect(row)"

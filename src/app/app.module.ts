@@ -156,6 +156,11 @@ import { ItemsLabelComponent } from './print-labels/items-label/items-label.comp
 import {ZXingScannerModule} from "@zxing/ngx-scanner";
 import { ActivateCameraComponent } from './activate-camera/activate-camera.component';
 import { AddStQtyScanComponent } from './stock-transfer/stock-transfer-items/add-st-qty-scan/add-st-qty-scan.component';
+import { NotificationMessageComponent } from './header/bell-notification/notification-message/notification-message.component';
+import { PurchaseDocComponent } from './buy/purchase-doc/purchase-doc/purchase-doc.component';
+import {VendorDocComponent} from "./buy/purchase-doc/vendor-doc/vendor-doc.component";
+import { PhoneNumberFormatPipePipe } from './shared/phone-number-format.pipe.pipe';
+import { VendorEmailSuccessComponent } from './buy/purchase-doc/vendor-doc/vendor-email-success/vendor-email-success.component';
 
 @NgModule({
   declarations: [
@@ -290,6 +295,11 @@ import { AddStQtyScanComponent } from './stock-transfer/stock-transfer-items/add
     ItemsLabelComponent,
     ActivateCameraComponent,
     AddStQtyScanComponent,
+    NotificationMessageComponent,
+    PurchaseDocComponent,
+    VendorDocComponent,
+    PhoneNumberFormatPipePipe,
+    VendorEmailSuccessComponent,
   ],
     imports: [
       AppRoutingModule,

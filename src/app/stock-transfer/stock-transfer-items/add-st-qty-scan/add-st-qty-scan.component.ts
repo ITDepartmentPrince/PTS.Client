@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import {ItemLabel} from "../../../models/itemLabel";
 import {ItemLabelService} from "../../../services/item-label.service";
 import {ControlContainer, NgForm} from "@angular/forms";
 

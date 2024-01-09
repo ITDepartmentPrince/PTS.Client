@@ -10,6 +10,7 @@ import {BodyDeleteFailedComponent} from "../shared/body-delete-failed/body-delet
 import {Subscription} from "rxjs";
 import {StockTransfer} from "../models/stock-transfer";
 import {StockTransferService} from "../services/stock-transfer-service";
+import {PrintLabelsService} from "../print-labels/print-labels.service";
 
 @Component({
   selector: 'app-stock-transfer',
@@ -26,7 +27,8 @@ export class StockTransferComponent implements OnInit, AfterViewInit, OnDestroy 
   constructor(public stService: StockTransferService,
               public router: Router,
               private route: ActivatedRoute,
-              private modalService: ModalService) {
+              private modalService: ModalService,
+              private printLabelsService: PrintLabelsService) {
 
     this.dataSource =
       new DataTable<StockTransfer>(this.displayedColumns,
@@ -109,10 +111,13 @@ export class StockTransferComponent implements OnInit, AfterViewInit, OnDestroy 
 
   onShipped(stockTransfer: StockTransfer) {
     this.stService.shipped(stockTransfer.number)
-      .subscribe(_ => {
+      .subscribe(res => {
         this.dataSource.isLoading.next(true);
         this.dataSource.loadData();
         this.dataSource.row = null;
+
+        this.printLabelsService.data = res;
+        this.printLabelsService.printDocument('items-label');
       });
   }
 }

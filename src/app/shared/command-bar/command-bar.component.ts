@@ -58,6 +58,6 @@ export class CommandBarComponent {
   onExport() {
     const doc = new JsPDF();
     autoTable(doc, { html: `#${this.export}` });
-    doc.save(`${this.export}.pdf`)
+    doc.save(`${this.export}.pdf`);
   }
 }

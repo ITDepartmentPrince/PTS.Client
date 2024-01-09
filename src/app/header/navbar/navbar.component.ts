@@ -30,11 +30,15 @@ export class NavbarComponent implements OnInit {
     this.signalRService.getServerNotification();
     this.signalRService.onNotified
       .subscribe(_ => {
-        console.log('called');
         this.bnService.getUnReadCount()
           .subscribe(res => {
-            new Audio('/assets/sound/notification.mp3').play().then();
-            this.unReadCount = res;
+            if (res > 0) {
+              const audio = new Audio('/assets/sound/notification.mp3');
+              audio.play().then();
+              audio.onended = _ => {
+                this.unReadCount = res;
+              }
+            }
           });
       });
 
