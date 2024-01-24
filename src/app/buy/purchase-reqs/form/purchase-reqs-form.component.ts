@@ -93,7 +93,7 @@ export class PurchaseReqsFormComponent implements OnInit {
             ?.find(c => c.classificationName.toLowerCase() === 'raw materials')
             ?.classificationId as number;
 
-        if (this.prService.purchaseReq.approveUserId)
+        if (this.prService.purchaseReq?.approveUserId)
           this.userService.get(this.prService.purchaseReq.approveUserId)
             .subscribe(res => {
               this.prService.purchaseReq.approveUser = res;

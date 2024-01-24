@@ -1,5 +1,6 @@
 <app-command-bar export="stock-transfer"
                  [reports]=true
+                 [disEdit]="dataSource.row?.isShipped ?? false"
                  (operations)="onOperate($event)">
   <ul class="dropdown-menu shadow">
     <li class="dropdown-item">Report One</li>

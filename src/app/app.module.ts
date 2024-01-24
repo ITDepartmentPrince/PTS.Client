@@ -161,6 +161,7 @@ import { PurchaseDocComponent } from './buy/purchase-doc/purchase-doc/purchase-d
 import {VendorDocComponent} from "./buy/purchase-doc/vendor-doc/vendor-doc.component";
 import { PhoneNumberFormatPipePipe } from './shared/phone-number-format.pipe.pipe';
 import { VendorEmailSuccessComponent } from './buy/purchase-doc/vendor-doc/vendor-email-success/vendor-email-success.component';
+import { InventoryIntelComponent } from './inventory/inventory-intel/inventory-intel.component';
 
 @NgModule({
   declarations: [
@@ -300,6 +301,7 @@ import { VendorEmailSuccessComponent } from './buy/purchase-doc/vendor-doc/vendo
     VendorDocComponent,
     PhoneNumberFormatPipePipe,
     VendorEmailSuccessComponent,
+    InventoryIntelComponent,
   ],
     imports: [
       AppRoutingModule,

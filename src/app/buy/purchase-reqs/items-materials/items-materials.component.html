@@ -143,6 +143,7 @@
                                  name="purchaseUomId{{i+1}}"
                                  placeholder="-- select --"
                                  [(ngModel)]="item.purchaseUomId"
+                                 appendTo="body"
                                  required
                                  #purchaseUomId="ngModel"
                                  [ngClass]="{input_danger: !purchaseUomId.valid && purchaseUomId.touched}"

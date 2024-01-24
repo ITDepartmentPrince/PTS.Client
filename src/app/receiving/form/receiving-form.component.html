@@ -23,7 +23,7 @@
             </button>
             <ul class="dropdown-menu shadow w-100">
               <li (click)="rfsService.onRoStatusChange(ReceivingStatus.ReceivedAll, modal)">
-                <div class="dropdown-item p-3" style="cursor: pointer;">Receive all</div>
+                <div class="dropdown-item p-3" style="cursor: pointer;">Received</div>
               </li>
             </ul>
           </div>
@@ -32,7 +32,7 @@
             <button class="btn btn-success dropdown-toggle w-100 btn-status"
                     type="button" data-bs-toggle="dropdown" aria-expanded="false"
                     style="width: 12rem !important;">
-              Received all
+              Received
             </button>
             <ul class="dropdown-menu shadow w-100">
               <li (click)="rfsService.onRoStatusChange(ReceivingStatus.NotReceived, modal)">
@@ -52,7 +52,7 @@
                 <div class="dropdown-item p-3" style="cursor: pointer;">Not received</div>
               </li>
               <li (click)="rfsService.onRoStatusChange(ReceivingStatus.ReceivedAll, modal)">
-                <div class="dropdown-item p-3" style="cursor: pointer;">Receive all</div>
+                <div class="dropdown-item p-3" style="cursor: pointer;">Received</div>
               </li>
             </ul>
           </div>

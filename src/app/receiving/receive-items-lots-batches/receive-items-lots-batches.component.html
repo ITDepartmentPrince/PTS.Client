@@ -30,13 +30,19 @@
         <table>
           <tr style="font-size: 1.3rem; font-weight: bold;">
             <td style="padding: 0.8rem;">Item</td>
-            <td style="width: 12rem; padding: 0.8rem;">Qty left</td>
+            <td style="width: 8rem; padding: 0.8rem;">Qty left</td>
             <td>
               <table>
                 <tr>
-                  <td style="width: 8rem; padding: 0.8rem;">To receive</td>
+                  <td style="width: 9rem; padding: 0.8rem;">To receive</td>
                   <td style="width: 18rem; padding: 0.8rem;">Lot / Batch #</td>
-                  <td style="width: 10rem; padding: 0.8rem;">Not accepted</td>
+                  <td style="width: 8rem; padding: 0.8rem;">PSS Id</td>
+                  <td style="width: 8rem; padding: 0 0.8rem;">
+                    <div class="d-flex align-items-center flex-column" style="line-height: 1;">
+                      <div>Not</div>
+                      <div>accepted</div>
+                    </div>
+                  </td>
                   <td style="width: 18rem; padding: 0.8rem;">Expiration date</td>
                   <td style="width: 3rem;"></td>
                 </tr>
@@ -56,7 +62,7 @@
                 </ng-select>
               </div>
             </td>
-            <td style="width: 12rem; vertical-align: top;">
+            <td style="width: 8rem; vertical-align: top;">
               <div class="{{item.recvdItemLotsBatches.length > 1 ? 'border-bottom' : ''}}">
                 <div class="d-flex justify-content-end" style="padding: 0.85rem 0.8rem;">
                   <div class="me-2">
@@ -69,7 +75,7 @@
             <td>
               <table>
                 <tr *ngFor="let itemLb of item.recvdItemLotsBatches; let j = index;">
-                  <td style="width: 8rem;">
+                  <td style="width: 9rem;">
                     <input type="number"
                            [min]="0"
                            class="form-control text-end"
@@ -92,7 +98,8 @@
                                  [(ngModel)]="itemLb.batchLotId"
                                  [required]="itemLb.rlbQty > 0"
                                  #blItemId="ngModel"
-                                 [ngClass]="{input_danger: !blItemId.valid && blItemId.touched}">
+                                 [ngClass]="{input_danger: !blItemId.valid && blItemId.touched}"
+                                 style="width: 17.9rem;">
                         <ng-template ng-tag-tmp let-search="searchTerm">
                           <b>create new</b>: {{ search }}
                         </ng-template>
@@ -106,7 +113,13 @@
                       </ng-select>
                     </div>
                   </td>
-                  <td style="width: 10rem; text-align: center;">
+                  <td style="width: 8rem;">
+                    <input type="text"
+                           class="form-control"
+                           name="pssId{{i}}{{j}}"
+                           [(ngModel)]="itemLb.pssId">
+                  </td>
+                  <td style="width: 8rem; text-align: center;">
                     <input type="checkbox"
                            class="form-check-input"
                            id="isDamage"

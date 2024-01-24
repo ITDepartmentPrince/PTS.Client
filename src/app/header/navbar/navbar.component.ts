@@ -19,7 +19,9 @@ export class NavbarComponent implements OnInit {
   logout() {
     this.authService
       .logoffAndRevokeTokens()
-      .subscribe((result) => console.log(result));
+      .subscribe(result => {
+        console.log(result)
+      });
   }
 
   ngOnInit(): void {

@@ -190,6 +190,14 @@
                  [readonly]=true
                  [value]="prService.purchaseReq.approveUser?.fullName ?? 'pending'">
         </div>
+
+        <div class="t-mb" *ngIf="action === operations.View">
+          <label class="form-label">Approved on</label>
+          <input type="text"
+                 class="form-control"
+                 [readonly]=true
+                 [value]="(prService.purchaseReq.approveDate | date:'short') ?? 'pending'">
+        </div>
       </div>
     </div>
 

@@ -29,4 +29,5 @@ export class BatchLot {
   lastUserId: number;
   lastUser: LastUser;
   pricePerQty: number;
+  pssId: string;
 }

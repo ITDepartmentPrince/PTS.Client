@@ -117,6 +117,15 @@ form .mb-4 {
   border-right: 0;
 }
 
+/*Links*/
+.bl-link {
+  color: #000;
+}
+
+.bl-link:active {
+  color: #fff;
+}
+
 /*Dropdown*/
 .dropdown .dropdown-menu {
   font-size: 1.4rem;

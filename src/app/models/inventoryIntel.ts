@@ -5,6 +5,7 @@ import {CreateUser} from "./create-user";
 import {LastUser} from "./last-user";
 import {BatchLot} from "./batchLot";
 import {ItemLabel} from "./itemLabel";
+import {StockTransfer} from "./stock-transfer";
 
 export class InventoryIntel {
   inventoryIntelId: number
@@ -17,6 +18,10 @@ export class InventoryIntel {
   receiving: Receiving;
   roSiteId: number;
   roSite: Site;
+  stNumber: string;
+  stockTransfer: StockTransfer;
+  stSiteId: number;
+  stSite: Site;
   movementDate: Date;
   qty: number;
   pricePerQty: number;
@@ -27,5 +32,10 @@ export class InventoryIntel {
   lastUserId: number;
   lastUser: LastUser;
   itemLabels: Array<ItemLabel>;
+  balancedAfter: number;
+
+  /*Display only*/
+  causedBy: string;
+  causedByLink: string;
 }
 

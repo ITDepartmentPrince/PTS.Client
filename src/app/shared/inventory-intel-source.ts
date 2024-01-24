@@ -1,3 +1,4 @@
 ﻿export enum InventoryIntelSource {
-  Receiving = 1
+  Receiving = 1,
+  StockTransfer = 2,
 }

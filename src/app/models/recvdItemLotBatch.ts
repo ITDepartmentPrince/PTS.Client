@@ -10,6 +10,7 @@ export class RecvdItemLotBatch {
   receivingItem: ReceivingItem;
   rlbConversionRate?: number;
   rlbQty = 0;
+  pssId: string;
   pricePerRlbQty?: number;
   batchLotId: number;
   batchLot: BatchLot;

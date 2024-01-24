@@ -14,6 +14,7 @@ import {Site} from "../models/site";
 import {SitesService} from "../services/sites.service";
 import {ItemLabelService} from "../services/item-label.service";
 import {map, Subscription} from "rxjs";
+import {InventoryIntelComponent} from "./inventory-intel/inventory-intel.component";
 
 @Component({
   selector: 'app-inventory',
@@ -158,5 +159,21 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy {
             .reduce((a, c) => a + c.pricePerQty * c.qty, 0)
             .toLocaleString())
       );
+  }
+
+  showTrailInv(event: MouseEvent, batchLot: BatchLot) {
+    this.modalService.show(
+      this.modal.viewContainerRef,
+      {
+        title: 'Inventory intel of ' + batchLot.material.catalogDescription + ', Batch/Lot #: ' + batchLot.batchLotNumber,
+        modalSize: 'modal-lg',
+        btnSuccess: false
+      },
+      InventoryIntelComponent,
+      {
+        batchLot: batchLot
+      });
+
+    event.stopPropagation();
   }
 }
