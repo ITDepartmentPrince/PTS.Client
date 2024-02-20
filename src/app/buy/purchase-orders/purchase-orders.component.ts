@@ -16,10 +16,10 @@ import {jsPDF} from "jspdf";
 import {ComponentToStringService} from "../../services/component-to-string.service";
 import {VendorDocComponent} from "../purchase-doc/vendor-doc/vendor-doc.component";
 import {map, mergeMap, of} from "rxjs";
-import {UserService} from "../../services/user-service";
 import {
   VendorEmailSuccessComponent
 } from "../purchase-doc/vendor-doc/vendor-email-success/vendor-email-success.component";
+import {UserService} from "../../services/user.service";
 
 export enum PoStatus {
   Approved = 1,

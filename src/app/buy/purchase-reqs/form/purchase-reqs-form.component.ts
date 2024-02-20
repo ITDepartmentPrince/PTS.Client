@@ -26,7 +26,7 @@ import {PayTerm} from "../../../models/pay-term";
 import {Shipping} from "../../../models/shipping";
 import {Site} from "../../../models/site";
 import {VendorContact} from "../../../models/vendor-contact";
-import {UserService} from "../../../services/user-service";
+import {UserService} from "../../../services/user.service";
 
 @Component({
   selector: 'app-purchase-reqs-form',

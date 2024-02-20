@@ -15,7 +15,7 @@ import {ComponentToStringService} from "../../services/component-to-string.servi
 import {PurchaseDocComponent} from "../purchase-doc/purchase-doc/purchase-doc.component";
 import {jsPDF} from "jspdf";
 import {map, mergeMap, of} from "rxjs";
-import {UserService} from "../../services/user-service";
+import {UserService} from "../../services/user.service";
 
 export enum PrStatus {
   Submitted = 1,

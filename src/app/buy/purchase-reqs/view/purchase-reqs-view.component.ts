@@ -2,7 +2,7 @@ import {Component, Input} from '@angular/core';
 import {Operations} from "../../../shared/operations";
 import {Router} from "@angular/router";
 import {PurchaseReqsService} from "../../../services/purchase-reqs.service";
-import {UserService} from "../../../services/user-service";
+import {UserService} from "../../../services/user.service";
 
 @Component({
   selector: 'app-purchase-reqs-view',

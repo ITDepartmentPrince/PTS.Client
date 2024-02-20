@@ -1,0 +1,153 @@
+<div>
+  <div class="d-flex align-items-center justify-content-between">
+    <div class="btn-group mx-5" role="group">
+      <!--<a routerLink="open"
+         routerLinkActive="sub-nav-link-active"
+         class="sub-nav-link">
+        Open
+      </a>-->
+    </div>
+    <div class="mx-5">
+      <h4 class="my-2">Users</h4>
+    </div>
+  </div>
+
+  <div class="sub-nav-link-border"></div>
+</div>
+
+<app-command-bar export="users" (operations)="onOperate($event)">
+  <!--<ul class="dropdown-menu shadow">
+    <li class="dropdown-item">Report One</li>
+  </ul>-->
+</app-command-bar>
+
+<div class="data-table-container">
+  <div class="data-table" tabindex="0">
+    <table id="users" mat-table [dataSource]="dataSource" matSort [matSortStart]="dataSource.pageOrder">
+      <ng-container matColumnDef="FullName">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>Full name</span>
+          <span class="search-container">
+            <app-column-search column="FullName"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>{{row["fullName"]}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Email">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>Email</span>
+          <span class="search-container">
+            <app-column-search column="Email"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>{{row["email"]}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="PhoneNumber">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>Phone #</span>
+          <span class="search-container">
+            <app-column-search column="PhoneNumber"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>{{row["phoneNumber"] | format:'(###) ###-####'}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="JobTitle">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>Job title</span>
+          <span class="search-container">
+            <app-column-search column="JobTitle"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>{{row["jobTitle"]}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Access">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>Access</span>
+          <span class="search-container">
+            <app-column-search column="Access"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>{{userRoles(row["userRoles"])}}</span>
+        </td>
+      </ng-container>
+      <!--<ng-container matColumnDef="UpdatedBy">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>Updated by</span>
+          <span class="search-container">
+            <app-column-search column="UpdatedBy"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>{{row["lastUser"]["luFirstName"] + ' ' + row["lastUser"]["luLastName"]}}</span>
+        </td>
+      </ng-container>-->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          (click)="dataSource.onRowSelect(row)"
+          [ngClass]="{highlighted: dataSource.selection.isSelected(row), inactive: row['inActive']}">
+      </tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell datatable-no-data"
+            [colSpan]="displayedColumns.length"
+            *ngIf="!(dataSource.isLoading | async)">No data available in table
+        </td>
+      </tr>
+    </table>
+    <div *ngIf="dataSource.isLoading | async" class="spinner-container-wrapper">
+      <div class="spinner-container">
+        <app-loading-spinner></app-loading-spinner>
+      </div>
+    </div>
+  </div>
+</div>
+<mat-paginator [pageSizeOptions]="[15, 30, 50, 100]"
+               [pageIndex]="dataSource.pageIndex"
+               [showFirstLastButtons]=true>
+</mat-paginator>
+<ng-container appModal></ng-container>

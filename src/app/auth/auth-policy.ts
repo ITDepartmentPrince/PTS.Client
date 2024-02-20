@@ -2,6 +2,10 @@
 
 @Injectable({providedIn: 'root'})
 export class AuthPolicy {
+  public static canUserRead() {
+    return ['Admin', 'Read'];
+  }
+
   public static canUserCreate() {
     return ['Admin', 'Create'];
   }
@@ -24,5 +28,9 @@ export class AuthPolicy {
 
   public static canUserExecApprovePo() {
     return ['Admin', 'ExecutiveApprover'];
+  }
+
+  public static canUserRegisterNewUser() {
+    return ['Admin', 'RegisterNewUser'];
   }
 }

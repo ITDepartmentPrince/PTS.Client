@@ -1,0 +1,67 @@
+<div class="trans">
+  <div class="row t-mb justify-content-between pb-2 border-bottom border-4">
+    <div class="col-md-4 align-self-end">
+      <div class="fw-bold fs-4">
+        Role
+        <span class="fw-normal">
+          {{action === operations.Create ? '(create)' : ''}}
+          {{action === operations.View ? '(read only)' : ''}}
+          {{action === operations.Edit ? '(edit)' : ''}}
+      </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div *ngIf="isLoading" class="text-center">
+      <app-loading-spinner></app-loading-spinner>
+    </div>
+    <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isLoading">
+      <ng-content></ng-content>
+      <div *ngIf="!f.valid && f.touched" class="alert alert-danger" role="alert">
+        One or more inputs are incorrect
+      </div>
+      <div class="mb-4">
+        <label for="name" class="form-label">Name</label>
+        <input type="text"
+               class="form-control"
+               id="name"
+               name="name"
+               [(ngModel)]="roleService.model.name"
+               required
+               #name="ngModel"
+               [ngClass]="{input_danger: !name.valid && name.touched}"
+               [readOnly]="controlState">
+      </div>
+      <div class="mb-4">
+        <label for="roleType" class="form-label">Role type</label>
+        <ng-select [items]="rolesType"
+                   bindLabel="name"
+                   bindValue="id"
+                   id="roleType"
+                   name="roleType"
+                   [(ngModel)]="roleService.model.roleType"
+                   required
+                   #roleType="ngModel"
+                   [ngClass]="{input_danger: !roleType.valid && roleType.touched}"
+                   [readonly]="controlState">
+        </ng-select>
+      </div>
+      <div class="mb-4">
+        <button class="btn btn-primary me-2"
+                type="submit"
+                *appAuth="AuthPolicy.canUserEdit()"
+                [disabled]="!f.valid && f.invalid">
+          <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
+          <span *ngIf="action === operations.View">Edit</span>
+        </button>
+        <button class="btn btn-primary"
+                type="button"
+                (click)="router.navigate(['/roles'],
+              {queryParamsHandling: 'preserve'})">
+          Back
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

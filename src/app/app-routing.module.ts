@@ -89,6 +89,15 @@ import {StockTransferEditComponent} from "./stock-transfer/edit/stock-transfer-e
 import {PrintLayoutComponent} from "./print-labels/print-layout/print-layout.component";
 import {ItemsLabelComponent} from "./print-labels/items-label/items-label.component";
 import {PurchaseDocComponent} from "./buy/purchase-doc/purchase-doc/purchase-doc.component";
+import {ForgotPasswordCallbackComponent} from "./auth/forgot-password-callback/forgot-password-callback.component";
+import {UsersComponent} from "./users/users.component";
+import {UsersViewComponent} from "./users/view/users-view.component";
+import {UsersEditComponent} from "./users/edit/users-edit.component";
+import {UsersCreateComponent} from "./users/create/users-create.component";
+import {RolesComponent} from "./roles/roles.component";
+import {RolesViewComponent} from "./roles/view/roles-view.component";
+import {RolesEditComponent} from "./roles/edit/roles-edit.component";
+import {RolesCreateComponent} from "./roles/create/roles-create.component";
 
 const appRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -272,7 +281,7 @@ const appRoutes: Routes = [
     component: BaseRecordsComponent,
     canActivate: [AutoLoginPartialRoutesGuard],
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'sites'},
+      { path: '', pathMatch: 'full', redirectTo: 'tax-rates'},
       { path: 'sites', component: SitesComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'sites/create', component: SitesCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
       { path: 'sites/:siteId', component: SitesViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
@@ -295,6 +304,17 @@ const appRoutes: Routes = [
     ]
   },
 
+  { path: 'users', component: UsersComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+  { path: 'users/create', component: UsersCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+  { path: 'users/:id', component: UsersViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+  { path: 'users/:id/edit', component: UsersEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+
+  { path: 'roles', component: RolesComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+  { path: 'roles/create', component: RolesCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+  { path: 'roles/:id', component: RolesViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+  { path: 'roles/:id/edit', component: RolesEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+
+
   {
     path: 'print',
     outlet: 'print',
@@ -307,6 +327,7 @@ const appRoutes: Routes = [
   { path: 'purchase-doc', component: PurchaseDocComponent },
   { path: 'login-callback', component: LoginCallbackComponent },
   { path: 'logout-callback', component: LogoutCallbackComponent },
+  { path: 'forgot-password-callback', component: ForgotPasswordCallbackComponent },
   { path: 'not-found', component: PageNotFoundComponent, data: { message: 'Page not found!' } },
   { path: 'unauthorized', component: PageNotFoundComponent },
   { path: 'forbidden', component: PageNotFoundComponent },

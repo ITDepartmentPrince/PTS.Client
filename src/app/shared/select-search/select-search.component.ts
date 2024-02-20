@@ -11,5 +11,4 @@ export class SelectSearchComponent {
   @Input() placeHolder = '';
   @Input() focus = true;
   @Output() value: string | number = '';
-
 }
