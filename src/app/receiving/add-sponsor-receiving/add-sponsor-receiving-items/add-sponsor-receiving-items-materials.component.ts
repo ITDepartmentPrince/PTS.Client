@@ -1,4 +1,4 @@
-import {Component, OnDestroy} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AddSponsorReceivingService} from "../../../services/add-sponsor-receiving.service";
 import {Material} from "../../../models/material";
 import {MeasurementUnit} from "../../../models/measurement-unit";
@@ -15,7 +15,7 @@ import {MeasurementUnitsService} from "../../../services/measurement-units.servi
   templateUrl: './add-sponsor-receiving-items-materials.component.html',
   viewProviders: [{provide: ControlContainer, useExisting: NgForm}]
 })
-export class AddSponsorReceivingItemsMaterialsComponent implements OnDestroy {
+export class AddSponsorReceivingItemsMaterialsComponent implements OnInit, OnDestroy {
   protected readonly FixNgSelectPlacement = FixNgSelectPlacement;
   isLoading = true;
   materials: Array<Material>;
@@ -70,7 +70,21 @@ export class AddSponsorReceivingItemsMaterialsComponent implements OnDestroy {
     item.orderedConversionRate = material?.conversionRate;
   }
 
+  purchaseUomLu(unitId: number) {
+    return this.getMeasurementUnit(unitId)?.longUnit;
+  }
+
+  baseUomLu(materialId: number | undefined) {
+    return this.getMeasurementUnit(
+      this.getMaterial(materialId as number)?.uomId as number)
+      ?.longUnit;
+  }
+
   private getMaterial(materialId: number) {
     return this.materials?.find(m => m.id === materialId);
+  }
+
+  private getMeasurementUnit(unitId: number) {
+    return this.measurementUnits?.find(mu => mu.unitId === unitId)
   }
 }

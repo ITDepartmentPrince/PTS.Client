@@ -29,7 +29,7 @@
           </div>
 
           <div *ngIf="prService.purchaseReq?.isSubmitted" class="dropdown">
-            <div *appAuth="AuthPolicy.canUserApprovePr()">
+            <div *appAuth="AuthPolicy.canUserApprovePr(); else restUsers">
               <div *ngIf="!prService.purchaseReq.purchaseOrder || prService.purchaseReq.purchaseOrder?.disApproveUserId">
                 <button class="btn {{prService.purchaseReq && prService.purchaseReq.approveUserId
                           ? 'btn-success'
@@ -57,13 +57,13 @@
             </div>
 
             <!--users without 'PO Approve' ability.-->
-            <div *appAuthReverse="AuthPolicy.canUserApprovePr()">
+            <ng-template #restUsers>
               <button class="btn {{prService.purchaseReq && prService.purchaseReq.approveUserId ? 'btn-success' : 'btn-secondary'}}"
                       style="padding: 0.6rem 1.2rem;"
                       type="button">
                 {{prService.purchaseReq && prService.purchaseReq.approveUserId ? 'Approved' : 'Pending'}}
               </button>
-            </div>
+            </ng-template>
           </div>
         </div>
         <div class="col-auto text-end">
@@ -402,31 +402,30 @@
                     </svg>
                   </span>
                 </div>
-                <div class="col-md-4 text-end">{{charge.amount.toFixed(2)}} <span style="font-size: 1.3rem;">USD</span></div>
+                <div class="col-md-4 text-end">
+                  $ {{charge.amount.toFixed(2)}}
+                </div>
               </div>
               <div class="border-bottom"></div>
             </div>
             <div class="row justify-content-between py-3">
               <div class="col fw-bold">Subtotal (Tax excluded):</div>
               <div class="col-md-4 text-end">
-                {{(prService.getTotal() + prService.getAddChargesTotal()).toFixed(2)}}
-                <span style="font-size: 1.3rem;">USD</span>
+                $ {{(prService.getTotal() + prService.getAddChargesTotal()).toFixed(2)}}
               </div>
             </div>
             <div class="border-bottom"></div>
             <div class="row justify-content-between py-3">
               <div class="col fw-bold">Plus Tax:</div>
               <div class="col-md-4 text-end">
-                {{prService.getTotalTaxRate().toFixed(2)}}
-                <span style="font-size: 1.3rem;">USD</span>
+                $ {{prService.getTotalTaxRate().toFixed(2)}}
               </div>
             </div>
             <div class="border-bottom"></div>
             <div class="row justify-content-between py-3">
               <div class="col fw-bold">Total:</div>
               <div class="col-md-4 text-end">
-                {{(prService.getTotal() + prService.getAddChargesTotal() + prService.getTotalTaxRate()).toFixed(2)}}
-                <span style="font-size: 1.3rem;">USD</span>
+                $ {{(prService.getTotal() + prService.getAddChargesTotal() + prService.getTotalTaxRate()).toFixed(2)}}
               </div>
             </div>
           </div>
@@ -438,7 +437,7 @@
       <div class="d-inline-block" *ngIf="!prService.purchaseReq.isSubmitted">
         <button class="btn btn-primary me-2"
                 type="submit"
-                *appAuth="AuthPolicy.canUserEdit()"
+                *appAuth="AuthPolicy.canUserEdit(RolesConstant.PurchaseReq)"
                 [disabled]="!f.valid && f.invalid || prService.purchaseReq.purchaseReqItems.length === 0">
           <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
           <span *ngIf="action === operations.View">Edit</span>

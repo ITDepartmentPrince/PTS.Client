@@ -99,8 +99,7 @@
                                  [(ngModel)]="itemLb.batchLotId"
                                  [required]="itemLb.rlbQty > 0"
                                  #blItemId="ngModel"
-                                 [ngClass]="{input_danger: !blItemId.valid && blItemId.touched}"
-                                 style="width: 17.9rem;">
+                                 [ngClass]="{input_danger: !blItemId.valid && blItemId.touched}">
                         <ng-template ng-tag-tmp let-search="searchTerm">
                           <b>create new</b>: {{ search }}
                         </ng-template>
@@ -118,7 +117,10 @@
                     <input type="text"
                            class="form-control"
                            name="pssId{{i}}{{j}}"
-                           [(ngModel)]="itemLb.pssId">
+                           [(ngModel)]="itemLb.pssId"
+                           [required]="true"
+                           #pssId="ngModel"
+                           [ngClass]="{input_danger: !pssId.valid && pssId.touched}">
                   </td>
                   <td style="width: 8rem; text-align: center;">
                     <input type="checkbox"

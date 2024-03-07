@@ -1,12 +1,12 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {Operations} from "../../../shared/operations";
-import {SizeVariant} from "../../../models/size-variant";
 import {IFormModel} from "../../../shared/interface/IFormModel";
 import {NgForm} from "@angular/forms";
 import {Router} from "@angular/router";
 import {AuthPolicy} from "../../../auth/auth-policy";
 import {MatlClassification} from "../../../models/matl-classification";
 import {ItemType} from "../../../shared/item-type";
+import {RolesConstant} from "../../../auth/roles-constant";
 
 @Component({
   selector: 'app-matl-classifications-form',
@@ -50,4 +50,6 @@ export class MatlClassificationsFormComponent implements OnInit {
       .filter(entry => !isNaN(entry[0] as any))
       .map(entry => ({ name: entry[1], id: +entry[0] }));
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

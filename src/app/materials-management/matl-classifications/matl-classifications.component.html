@@ -1,4 +1,4 @@
-<app-command-bar export="matl-classifications" (operations)="onOperate($event)"></app-command-bar>
+<app-command-bar export="matl-classifications" [role]="RolesConstant.MatlClassification" (operations)="onOperate($event)"></app-command-bar>
 <div class="data-table-container">
   <div class="data-table" tabindex="0">
     <table id="matl-classifications" mat-table [dataSource]="dataSource" matSort [matSortStart]="dataSource.pageOrder">

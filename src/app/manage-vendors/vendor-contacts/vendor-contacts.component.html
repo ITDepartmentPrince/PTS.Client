@@ -1,4 +1,4 @@
-<app-command-bar export="vendor-contacts" (operations)="onOperate($event)"></app-command-bar>
+<app-command-bar export="vendor-contacts" [role]="RolesConstant.VendorContact" (operations)="onOperate($event)"></app-command-bar>
 <div class="data-table-container">
   <div class="data-table" tabindex="0">
     <table id="vendor-contacts" mat-table [dataSource]="dataSource" matSort [matSortStart]="dataSource.pageOrder">

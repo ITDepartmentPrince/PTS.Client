@@ -16,6 +16,7 @@ import {Vendor} from "../../../models/vendor";
 import {MatlCategory} from "../../../models/matl-category";
 import {enumToArray} from "../../../shared/enumToArray";
 import {RefersTo} from "../../../models/material";
+import {RolesConstant} from "../../../auth/roles-constant";
 
 @Component({
   selector: 'app-materials-form',
@@ -82,4 +83,6 @@ export class MaterialsFormComponent implements OnInit {
       ?.find(unit => unit.unitId === this.matService.material.uomId)
       ?.longUnit?.toLowerCase();
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

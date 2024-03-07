@@ -1,4 +1,4 @@
-<app-command-bar export="countries" (operations)="onOperate($event)"></app-command-bar>
+<app-command-bar export="countries" [role]="RolesConstant.Country" (operations)="onOperate($event)"></app-command-bar>
 <div class="data-table-container">
   <div class="data-table" tabindex="0">
     <table id="countries" mat-table [dataSource]="dataSource" matSort [matSortStart]="dataSource.pageOrder">

@@ -12,6 +12,7 @@ import {PayTerm} from "./pay-term";
 import {Site} from "./site";
 import {PurchaseOrder} from "./purchase-order";
 import {User} from "./user";
+import {Time} from "@angular/common";
 
 export class PurchaseReq {
   prNumber: string;
@@ -45,4 +46,6 @@ export class PurchaseReq {
   lastUser: LastUser;
   purchaseOrder: PurchaseOrder | null;
   totalPurchaseValue: number;
+  start: Date | null;
+  end: Date | null;
 }

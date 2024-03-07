@@ -5,6 +5,7 @@ import {NgForm} from "@angular/forms";
 import {Router} from "@angular/router";
 import {AuthPolicy} from "../../../auth/auth-policy";
 import {MeasurementUnit} from "../../../models/measurement-unit";
+import {RolesConstant} from "../../../auth/roles-constant";
 
 @Component({
   selector: 'app-measurement-units-form',
@@ -39,4 +40,6 @@ export class MeasurementUnitsFormComponent implements OnInit {
     this.controlState = this.action === this.operations.View ||
       this.action === this.operations.Delete;
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

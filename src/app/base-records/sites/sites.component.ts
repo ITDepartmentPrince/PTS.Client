@@ -9,6 +9,7 @@ import {DataTable} from "../../shared/dataTable";
 import {BodyDeleteFailedComponent} from "../../shared/body-delete-failed/body-delete-failed.component";
 import {Site} from "../../models/site";
 import {SitesService} from "../../services/sites.service";
+import {RolesConstant} from "../../auth/roles-constant";
 
 @Component({
   selector: 'app-sites',
@@ -20,6 +21,7 @@ export class SitesComponent implements AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(ModalDirective) modal: ModalDirective;
+  protected readonly RolesConstant = RolesConstant;
 
   constructor(private siteService: SitesService,
               private router: Router,

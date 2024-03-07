@@ -1,4 +1,4 @@
-<app-command-bar export="states" (operations)="onOperate($event)"></app-command-bar>
+<app-command-bar export="states" [role]="RolesConstant.State" (operations)="onOperate($event)"></app-command-bar>
 <div class="data-table-container">
   <div class="data-table" tabindex="0">
     <table id="states" mat-table [dataSource]="dataSource" matSort [matSortStart]="dataSource.pageOrder">

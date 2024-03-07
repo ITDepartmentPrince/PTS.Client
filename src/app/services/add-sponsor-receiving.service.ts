@@ -30,6 +30,7 @@ export class AddSponsorReceivingService {
   }
 
   create(): Observable<any> {
+    console.log(this.receiving.receivingItems);
     return this.httpClient.post<Receiving>(AuthConstant.apiRoot +
       `/Sites/${this.siteService.localSite}/Receiving`,
       this.receiving,

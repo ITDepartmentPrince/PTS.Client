@@ -147,18 +147,20 @@ export class ReceivingForSiteService implements IService<Receiving> {
           btnCloseLabel: 'Cancel',
           title: title,
           successCallback: _ => {
+            const rcItems = this.receivingItems
+              .flatMap(ri => ri.recvdItemLotsBatches
+                .filter(rilb => rilb.rlbQty > 0));
+
+            console.log(rcItems);
             this.recvdItemsLb
-              .create(this.receiving.roNumber, this.receiving.siteId, this.receiving.notes,
-                this.receivingItems
-                  .flatMap(ri => ri.recvdItemLotsBatches
-                    .filter(rilb => rilb.rlbQty > 0)))
+              .create(this.receiving.roNumber, this.receiving.siteId, this.receiving.notes, rcItems)
               .subscribe(res => {
                 this.receiveStatusChanged.next();
                 this.itemLabelService.recvdItemLotsBatches = res;
 
                 this.modalService.show(modal.viewContainerRef, {
                   modalSize: 'modal-xl',
-                  btnSuccessLabel: 'Print',
+                  btnSuccessLabel: 'Save',
                   title: `Create labels for received items RO ${this.receiving.roNumber}`,
                   successCallback: _ => {
                     this.itemLabelService.create()

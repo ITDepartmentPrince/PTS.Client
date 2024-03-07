@@ -36,7 +36,7 @@ export class ModalComponent implements AfterViewInit, OnDestroy {
   }
 
   onSuccess() {
-    this.modalService.succeed.emit(this.form);
+    this.modalService.succeed.next(this.form);
   }
 
   ngOnDestroy(): void {

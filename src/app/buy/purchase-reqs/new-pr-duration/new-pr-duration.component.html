@@ -1,0 +1,116 @@
+<div>
+  <div class="d-flex align-items-center justify-content-between">
+    <div class="btn-group mx-5" role="group"></div>
+    <div class="mx-5">
+      <h4 class="my-2">PR duration by user</h4>
+    </div>
+  </div>
+  <div class="sub-nav-link-border"></div>
+</div>
+<app-command-bar export="new=pr-duration"
+                 [reports]=true
+                 [create]="false"
+                 [edit]="false"
+                 [disBtnDel]="true"
+                 (operations)="onOperate($event)">
+  <ul class="dropdown-menu shadow">
+    <li class="dropdown-item">Report One</li>
+  </ul>
+</app-command-bar>
+<div class="data-table-container">
+  <div class="data-table" tabindex="0">
+    <table id="new=pr-duration" mat-table [dataSource]="dataSource" matSort [matSortStart]="dataSource.pageOrder">
+      <ng-container matColumnDef="CreateDate">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>Created Date</span>
+          <span class="search-container">
+            <app-column-search column="CreateDate"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               type="date"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>{{row['createDate'] | date:'MM-dd-yyyy'}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="PrNumber">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>PR #</span>
+          <span class="search-container">
+            <app-column-search column="PrNumber"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>PR {{row['prNumber']}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="CreatedBy">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span mat-sort-header>Created by</span>
+          <span class="search-container">
+            <app-column-search column="CreatedBy"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>{{row["createUser"]["cuFirstName"] + ' ' + row["createUser"]["cuLastName"]}}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="Duration">
+        <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
+        <span class="cell-data">
+          <span>Duration</span>
+          <!--<span class="search-container">
+            <app-column-search column="Duration"
+                               [value]="dataSource.search.value"
+                               (search)="dataSource.onSearch($event)"
+                               highlightOnSearch>
+            </app-column-search>
+          </span>-->
+        </span>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <span>{{getDuration(row)}}</span>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          (click)="dataSource.onRowSelect(row)"
+          [ngClass]="{highlighted: dataSource.selection.isSelected(row), inactive: row['inActive']}">
+      </tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell datatable-no-data"
+            [colSpan]="displayedColumns.length"
+            *ngIf="!(dataSource.isLoading | async)">No data available in table
+        </td>
+      </tr>
+    </table>
+    <div *ngIf="dataSource.isLoading | async" class="spinner-container-wrapper">
+      <div class="spinner-container">
+        <app-loading-spinner></app-loading-spinner>
+      </div>
+    </div>
+  </div>
+</div>
+<mat-paginator [pageSizeOptions]="[15, 30, 50, 100]"
+               [pageIndex]="dataSource.pageIndex"
+               [showFirstLastButtons]="true">
+</mat-paginator>
+<ng-container appModal></ng-container>

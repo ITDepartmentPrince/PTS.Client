@@ -16,6 +16,7 @@ import {AuthConstant} from "./auth.constant";
         silentRenewUrl: AuthConstant.silentRedirectUri,
         renewTimeBeforeTokenExpiresInSeconds: 10,
         useRefreshToken: true,
+        historyCleanupOff: false,
         postLoginRoute: '/',
         forbiddenRoute: '/forbidden',
         unauthorizedRoute: '/unauthorized',

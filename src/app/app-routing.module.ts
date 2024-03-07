@@ -91,13 +91,14 @@ import {ItemsLabelComponent} from "./print-labels/items-label/items-label.compon
 import {PurchaseDocComponent} from "./buy/purchase-doc/purchase-doc/purchase-doc.component";
 import {ForgotPasswordCallbackComponent} from "./auth/forgot-password-callback/forgot-password-callback.component";
 import {UsersComponent} from "./users/users.component";
-import {UsersViewComponent} from "./users/view/users-view.component";
-import {UsersEditComponent} from "./users/edit/users-edit.component";
-import {UsersCreateComponent} from "./users/create/users-create.component";
 import {RolesComponent} from "./roles/roles.component";
 import {RolesViewComponent} from "./roles/view/roles-view.component";
 import {RolesEditComponent} from "./roles/edit/roles-edit.component";
 import {RolesCreateComponent} from "./roles/create/roles-create.component";
+import {LocationComponent} from "./settings/location/location.component";
+import {NewPrDurationComponent} from "./buy/purchase-reqs/new-pr-duration/new-pr-duration.component";
+import {UserComponent} from "./users/user/user.component";
+import {Operations} from "./shared/operations";
 
 const appRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -190,6 +191,8 @@ const appRoutes: Routes = [
   { path: 'purchase-requisitions/:prNumber', component: PurchaseReqsViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
 
   { path: 'purchase-requisitions/:prNumber/edit', component: PurchaseReqsEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+
+  { path: 'pr-duration', component: NewPrDurationComponent, canActivate: [AutoLoginPartialRoutesGuard] },
 
   {
     path: 'purchase-orders',
@@ -305,15 +308,16 @@ const appRoutes: Routes = [
   },
 
   { path: 'users', component: UsersComponent, canActivate: [AutoLoginPartialRoutesGuard] },
-  { path: 'users/create', component: UsersCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
-  { path: 'users/:id', component: UsersViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
-  { path: 'users/:id/edit', component: UsersEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
+  { path: 'users/create', component: UserComponent, canActivate: [AutoLoginPartialRoutesGuard], data: { action: Operations.Create } },
+  { path: 'users/:id', component: UserComponent, canActivate: [AutoLoginPartialRoutesGuard], data: { action: Operations.View }  },
+  { path: 'users/:id/edit', component: UserComponent, canActivate: [AutoLoginPartialRoutesGuard], data: { action: Operations.Edit }  },
 
   { path: 'roles', component: RolesComponent, canActivate: [AutoLoginPartialRoutesGuard] },
   { path: 'roles/create', component: RolesCreateComponent, canActivate: [AutoLoginPartialRoutesGuard] },
   { path: 'roles/:id', component: RolesViewComponent, canActivate: [AutoLoginPartialRoutesGuard] },
   { path: 'roles/:id/edit', component: RolesEditComponent, canActivate: [AutoLoginPartialRoutesGuard] },
 
+  { path: 'location', component: LocationComponent, canActivate: [AutoLoginPartialRoutesGuard] },
 
   {
     path: 'print',

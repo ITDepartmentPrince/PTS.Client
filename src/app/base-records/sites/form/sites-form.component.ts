@@ -6,6 +6,7 @@ import {AuthPolicy} from "../../../auth/auth-policy";
 import {SitesService} from "../../../services/sites.service";
 import {State} from "../../../models/state";
 import {StatesService} from "../../../services/states.service";
+import {RolesConstant} from "../../../auth/roles-constant";
 
 @Component({
   selector: 'app-sites-form',
@@ -20,6 +21,7 @@ export class SitesFormComponent implements OnInit {
   @ViewChild('f') form: NgForm;
   protected readonly AuthPolicy = AuthPolicy;
   states: Array<State>;
+  protected readonly RolesConstant = RolesConstant;
 
   constructor(public router: Router,
               public sitesService: SitesService,

@@ -10,6 +10,7 @@ import {Material, RefersTo} from "../../models/material";
 import {MaterialsService} from "../../services/materials.service";
 import {BodyDeleteFailedComponent} from "../../shared/body-delete-failed/body-delete-failed.component";
 import {enumToArray} from "../../shared/enumToArray";
+import {RolesConstant} from "../../auth/roles-constant";
 
 @Component({
   selector: 'app-materials',
@@ -105,4 +106,6 @@ export class MaterialsComponent implements AfterViewInit {
       ?.find(r => r.id === refersTo)
       ?.name;
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

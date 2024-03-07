@@ -1,5 +1,6 @@
 ﻿import * as signalR from "@microsoft/signalr";
 import {EventEmitter, Injectable} from "@angular/core";
+import {AuthConstant} from "../auth/auth.constant";
 
 @Injectable({providedIn: "root"})
 export class SignalRService {
@@ -8,12 +9,11 @@ export class SignalRService {
 
   startConnection() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('https://localhost:7230/notification')
+      .withUrl(AuthConstant.apiSignalRConn)
       .build();
 
     this.hubConnection
       .start()
-      .then(_ => console.log('SignalR connection started.'))
       .catch(error => console.log(error));
   }
 

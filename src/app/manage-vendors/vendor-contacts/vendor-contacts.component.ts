@@ -9,6 +9,7 @@ import {Operations} from "../../shared/operations";
 import {VendorContact} from "../../models/vendor-contact";
 import {VendorContactsService} from "../../services/vendor-contacts.service";
 import {BodyDeleteFailedComponent} from "../../shared/body-delete-failed/body-delete-failed.component";
+import {RolesConstant} from "../../auth/roles-constant";
 
 @Component({
   selector: 'app-vendor-contacts',
@@ -97,4 +98,6 @@ export class VendorContactsComponent implements AfterViewInit {
         break;
     }
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

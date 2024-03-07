@@ -12,6 +12,7 @@ import {ModalDirective} from "../../shared/modal/modal.directive";
 import {MatlClassificationsService} from "../../services/matl-classifications.service";
 import {VendorsService} from "../../services/vendors.service";
 import {zip} from "rxjs";
+import {RolesConstant} from "../../auth/roles-constant";
 
 @Component({
   selector: 'app-receiving-form',
@@ -62,4 +63,6 @@ export class ReceivingFormComponent implements OnInit {
       .filter(entry => !isNaN(entry[0] as any))
       .map(entry => ({ name: entry[1], id: +entry[0] }));
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

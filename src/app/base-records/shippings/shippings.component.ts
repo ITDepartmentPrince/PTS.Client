@@ -9,6 +9,7 @@ import {DataTable} from "../../shared/dataTable";
 import {BodyDeleteFailedComponent} from "../../shared/body-delete-failed/body-delete-failed.component";
 import {Shipping} from "../../models/shipping";
 import {ShippingsService} from "../../services/shippings.service";
+import {RolesConstant} from "../../auth/roles-constant";
 
 @Component({
   selector: 'app-shippings',
@@ -97,4 +98,6 @@ export class ShippingsComponent implements AfterViewInit {
         break;
     }
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

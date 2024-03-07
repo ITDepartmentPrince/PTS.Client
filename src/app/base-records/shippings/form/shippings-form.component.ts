@@ -4,6 +4,7 @@ import {NgForm} from "@angular/forms";
 import {Router} from "@angular/router";
 import {AuthPolicy} from "../../../auth/auth-policy";
 import {ShippingsService} from "../../../services/shippings.service";
+import {RolesConstant} from "../../../auth/roles-constant";
 
 @Component({
   selector: 'app-shippings-form',
@@ -31,4 +32,6 @@ export class ShippingsFormComponent implements OnInit {
     this.controlState = this.action === this.operations.View ||
       this.action === this.operations.Delete;
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

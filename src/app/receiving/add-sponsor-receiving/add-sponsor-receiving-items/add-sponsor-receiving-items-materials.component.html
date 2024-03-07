@@ -54,20 +54,70 @@
                  [ngClass]="{input_danger: !orderedQty.valid && orderedQty.touched}">
         </td>
         <td>
-          <ng-select [items]="measurementUnits"
-                     bindLabel="longUnit"
-                     bindValue="unitId"
-                     #fpOrderedUomId
-                     class="fix-placement"
-                     name="orderedUomId{{i+1}}"
-                     placeholder="-- select --"
-                     [(ngModel)]="item.orderedUomId"
-                     appendTo="body"
-                     (open)="FixNgSelectPlacement.onOpen(fpOrderedUomId)"
+          <div class="dropdown">
+            <div class="dropdown-toggle"
+                 data-bs-toggle="dropdown"
+                 data-bs-auto-close="outside"
+                 aria-expanded="false"
+                 data-bs-popper-config='{"strategy":"fixed"}'>
+              <input type="text"
+                     class="form-control"
+                     [value]="purchaseUomLu(item.orderedUomId ?? 0) ?? '?'"
                      required
-                     #orderedUomId="ngModel"
-                     [ngClass]="{input_danger: !orderedUomId.valid && orderedUomId.touched}">
-          </ng-select>
+                     [ngClass]="{input_danger: !orderedUomId.valid || !orderedConversionRate.valid}"
+                     readonly
+                     style="cursor: pointer; padding-right: 20px !important;"
+                     [readonly]="true">
+            </div>
+            <ul class="dropdown-menu shadow" #uomDd>
+              <li>
+                <div class="uom">
+                  <div class="uom-header">
+                    <div>Buy this in a different unit</div>
+                  </div>
+                  <div class="uom-body">
+                    <div class="mb-4 mt-2">
+                      <label class="form-label">Purchase unit of measure</label>
+                      <ng-select [items]="measurementUnits"
+                                 bindLabel="longUnit"
+                                 bindValue="unitId"
+                                 #fpOrderedUomId
+                                 class="fix-placement"
+                                 name="orderedUomId{{i+1}}"
+                                 placeholder="-- select --"
+                                 [(ngModel)]="item.orderedUomId"
+                                 appendTo="body"
+                                 (open)="FixNgSelectPlacement.onOpen(fpOrderedUomId)"
+                                 required
+                                 #orderedUomId="ngModel"
+                                 [ngClass]="{input_danger: !orderedUomId.valid && orderedUomId.touched}">
+                      </ng-select>
+                    </div>
+                    <div>
+                      <label class="form-label">Unit conversion rate</label>
+                      <div class="d-flex align-items-center p-1 px-3">
+                        <span class="me-3">1 {{purchaseUomLu(item.orderedUomId ?? 0) ?? '?'}} = </span>
+                        <input type="number"
+                               [min]="1"
+                               class="form-control w-50"
+                               name="conversionRate{{i+1}}"
+                               [(ngModel)]="item.orderedConversionRate"
+                               required
+                               #orderedConversionRate="ngModel"
+                               [ngClass]="{input_danger: !orderedConversionRate.valid}">
+                        <span class="ms-3">{{baseUomLu(item.materialId) ?? '?'}}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="uom-footer">
+                    <button class="btn btn-primary px-4"
+                            type="button"
+                            (click)="uomDd.classList.remove('show')">Ok</button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </div>
         </td>
         <td>
           <input type="number"

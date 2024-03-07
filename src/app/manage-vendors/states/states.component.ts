@@ -9,6 +9,7 @@ import {Operations} from "../../shared/operations";
 import {State} from "../../models/state";
 import {StatesService} from "../../services/states.service";
 import {BodyDeleteFailedComponent} from "../../shared/body-delete-failed/body-delete-failed.component";
+import {RolesConstant} from "../../auth/roles-constant";
 
 @Component({
   selector: 'app-states',
@@ -96,4 +97,6 @@ export class StatesComponent implements AfterViewInit {
         break;
     }
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

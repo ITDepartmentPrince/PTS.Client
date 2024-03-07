@@ -67,7 +67,6 @@
                id="street2"
                name="street2"
                [ngModel]="model.street2"
-               #street2="ngModel"
                [disabled]="controlState">
       </div>
       <div class="mb-4">
@@ -118,7 +117,6 @@
                id="notes"
                name="notes"
                [ngModel]="model.notes"
-               #notes="ngModel"
                [disabled]="controlState">
       </div>
       <div class="mb-4 form-check" *ngIf="action !== operations.Create">
@@ -133,7 +131,7 @@
       <div class="mb-4">
         <button class="btn btn-primary me-2"
                 type="submit"
-                *appAuth="AuthPolicy.canUserEdit()"
+                *appAuth="AuthPolicy.canUserEdit(RolesConstant.Vendor)"
                 [disabled]="!f.valid && f.invalid">
           <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
           <span *ngIf="action === operations.View">Edit</span>

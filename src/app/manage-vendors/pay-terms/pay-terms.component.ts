@@ -9,6 +9,7 @@ import {DataTable} from "../../shared/dataTable";
 import {BodyDeleteFailedComponent} from "../../shared/body-delete-failed/body-delete-failed.component";
 import {PayTerm} from "../../models/pay-term";
 import {PayTermsService} from "../../services/pay-terms.service";
+import {RolesConstant} from "../../auth/roles-constant";
 
 @Component({
   selector: 'app-pay-terms',
@@ -97,4 +98,6 @@ export class PayTermsComponent implements AfterViewInit {
         break;
     }
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

@@ -43,7 +43,7 @@ export class ActivateCameraComponent implements AfterViewInit {
         this.scanner.enable = false;
 
         if (this.isModalRequired)
-          this.modalService.succeed.emit(result);
+          this.modalService.succeed.next(result);
         else {
           this.itemScanned.emit(result);
           setTimeout(_ => {

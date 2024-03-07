@@ -6,7 +6,6 @@ import {ActivatedRoute, Router} from "@angular/router";
   templateUrl: './stock-transfer-nav.component.html'
 })
 export class StockTransferNavComponent {
-  protected readonly window = window;
   isOpen = false;
 
   constructor(private router: Router, private route: ActivatedRoute) {

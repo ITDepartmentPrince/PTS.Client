@@ -3,7 +3,7 @@ import {exhaustMap, Observable, take} from "rxjs";
 import {AuthConstant} from "../auth/auth.constant";
 import {User} from "../models/user";
 import {OidcSecurityService} from "angular-auth-oidc-client";
-import {EventEmitter, Injectable} from "@angular/core";
+import {Injectable} from "@angular/core";
 import {IService} from "../shared/interface/IService";
 import { DatatableResponse } from "../models/datatable-response";
 import { QueryParams } from "../models/query-params";
@@ -11,11 +11,18 @@ import {UserRole} from "../models/user-role";
 
 @Injectable({providedIn: 'root'})
 export class UserService implements IService<User> {
-  model: User;
-  userLoaded = new EventEmitter<void>();
+  _user: User;
 
   constructor(private httpClient: HttpClient,
               private authService: OidcSecurityService) {
+  }
+
+  get user() {
+    return this._user;
+  }
+
+  set user(user: User) {
+    this._user = user;
   }
 
   getRequired(qp: QueryParams): Observable<DatatableResponse<User>> {
@@ -58,7 +65,7 @@ export class UserService implements IService<User> {
       .pipe(
         take(1),
         exhaustMap(token => {
-          return this.httpClient.put<User>(AuthConstant.idpRoot + '/Api/Users', this.model, {
+          return this.httpClient.put<User>(AuthConstant.idpRoot + '/Api/Users', this._user, {
             headers: new HttpHeaders().append('Authorization', `Bearer ${token}`)
           });
         }));
@@ -66,5 +73,39 @@ export class UserService implements IService<User> {
 
   delete(id: number | undefined) {
     return this.httpClient.delete(AuthConstant.idpRoot + `/Users/${id}`);
+  }
+
+  canUserCreate(access: number) {
+    return this.getActiveBits(access)[0] === 1;
+  }
+
+  canUserRead(access: number) {
+    return this.getActiveBits(access)[1] === 1;
+  }
+
+  canUserUpdate(access: number) {
+    return this.getActiveBits(access)[2] === 1;
+  }
+
+  canUserDelete(access: number) {
+    return this.getActiveBits(access)[3] === 1;
+  }
+
+  private getActiveBits(value: number) {
+    let access = value;
+    const activeBits: number[] = [];
+
+    while (access > 0) {
+      if (access === 1) {
+        activeBits.push(1);
+        access = 0;
+      }
+      else {
+        activeBits.push(access % 2);
+        access = Math.floor(access / 2);
+      }
+    }
+
+    return activeBits;
   }
 }

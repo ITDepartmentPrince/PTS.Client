@@ -11,6 +11,7 @@ import {Subscription} from "rxjs";
 import {StockTransfer} from "../models/stock-transfer";
 import {StockTransferService} from "../services/stock-transfer-service";
 import {PrintLabelsService} from "../print-labels/print-labels.service";
+import {RolesConstant} from "../auth/roles-constant";
 
 @Component({
   selector: 'app-stock-transfer',
@@ -120,4 +121,6 @@ export class StockTransferComponent implements OnInit, AfterViewInit, OnDestroy 
         this.printLabelsService.printDocument('items-label');
       });
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

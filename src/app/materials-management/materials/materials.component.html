@@ -1,4 +1,4 @@
-<app-command-bar export="materials" (operations)="onOperate($event)"></app-command-bar>
+<app-command-bar export="materials" [role]="RolesConstant.Materials" (operations)="onOperate($event)"></app-command-bar>
 <div class="data-table-container">
   <div class="data-table" tabindex="0">
     <table id="materials" mat-table [dataSource]="dataSource" matSort [matSortStart]="dataSource.pageOrder">
@@ -73,7 +73,7 @@
       <ng-container matColumnDef="ConversionRate">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
         <span class="cell-data">
-          <span mat-sort-header>Conversion Rate</span>
+          <span mat-sort-header>Conversion rate</span>
           <span class="search-container">
             <app-column-search column="ConversionRate"
                                [value]="dataSource.search.value"
@@ -94,7 +94,7 @@
       <ng-container matColumnDef="ClassificationName">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
         <span class="cell-data">
-          <span mat-sort-header>ClassificationName</span>
+          <span mat-sort-header>Classification name</span>
           <span class="search-container">
             <app-column-search column="ClassificationName"
                                [value]="dataSource.search.value"
@@ -111,7 +111,7 @@
       <ng-container matColumnDef="RefersTo">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
         <span class="cell-data">
-          <span mat-sort-header>RefersTo</span>
+          <span mat-sort-header>Refers to</span>
           <span class="search-container">
             <app-column-search column="RefersTo"
                                [value]="dataSource.search.value"
@@ -219,6 +219,6 @@
 </div>
 <mat-paginator [pageSizeOptions]="[15, 30, 50, 100]"
                [pageIndex]="dataSource.pageIndex"
-               showFirstLastButtons>
+               [showFirstLastButtons]="true">
 </mat-paginator>
 <ng-container appModal></ng-container>

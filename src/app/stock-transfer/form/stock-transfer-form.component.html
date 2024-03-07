@@ -171,7 +171,7 @@
     <div class="my-4">
       <button class="btn btn-primary me-2"
               type="submit"
-              *appAuth="AuthPolicy.canUserEdit()"
+              *appAuth="AuthPolicy.canUserEdit(RolesConstant.StockTransfer)"
               [disabled]="f.invalid || !stService.stockTransfer.itemsValid">
         <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
         <span *ngIf="action === operations.View">Edit</span>

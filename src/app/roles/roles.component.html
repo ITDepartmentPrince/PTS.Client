@@ -15,7 +15,10 @@
   <div class="sub-nav-link-border"></div>
 </div>
 
-<app-command-bar export="roles" (operations)="onOperate($event)">
+<app-command-bar export="roles"
+                 [role]="RolesConstant.Admin"
+                 (operations)="onOperate($event)"
+                 [disBtnDel]="true">
   <!--<ul class="dropdown-menu shadow">
     <li class="dropdown-item">Report One</li>
   </ul>-->

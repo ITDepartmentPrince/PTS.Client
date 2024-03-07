@@ -13,6 +13,7 @@ import {ReceivingForSiteService} from "../services/receiving-for-site.service";
 import {SourceType} from "../shared/source-type";
 import {Subscription} from "rxjs";
 import {SitesService} from "../services/sites.service";
+import {RolesConstant} from "../auth/roles-constant";
 
 @Component({
   selector: 'app-receiving',
@@ -132,4 +133,6 @@ export class ReceivingComponent implements OnInit, AfterViewInit, OnDestroy {
         break;
     }
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

@@ -1,4 +1,5 @@
 ﻿import {SelectListItem} from "../shared/select-list-item";
+import {UserRole} from "./user-role";
 
 export class User {
   id: number;
@@ -11,5 +12,6 @@ export class User {
   email: string;
   phoneNumber: string;
   fullName = "";
+  userRoles: UserRole[] = [];
   roles = new Array<SelectListItem>();
 }

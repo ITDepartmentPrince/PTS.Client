@@ -26,7 +26,8 @@
     </div>
   </div>
   <div class="col-auto">
-    <app-command-bar export="receiving"
+    <app-command-bar export="inventory"
+                     [role]="RolesConstant.Inventory"
                      [reports]=true
                      [create]=false
                      [view]=false
@@ -35,20 +36,20 @@
                      (operations)="onOperate($event)">
       <ul class="dropdown-menu shadow">
         <li class="dropdown-item">
+<!--          href="http://pslt19/Reports/report/Inventory"-->
           <a class="bl-link"
-             href="http://pslt19/Reports/report/Inventory"
+             href="https://172.16.4.166:4490/Reports/report/Inventory"
              target="_blank">
             Inventory report
           </a>
         </li>
-        <li class="dropdown-item">Report two</li>
-      </ul>
+       </ul>
     </app-command-bar>
   </div>
 </div>
 <div class="data-table-container">
   <div class="data-table" tabindex="0">
-    <table id="receiving" mat-table [dataSource]="dataSource" matSort [matSortStart]="dataSource.pageOrder">
+    <table id="inventory" mat-table [dataSource]="dataSource" matSort [matSortStart]="dataSource.pageOrder">
       <ng-container matColumnDef="Description">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true" style="width: 15rem;">
           <span class="cell-data">
@@ -183,8 +184,7 @@
         </th>
         <td mat-cell *matCellDef="let row">
           <div class="d-flex justify-content-end">
-            <div class="me-2">{{blService.avgCost(row)}}</div>
-            <div class="fs-5">USD</div>
+            <div>$ {{blService.avgCost(row)}}</div>
           </div>
         </td>
       </ng-container>
@@ -204,8 +204,7 @@
         </th>
         <td mat-cell *matCellDef="let row">
           <div class="d-flex justify-content-end">
-            <div class="me-2">{{blService.valueInStock(row)}}</div>
-            <div class="fs-5">USD</div>
+            <div>$ {{blService.valueInStock(row)}}</div>
           </div>
         </td>
       </ng-container>
@@ -259,7 +258,7 @@
         <th [colSpan]="isSponsor ? 6 : 7" class="text-end" mat-header-cell *matHeaderCellDef>Total</th>
       </ng-container>
       <ng-container matColumnDef="VIS">
-        <th mat-header-cell class="text-end" *matHeaderCellDef>{{getTotalValueInStock() | async}} USD</th>
+        <th mat-header-cell class="text-end" *matHeaderCellDef>$ {{getTotalValueInStock() | async}}</th>
       </ng-container>
       <ng-container matColumnDef="IS">
         <th mat-header-cell class="text-end" *matHeaderCellDef>{{getTotalInStock() | async}}</th>

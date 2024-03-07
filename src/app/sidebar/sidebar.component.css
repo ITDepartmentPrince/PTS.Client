@@ -1,4 +1,6 @@
 .sidebar {
+  padding-bottom: 30px;
+  overflow: auto;
   position: fixed;
   width: 230px;
   transform: translateX(-250px);

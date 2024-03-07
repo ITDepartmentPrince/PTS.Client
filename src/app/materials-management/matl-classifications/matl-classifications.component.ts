@@ -10,6 +10,7 @@ import {MatlClassification} from "../../models/matl-classification";
 import {MatlClassificationsService} from "../../services/matl-classifications.service";
 import {BodyDeleteFailedComponent} from "../../shared/body-delete-failed/body-delete-failed.component";
 import {ItemType} from "../../shared/item-type";
+import {RolesConstant} from "../../auth/roles-constant";
 
 @Component({
   selector: 'app-matl-classifications',
@@ -108,4 +109,6 @@ export class MatlClassificationsComponent implements AfterViewInit  {
         return '';
     }
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

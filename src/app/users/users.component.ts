@@ -10,6 +10,7 @@ import {Operations} from "../shared/operations";
 import {UserRole} from "../models/user-role";
 import {BodyDeleteFailedComponent} from "../shared/body-delete-failed/body-delete-failed.component";
 import {UserService} from "../services/user.service";
+import {RolesConstant} from "../auth/roles-constant";
 
 @Component({
   selector: 'app-users',
@@ -90,7 +91,7 @@ export class UsersComponent implements AfterViewInit {
 
                     this.dataSource.isLoading.next(false);
                   }
-                })
+                });
             }
           });
         }
@@ -104,4 +105,6 @@ export class UsersComponent implements AfterViewInit {
       .join(', ');
     return roles.length > 0 ? roles : '---';
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

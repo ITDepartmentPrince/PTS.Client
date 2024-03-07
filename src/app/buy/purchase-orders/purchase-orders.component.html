@@ -1,12 +1,11 @@
 <app-command-bar export="purchase-orders"
+                 [role]="RolesConstant.PurchaseOrder"
                  [reports]=true
                  [create]=false
                  [edit]=false
                  (operations)="onOperate($event)">
   <ul class="dropdown-menu shadow">
     <li class="dropdown-item" (click)="onViewPo($event)">Purchase order</li>
-    <li class="dropdown-item">Report two</li>
-    <li class="dropdown-item">Report three</li>
   </ul>
 </app-command-bar>
 <div class="data-table-container">
@@ -78,8 +77,7 @@
         </span>
         </th>
         <td mat-cell *matCellDef="let row" class="text-end">
-          <div class="d-inline-block">{{row['purchaseReq']['totalPurchaseValue'].toFixed(2)}}</div>
-          <div style="display: inline-block; font-size: 1.3rem; margin-left: 0.7rem;">USD</div>
+          <div class="d-inline-block">$ {{row['purchaseReq']['totalPurchaseValue'].toFixed(2)}}</div>
         </td>
       </ng-container>
       <ng-container matColumnDef="PrNumber">

@@ -1,0 +1,51 @@
+<div class="trans">
+  <div class="row t-mb justify-content-between pb-2 border-bottom border-4">
+    <div class="col-md-4 align-self-end">
+      <div class="fw-bold fs-4">Location</div>
+    </div>
+  </div>
+  <div *ngIf="isLoading" class="text-center">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+  <form (ngSubmit)="onSubmit()" #f="ngForm" *ngIf="!isLoading">
+    <div *ngIf="locationChanged" class="alert alert-success" role="alert">
+      Location was changed successfully.
+    </div>
+    <div *ngIf="isNaN(siteService.localSite)" class="alert alert-danger" role="alert">
+      Location not set for this device. Please set the location.
+    </div>
+    <div *ngIf="!f.valid && f.touched" class="alert alert-danger" role="alert">
+      One or more inputs are incorrect
+    </div>
+    <div class="row justify-content-between" style="width: 80%;">
+      <div class="col-md-3">
+        <div class="t-mb">
+          <label for="siteId" class="form-label">Current location</label>
+          <ng-select [items]="sites"
+                     bindLabel="siteName"
+                     bindValue="siteId"
+                     id="siteId"
+                     name="siteId"
+                     [(ngModel)]="siteId"
+                     required>
+          </ng-select>
+        </div>
+      </div>
+    </div>
+    <div class="mb-4">
+      <button class="btn btn-primary me-2"
+              type="submit"
+              *appAuth="AuthPolicy.canUserEdit(RolesConstant.LocalLocation)"
+              [disabled]="!f.valid && f.invalid">
+        <span>Save</span>
+<!--        <span *ngIf="action === operations.View">Edit</span>-->
+      </button>
+      <!--<button class="btn btn-primary"
+              type="button"
+              (click)="router.navigate(['/users'],
+              {queryParamsHandling: 'preserve'})">
+        Back
+      </button>-->
+    </div>
+  </form>
+</div>

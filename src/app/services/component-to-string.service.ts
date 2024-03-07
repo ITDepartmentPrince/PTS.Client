@@ -1,8 +1,10 @@
 import {Injectable, Type, ViewContainerRef} from "@angular/core";
+import {Subscription} from "rxjs";
 
 @Injectable({providedIn: "root"})
 export class ComponentToStringService {
   container: ViewContainerRef;
+  sub: Subscription;
 
   toString(container: ViewContainerRef, component: Type<any>, model: any): Promise<string> {
     this.container = container;
@@ -12,9 +14,10 @@ export class ComponentToStringService {
 
     return new Promise<string>(resolve => {
       if (componentRef.instance.imagesLoaded) {
-        componentRef.instance.imagesLoaded
-          .subscribe(() => {
-            resolve(componentRef.location.nativeElement.innerHTML);
+        this.sub = componentRef.instance.imagesLoaded
+          .subscribe((value: boolean) => {
+            if (value)
+              resolve(componentRef.location.nativeElement.innerHTML);
           });
       }
       else {
@@ -27,6 +30,7 @@ export class ComponentToStringService {
   }
 
   destroy() {
+    this.sub.unsubscribe();
     this.container.clear();
   }
 }

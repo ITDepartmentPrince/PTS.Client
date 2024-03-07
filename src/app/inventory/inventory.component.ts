@@ -15,6 +15,7 @@ import {SitesService} from "../services/sites.service";
 import {ItemLabelService} from "../services/item-label.service";
 import {map, Subscription} from "rxjs";
 import {InventoryIntelComponent} from "./inventory-intel/inventory-intel.component";
+import {RolesConstant} from "../auth/roles-constant";
 
 @Component({
   selector: 'app-inventory',
@@ -176,4 +177,6 @@ export class InventoryComponent implements OnInit, AfterViewInit, OnDestroy {
 
     event.stopPropagation();
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

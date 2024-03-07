@@ -224,7 +224,7 @@
       <div *ngIf="action === operations.View" class="d-inline-block">
         <button class="btn btn-primary me-2"
                 type="submit"
-                *appAuth="AuthPolicy.canUserEdit()">
+                *appAuth="AuthPolicy.canUserEdit(RolesConstant.Receiving)">
           <span>Edit</span>
         </button>
       </div>

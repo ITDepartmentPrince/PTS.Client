@@ -47,7 +47,7 @@
       <div class="mb-4">
         <button class="btn btn-primary me-2"
                 type="submit"
-                *appAuth="AuthPolicy.canUserEdit()"
+                *appAuth="AuthPolicy.canUserEdit(RolesConstant.TaxRate)"
                 [disabled]="!f.valid && f.invalid">
           <span *ngIf="action === operations.Create || action === operations.Edit">Save</span>
           <span *ngIf="action === operations.View">Edit</span>

@@ -1,4 +1,4 @@
-<app-command-bar export="departments" (operations)="onOperate($event)">
+<app-command-bar export="departments" [role]="RolesConstant.Department" (operations)="onOperate($event)">
 </app-command-bar>
 <div class="data-table-container">
   <div class="data-table" tabindex="0">

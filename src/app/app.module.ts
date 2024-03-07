@@ -163,15 +163,14 @@ import { PhoneNumberFormatPipePipe } from './shared/phone-number-format.pipe.pip
 import { VendorEmailSuccessComponent } from './buy/purchase-doc/vendor-doc/vendor-email-success/vendor-email-success.component';
 import { InventoryIntelComponent } from './inventory/inventory-intel/inventory-intel.component';
 import { UsersComponent } from './users/users.component';
-import {UsersFormComponent} from "./users/form/users-form.component";
-import {UsersViewComponent} from "./users/view/users-view.component";
-import {UsersEditComponent} from "./users/edit/users-edit.component";
-import {UsersCreateComponent} from "./users/create/users-create.component";
 import {RolesComponent} from "./roles/roles.component";
 import {RolesFormComponent} from "./roles/form/roles-form.component";
 import {RolesViewComponent} from "./roles/view/roles-view.component";
 import {RolesEditComponent} from "./roles/edit/roles-edit.component";
 import {RolesCreateComponent} from "./roles/create/roles-create.component";
+import { LocationComponent } from './settings/location/location.component';
+import { NewPrDurationComponent } from './buy/purchase-reqs/new-pr-duration/new-pr-duration.component';
+import { UserComponent } from './users/user/user.component';
 
 @NgModule({
   declarations: [
@@ -313,15 +312,14 @@ import {RolesCreateComponent} from "./roles/create/roles-create.component";
     VendorEmailSuccessComponent,
     InventoryIntelComponent,
     UsersComponent,
-    UsersFormComponent,
-    UsersViewComponent,
-    UsersEditComponent,
-    UsersCreateComponent,
     RolesComponent,
     RolesFormComponent,
     RolesViewComponent,
     RolesEditComponent,
     RolesCreateComponent,
+    LocationComponent,
+    NewPrDurationComponent,
+    UserComponent,
 
   ],
     imports: [

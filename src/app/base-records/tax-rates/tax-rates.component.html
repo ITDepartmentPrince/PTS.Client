@@ -1,4 +1,4 @@
-<app-command-bar export="tax-rates" (operations)="onOperate($event)"></app-command-bar>
+<app-command-bar export="tax-rates" [role]="RolesConstant.TaxRate" (operations)="onOperate($event)"></app-command-bar>
 <div class="data-table-container">
   <div class="data-table" tabindex="0">
     <table id="tax-rates" mat-table [dataSource]="dataSource" matSort [matSortStart]="dataSource.pageOrder">

@@ -20,6 +20,7 @@ import {
   VendorEmailSuccessComponent
 } from "../purchase-doc/vendor-doc/vendor-email-success/vendor-email-success.component";
 import {UserService} from "../../services/user.service";
+import {RolesConstant} from "../../auth/roles-constant";
 
 export enum PoStatus {
   Approved = 1,
@@ -305,4 +306,6 @@ export class PurchaseOrdersComponent implements AfterViewInit {
           });
       });
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

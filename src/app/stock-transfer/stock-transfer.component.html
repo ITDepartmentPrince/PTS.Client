@@ -1,4 +1,5 @@
-<app-command-bar export="stock-transfer"
+<app-command-bar export="stock-transfers"
+                 [role]="RolesConstant.StockTransfer"
                  [reports]=true
                  [disEdit]="dataSource.row?.isShipped ?? false"
                  (operations)="onOperate($event)">
@@ -8,7 +9,7 @@
 </app-command-bar>
 <div class="data-table-container">
   <div class="data-table" tabindex="0">
-    <table id="stock-transfer" mat-table [dataSource]="dataSource" matSort [matSortStart]="dataSource.pageOrder">
+    <table id="stock-transfers" mat-table [dataSource]="dataSource" matSort [matSortStart]="dataSource.pageOrder">
       <ng-container matColumnDef="Number">
         <th mat-header-cell *matHeaderCellDef [resizeColumn]="true">
         <span class="cell-data">

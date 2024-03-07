@@ -474,6 +474,7 @@ a {
 }
 
 .data-table {
+  outline: none;
   height: calc(100vh - 238px);
   overflow: auto;
   border: 1px solid var(--bs-border-color);

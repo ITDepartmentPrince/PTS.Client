@@ -2,6 +2,7 @@ import {AfterViewInit, Component, ElementRef, EventEmitter, ViewChild} from '@an
 import {ImageService} from "../../../services/image.service";
 import {PurchaseReqItem} from "../../../models/purchase-req-item";
 import {PurchaseReqCharges} from "../../../models/purchase-req-charges";
+import {BehaviorSubject} from "rxjs";
 
 @Component({
   selector: 'purchase-doc',
@@ -10,19 +11,24 @@ import {PurchaseReqCharges} from "../../../models/purchase-req-charges";
 export class PurchaseDocComponent implements AfterViewInit {
   logo: string;
   model: any;
-  imagesLoaded = new EventEmitter<void>();
+  imagesLoaded = new BehaviorSubject(false);
   @ViewChild('imgLogo') imgLogo: ElementRef;
 
   constructor(private imageService: ImageService) {
   }
 
   ngAfterViewInit(): void {
-    this.imageService.imageToDataUri('/assets/images/app/pss_logo.webp')
-      .subscribe(res => {
-        this.logo = res;
+    this.imageService.imageToDataUri('/assets/images/app/pss_logo.jpg')
+      .subscribe({
+        next: res => {
+          this.logo = res;
 
-        this.imgLogo.nativeElement.onload = (_: any) => {
-          this.imagesLoaded.emit();
+          this.imgLogo.nativeElement.onload = (_: any) => {
+            this.imagesLoaded.next(true);
+          }
+        },
+        error: err => {
+          console.log(err);
         }
       });
   }

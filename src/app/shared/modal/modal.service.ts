@@ -1,8 +1,8 @@
-﻿import {ComponentRef, EventEmitter, Injectable, Type, ViewContainerRef} from "@angular/core";
+﻿import {ComponentRef, Injectable, Type, ViewContainerRef} from "@angular/core";
 import {ModalComponent} from "./modal.component";
 import {BodyDeleteComponent} from "../body-delete/body-delete.component";
 import {NgForm} from "@angular/forms";
-import {Subscription, take} from "rxjs";
+import {Subject, Subscription, take} from "rxjs";
 
 interface ISuccessCallback {
   (form: NgForm | any, data?: any): void;
@@ -22,7 +22,7 @@ type FunctionOptions = {
 
 @Injectable({providedIn: 'root'})
 export class ModalService {
-  succeed = new EventEmitter<NgForm | any>();
+  succeed = new Subject<NgForm | any>();
   sub: Subscription;
 
   show(modalContainer: ViewContainerRef,
@@ -48,7 +48,7 @@ export class ModalService {
 
       bodyRef.changeDetectorRef.detectChanges();
 
-      this.succeed
+      this.sub = this.succeed
         .pipe(take(1))
         .subscribe(form => {
           options.successCallback?.(form, bodyComponentData);
@@ -56,14 +56,18 @@ export class ModalService {
           bodyRef.destroy();
           modalRef.destroy();
           modalContainer.clear();
+          this.sub.unsubscribe();
         });
     });
 
-    modalRef.instance.closed.subscribe(_ => {
-      options.closeCallback?.();
-      bodyRef.destroy();
-      modalRef.destroy();
-      modalContainer.clear();
+    modalRef.instance.closed
+      .pipe(take(1))
+      .subscribe(_ => {
+        options.closeCallback?.();
+        bodyRef.destroy();
+        modalRef.destroy();
+        modalContainer.clear();
+        this.sub.unsubscribe();
     });
   }
 }

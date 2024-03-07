@@ -5,6 +5,7 @@ import {NgForm} from "@angular/forms";
 import {Router} from "@angular/router";
 import {AuthPolicy} from "../../../auth/auth-policy";
 import {MatlCategory} from "../../../models/matl-category";
+import {RolesConstant} from "../../../auth/roles-constant";
 
 @Component({
   selector: 'app-matl-categories-form',
@@ -38,4 +39,6 @@ export class MatlCategoriesFormComponent implements OnInit {
     this.controlState = this.action === this.operations.View ||
       this.action === this.operations.Delete;
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

@@ -159,7 +159,8 @@ export class DataTable<T> implements DataSource<T> {
           this.data.next(res.data);
           this.loading.next(false);
         },
-        error: _ => {
+        error: error => {
+          console.log(error);
           this.loading.next(false);
         }
       });

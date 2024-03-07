@@ -9,6 +9,7 @@ import {Operations} from "../../shared/operations";
 import {MatlCategory} from "../../models/matl-category";
 import {MatlCategoriesService} from "../../services/matl-categories.service";
 import {BodyDeleteFailedComponent} from "../../shared/body-delete-failed/body-delete-failed.component";
+import {RolesConstant} from "../../auth/roles-constant";
 
 @Component({
   selector: 'app-matl-categories',
@@ -96,4 +97,6 @@ export class MatlCategoriesComponent implements AfterViewInit  {
         break;
     }
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

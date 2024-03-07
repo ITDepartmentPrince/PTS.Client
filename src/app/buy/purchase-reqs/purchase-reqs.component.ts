@@ -16,6 +16,7 @@ import {PurchaseDocComponent} from "../purchase-doc/purchase-doc/purchase-doc.co
 import {jsPDF} from "jspdf";
 import {map, mergeMap, of} from "rxjs";
 import {UserService} from "../../services/user.service";
+import {RolesConstant} from "../../auth/roles-constant";
 
 export enum PrStatus {
   Submitted = 1,
@@ -235,4 +236,6 @@ export class PurchaseReqsComponent implements AfterViewInit {
         });
     }
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

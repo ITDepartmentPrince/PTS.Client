@@ -49,7 +49,7 @@
     </div>
     <ul class="cb-inner" #show>
       <li class="cb-inner-item" *ngIf="create">
-        <div class="cb-inner-link" (click)="onCreate()" *appAuth="AuthPolicy.canUserCreate()">
+        <div class="cb-inner-link" (click)="onCreate()" *appAuth="AuthPolicy.canUserCreate(role)">
           <svg xmlns="http://www.w3.org/2000/svg"
                width="18" height="18"
                fill="currentColor"
@@ -62,7 +62,7 @@
         </div>
       </li>
       <li class="cb-inner-item" *ngIf="view">
-        <div class="cb-inner-link" (click)="onView()">
+        <div class="cb-inner-link" (click)="onView()" *appAuth="AuthPolicy.canUserRead(role)">
           <svg xmlns="http://www.w3.org/2000/svg"
                width="18" height="18"
                fill="currentColor"
@@ -77,7 +77,7 @@
         <div class="cb-inner-link"
              style="{{disEdit ? 'pointer-events: none; opacity: 0.5;' : ''}}"
              (click)="onEdit()"
-             *appAuth="AuthPolicy.canUserEdit()">
+             *appAuth="AuthPolicy.canUserEdit(role)">
           <svg xmlns="http://www.w3.org/2000/svg"
                width="18" height="18"
                fill="currentColor"
@@ -89,7 +89,7 @@
           Edit
         </div>
       </li>
-      <li class="cb-inner-item" *appAuth="AuthPolicy.canUserDelete()">
+      <li class="cb-inner-item" *appAuth="AuthPolicy.canUserDelete(role)">
         <div class="cb-inner-link" (click)="onDelete()"
              style="{{disBtnDel ? 'pointer-events: none; opacity: 0.5;' : ''}}">
           <svg xmlns="http://www.w3.org/2000/svg"

@@ -9,6 +9,7 @@ import {MatPaginator} from "@angular/material/paginator";
 import {TaxRate} from "../../models/tax-rate";
 import {TaxRateService} from "../../services/tax-rates.service";
 import {BodyDeleteFailedComponent} from "../../shared/body-delete-failed/body-delete-failed.component";
+import {RolesConstant} from "../../auth/roles-constant";
 
 @Component({
   selector: 'app-tax-rates',
@@ -96,4 +97,6 @@ export class TaxRatesComponent {
         break;
     }
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

@@ -1,36 +1,58 @@
 ﻿import {Injectable} from "@angular/core";
+import {Operations} from "../shared/operations";
+import {RolesConstant} from "./roles-constant";
 
 @Injectable({providedIn: 'root'})
 export class AuthPolicy {
-  public static canUserRead() {
-    return ['Admin', 'Read'];
+  public static canUserRead(role: string) {
+    return {
+      action: Operations.View,
+      role: role
+    }
   }
 
-  public static canUserCreate() {
-    return ['Admin', 'Create'];
+  public static canUserCreate(role: string) {
+    return {
+      action: Operations.Create,
+      role: role
+    }
   }
 
-  public static canUserEdit() {
-    return ['Admin', 'Edit'];
+  public static canUserEdit(role: string) {
+    return {
+      action: Operations.Edit,
+      role: role
+    }
   }
 
-  public static canUserDelete() {
-    return ['Admin', 'Delete'];
+  public static canUserDelete(role: string) {
+    return {
+      action: Operations.Delete,
+      role: role
+    }
   }
 
   public static canUserApprovePr() {
-    return ['Admin', 'PRApprover'];
+    return {
+      role: RolesConstant.PRApprover
+    }
   }
 
   public static canUserApprovePo() {
-    return ['Admin', 'POApprover'];
+    return {
+      role: RolesConstant.POApprover
+    }
   }
 
   public static canUserExecApprovePo() {
-    return ['Admin', 'ExecutiveApprover'];
+    return {
+      role: RolesConstant.ExecutiveApprover
+    }
   }
 
   public static canUserRegisterNewUser() {
-    return ['Admin', 'RegisterNewUser'];
+    return {
+      role: RolesConstant.RegisterNewUser
+    }
   }
 }

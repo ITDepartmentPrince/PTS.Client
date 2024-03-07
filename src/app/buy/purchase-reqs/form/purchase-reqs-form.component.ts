@@ -27,6 +27,7 @@ import {Shipping} from "../../../models/shipping";
 import {Site} from "../../../models/site";
 import {VendorContact} from "../../../models/vendor-contact";
 import {UserService} from "../../../services/user.service";
+import {RolesConstant} from "../../../auth/roles-constant";
 
 @Component({
   selector: 'app-purchase-reqs-form',
@@ -79,7 +80,9 @@ export class PurchaseReqsFormComponent implements OnInit {
       this.contactsService.getAll())
       .pipe(delay(200))
       .subscribe(res => {
-        this.classifications = res[0].filter(e => e.classificationName.toLowerCase() !== 'finished goods');
+        this.classifications = res[0].filter(e =>
+          e.classificationName.toLowerCase() !== 'finished goods' &&
+          !e.classificationName.toLowerCase().includes('equipment'));
         this.vendors = res[1];
         this.otherCharges = res[2];
         this.departments = res[3];
@@ -87,6 +90,10 @@ export class PurchaseReqsFormComponent implements OnInit {
         this.shippings = res[5];
         this.sites = res[6].filter(e => e.siteName.toLowerCase() !== 'all locations');
         this.vendorContacts = res[7];
+
+        if (this.action === Operations.Create)
+          this.prService.purchaseReq.payTermId = this.payTerms.find(pt =>
+            pt.name.toLowerCase().includes('45'))?.id as number;
 
         if (this.action === Operations.Create && !this.prService.isDuplicate)
           this.prService.purchaseReq.classificationId = this.classifications
@@ -224,4 +231,6 @@ export class PurchaseReqsFormComponent implements OnInit {
   onDeliveryDateChange(event: any) {
     this.prService.purchaseReq.deliveryDate = event.target.value;
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

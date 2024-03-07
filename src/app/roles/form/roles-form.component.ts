@@ -6,6 +6,7 @@ import {AuthPolicy} from 'src/app/auth/auth-policy';
 import {RoleService} from "../../services/role.service";
 import {enumToArray} from "../../shared/enumToArray";
 import {RoleType} from "../../models/role";
+import {RolesConstant} from "../../auth/roles-constant";
 
 @Component({
   selector: 'app-roles-form',
@@ -36,4 +37,6 @@ export class RolesFormComponent implements OnInit {
 
     this.rolesType = enumToArray(RoleType);
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

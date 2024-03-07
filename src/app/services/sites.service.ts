@@ -17,9 +17,8 @@ export class SitesService {
     localStorage.setItem('site', siteId.toString());
   }
 
-  get localSite() {
-    // return parseInt(localStorage.getItem('site') as string);
-    return 1;
+  get   localSite() {
+    return parseInt(localStorage.getItem('site') as string);
   }
 
   getRequired(queryParams: QueryParams): Observable<DatatableResponse<Site>> {

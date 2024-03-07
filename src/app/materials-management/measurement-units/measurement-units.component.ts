@@ -9,6 +9,7 @@ import {Operations} from "../../shared/operations";
 import {MeasurementUnit} from "../../models/measurement-unit";
 import {MeasurementUnitsService} from "../../services/measurement-units.service";
 import {BodyDeleteFailedComponent} from "../../shared/body-delete-failed/body-delete-failed.component";
+import {RolesConstant} from "../../auth/roles-constant";
 
 @Component({
   selector: 'app-measurement-units',
@@ -96,4 +97,6 @@ export class MeasurementUnitsComponent implements AfterViewInit {
         break;
     }
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

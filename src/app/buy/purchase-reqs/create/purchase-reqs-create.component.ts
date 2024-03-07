@@ -23,6 +23,7 @@ export class PurchaseReqsCreateComponent implements OnInit {
     if (!this.prService.isDuplicate)
       this.prService.purchaseReq = new PurchaseReq();
 
+    this.prService.purchaseReq.start = new Date();
     this.prService.isDuplicate = false;
   }
 

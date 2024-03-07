@@ -21,13 +21,14 @@ import {AuthPolicy} from "../../auth/auth-policy";
 })
 export class CommandBarComponent {
   protected readonly AuthPolicy = AuthPolicy;
-  @Input() export: string;
   @Input() reports = false;
   @Input() edit = true;
   @Input() disEdit = false;
   @Input() create = true;
   @Input() view = true;
   @Input() disBtnDel = false;
+  @Input() role: string;
+  @Input() export: string;
   @Output() operations = new EventEmitter<Operations>();
   @ViewChild('cbToggler') cbToggler: ElementRef;
   @ViewChild('show') show: ElementRef;

@@ -5,6 +5,7 @@ import {IFormModel} from "../../../shared/interface/IFormModel";
 import {NgForm} from "@angular/forms";
 import {Router} from "@angular/router";
 import {AuthPolicy} from "../../../auth/auth-policy";
+import {RolesConstant} from "../../../auth/roles-constant";
 
 @Component({
   selector: 'app-size-variant-form',
@@ -38,4 +39,6 @@ export class SizeVariantFormComponent implements OnInit {
     this.controlState = this.action === this.operations.View ||
       this.action === this.operations.Delete;
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

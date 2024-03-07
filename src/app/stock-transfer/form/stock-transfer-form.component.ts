@@ -6,6 +6,7 @@ import {ModalDirective} from "../../shared/modal/modal.directive";
 import {Site} from "../../models/site";
 import {SitesService} from "../../services/sites.service";
 import {StockTransferService} from "../../services/stock-transfer-service";
+import {RolesConstant} from "../../auth/roles-constant";
 
 @Component({
   selector: 'app-stock-transfer-form',
@@ -51,4 +52,6 @@ export class StockTransferFormComponent implements OnInit {
   onTransferDateChange(event: any) {
     this.stService.stockTransfer.createDate = event.target.value
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

@@ -26,6 +26,7 @@ export class ItemLabelService {
         itemLabel.batchLotId = recvdItemLotsBatch.batchLotId;
         itemLabel.batchLotSiteId = recvdItemLotsBatch.batchLotSiteId;
         itemLabel.conversionRate = recvdItemLotsBatch.rlbConversionRate;
+        itemLabel.receivingItemId = recvdItemLotsBatch.rilbReceivingItemId;
         recvdItemLotsBatch.itemsLabels = new Array<ItemLabel>();
         recvdItemLotsBatch.itemsLabels.push(itemLabel);
       }

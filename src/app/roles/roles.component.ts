@@ -9,6 +9,7 @@ import {Operations} from "../shared/operations";
 import {BodyDeleteFailedComponent} from "../shared/body-delete-failed/body-delete-failed.component";
 import {Role} from "../models/role";
 import {RoleService} from "../services/role.service";
+import {RolesConstant} from "../auth/roles-constant";
 
 @Component({
   selector: 'app-roles',
@@ -96,4 +97,6 @@ export class RolesComponent implements AfterViewInit {
         break;
     }
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }

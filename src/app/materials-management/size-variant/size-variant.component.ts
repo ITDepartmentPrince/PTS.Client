@@ -9,6 +9,7 @@ import {ModalService} from "../../shared/modal/modal.service";
 import {Operations} from "../../shared/operations";
 import {DataTable} from "../../shared/dataTable";
 import {BodyDeleteFailedComponent} from "../../shared/body-delete-failed/body-delete-failed.component";
+import {RolesConstant} from "../../auth/roles-constant";
 
 @Component({
   selector: 'app-size-variant',
@@ -96,4 +97,6 @@ export class SizeVariantComponent implements AfterViewInit {
         break;
     }
   }
+
+  protected readonly RolesConstant = RolesConstant;
 }
